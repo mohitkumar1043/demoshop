@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Local Shop</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="shop-header">
+
+    <div class="shop-logo">🏪</div>
+
+    <div>
+        <h1>My Local Shop</h1>
+        <p>Available Products</p>
+    </div>
+
+</header>
+
+
+<div class="top-bar">
+
+    <div class="search-box">
+        🔍
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search product..."
+        >
+    </div>
+
+    <button id="cartButton" class="cart-button">
+        🛒 Cart
+        <span id="cartCount">0</span>
+    </button>
+
+</div>
+
+
+<main>
+
+    <h2>Products</h2>
+
+    <div id="productList" class="product-list">
+
+        <div class="loading">
+            Loading products...
+        </div>
+
+    </div>
+
+</main>
+
+
+<section class="location-section">
+
+    <button
+        id="locationButton"
+        class="location-button">
+
+        📍 Get Shop Location
+
+    </button>
+
+</section>
+
+
+<!-- CART -->
+
+<div id="cartModal" class="modal">
+
+    <div class="modal-content">
+
+        <button id="closeCart" class="close">
+            ×
+        </button>
+
+        <h2>🛒 Your Cart</h2>
+
+        <div id="cartItems"></div>
+
+        <p id="emptyCart">
+            Cart is empty.
+        </p>
+
+        <div id="cartBottom">
+
+            <h3>
+                Total:
+                <span id="cartTotal">₹0</span>
+            </h3>
+
+            <button
+                id="orderButton"
+                class="main-button">
+
+                Order / Send Request
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ORDER -->
+
+<div id="orderModal" class="modal">
+
+    <div class="modal-content">
+
+        <button id="closeOrder" class="close">
+            ×
+        </button>
+
+        <h2>Customer Details</h2>
+
+        <label>Name</label>
+
+        <input
+            id="customerName"
+            type="text"
+            placeholder="Your name"
+        >
+
+
+        <label>Mobile</label>
+
+        <input
+            id="customerMobile"
+            type="tel"
+            placeholder="Mobile number"
+        >
+
+
+        <label>Message</label>
+
+        <textarea
+            id="customerMessage"
+            placeholder="Message">
+        </textarea>
+
+
+        <h3>Order</h3>
+
+        <div id="orderItems"></div>
+
+
+        <h3>
+            Total:
+            <span id="orderTotal">₹0</span>
+        </h3>
+
+
+        <button
+            id="sendOrder"
+            class="main-button">
+
+            📧 Send Order
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<div id="customAlert">
+    <span id="customAlertMessage"></span>
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
