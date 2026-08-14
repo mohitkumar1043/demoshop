@@ -1,198 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>Shopkeeper Product Manager</title>
-
-    <link
-        rel="stylesheet"
-        href="shopkeeper.css">
-
-</head>
-
-<body>
-
-
-<header class="admin-header">
-
-    <div>
-
-        <h1>👨‍💼 Shopkeeper</h1>
-
-        <p>Manage Products</p>
-
-    </div>
-
-</header>
-
-
-<main class="admin-container">
-
-
-    <!-- ADD / EDIT FORM -->
-
-    <section class="form-card">
-
-        <h2 id="formTitle">
-            Add Product
-        </h2>
-
-
-        <form id="productForm">
-
-
-            <input
-                type="hidden"
-                id="productId">
-
-
-            <label>
-                Product Name
-            </label>
-
-            <input
-                id="productName"
-                type="text"
-                required
-                placeholder="Tata Salt">
-
-
-            <label>
-                Description
-            </label>
-
-            <textarea
-                id="productDescription"
-                placeholder="1 kg packet">
-            </textarea>
-
-
-            <label>
-                Price
-            </label>
-
-            <input
-                id="productPrice"
-                type="number"
-                min="0"
-                required
-                placeholder="30">
-
-
-            <label>
-                Discount %
-            </label>
-
-            <input
-                id="productDiscount"
-                type="number"
-                min="0"
-                max="100"
-                value="0"
-                placeholder="5">
-
-
-            <label>
-                Google Drive Image URL
-            </label>
-
-            <input
-                id="productImage"
-                type="url"
-                placeholder="https://...">
-
-
-            <div
-                id="imagePreview"
-                class="image-preview">
-            </div>
-
-
-            <label class="available-row">
-
-                <input
-                    id="productAvailable"
-                    type="checkbox"
-                    checked>
-
-                Product Available
-
-            </label>
-
-
-            <button
-                type="submit"
-                class="save-button">
-
-                💾 Save Product
-
-            </button>
-
-
-            <button
-                type="button"
-                id="cancelEdit"
-                class="cancel-button"
-                style="display:none;">
-
-                Cancel Edit
-
-            </button>
-
-
-        </form>
-
-    </section>
-
-
-    <!-- PRODUCTS -->
-
-    <section class="products-card">
-
-        <div class="products-title">
-
-            <h2>
-                Products
-            </h2>
-
-            <button
-                id="refreshButton">
-
-                🔄 Refresh
-
-            </button>
-
+<section class="form-card">
+
+    <h2 id="formTitle">
+        ➕ Add Product
+    </h2>
+
+    <form id="productForm">
+
+        <!-- PRODUCT ID -->
+        <label>
+            Product ID
+        </label>
+
+        <input
+            id="productId"
+            type="text"
+            readonly
+            placeholder="Auto generated"
+        >
+
+        <label>
+            Product Name
+        </label>
+
+        <input
+            id="productName"
+            type="text"
+            required
+            placeholder="Tata Salt">
+
+        <label>
+            Description
+        </label>
+
+        <textarea
+            id="productDescription"
+            placeholder="1 kg packet"></textarea>
+
+        <label>
+            Price
+        </label>
+
+        <input
+            id="productPrice"
+            type="number"
+            min="0"
+            step="0.01"
+            required
+            placeholder="30">
+
+        <label>
+            Discount %
+        </label>
+
+        <input
+            id="productDiscount"
+            type="number"
+            min="0"
+            max="100"
+            value="0"
+            placeholder="5">
+
+        <label>
+            Google Drive Image URL
+        </label>
+
+        <input
+            id="productImage"
+            type="url"
+            placeholder="https://...">
+
+        <div
+            id="imagePreview"
+            class="image-preview">
         </div>
 
+        <label class="available-row">
 
-        <div id="adminProductList">
+            <input
+                id="productAvailable"
+                type="checkbox"
+                checked>
 
-            Loading products...
+            Product Available
 
-        </div>
+        </label>
 
-    </section>
+        <button
+            type="submit"
+            class="save-button"
+            id="saveButton">
 
+            💾 Add Product
 
-</main>
+        </button>
 
+        <button
+            type="button"
+            id="cancelEdit"
+            class="cancel-button"
+            style="display:none;">
 
-<div
-    id="adminAlert"
-    class="admin-alert">
+            Cancel Edit
 
-</div>
+        </button>
 
+    </form>
 
-<script src="shopkeeper.js"></script>
-
-</body>
-
-</html>
+</section>
