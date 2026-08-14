@@ -977,8 +977,10 @@ function applyCurrentSearch() {
 }
 
 
+ 
+
 /* =========================================================
-   GOOGLE MAP
+   GET SHOP LOCATION → MAP APP
 ========================================================= */
 
 function setupLocation() {
@@ -987,30 +989,32 @@ function setupLocation() {
         document.getElementById("locationButton");
 
     if (!locationButton) {
+        console.error("locationButton not found");
         return;
     }
 
-    locationButton.addEventListener(
-        "click",
-        function () {
+    locationButton.addEventListener("click", function () {
 
-            const url =
-                "https://www.google.com/maps/dir/?api=1" +
-                "&destination=" +
-                encodeURIComponent(
-                    SHOP_LATITUDE +
-                    "," +
-                    SHOP_LONGITUDE
-                );
+        const latitude = SHOP_LATITUDE;
+        const longitude = SHOP_LONGITUDE;
 
-            window.open(
-                url,
-                "_blank"
+        /*
+         * Google Maps app URL
+         */
+        const mapsAppURL =
+            "google.navigation:q=" +
+            encodeURIComponent(
+                latitude + "," + longitude
             );
-        }
-    );
-}
 
+        /*
+         * Open Google Maps app
+         */
+        window.location.href = mapsAppURL;
+
+    });
+
+}
 
 /* =========================================================
    CLOSE MODALS OUTSIDE
