@@ -1236,13 +1236,22 @@ function setupSendOrder() {
                     itemTotal;
 
 
-                orderText +=
-                    item.name +
-                    " × " +
-                    item.quantity +
-                    " = ₹" +
-                    itemTotal.toFixed(2) +
-                    "\n";
+              orderText +=
+    "Product ID: " +
+    item.id +
+    "\n" +
+    "Product: " +
+    item.name +
+    "\n" +
+    "Quantity: " +
+    item.quantity +
+    "\n" +
+    "Price: ₹" +
+    Number(item.price).toFixed(2) +
+    "\n" +
+    "Item Total: ₹" +
+    itemTotal.toFixed(2) +
+    "\n\n";
 
             });
 
