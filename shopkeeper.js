@@ -9,7 +9,7 @@
 ========================================================= */
 
 const WORKER_URL =
-    "https://YOUR-WORKER.workers.dev";
+    "https://my-demo-shop-api.mohitsaini12943.workers.dev";
 
 const PRODUCTS_URL =
     "products.json";
