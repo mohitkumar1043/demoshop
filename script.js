@@ -873,193 +873,156 @@ function setupSendOrder() {
         document.getElementById("sendOrder");
 
     if (!sendOrder) {
-
-        console.error(
-            "sendOrder button not found"
-        );
-
+        console.error("sendOrder button not found");
         return;
     }
 
+    sendOrder.addEventListener("click", function () {
 
-    sendOrder.addEventListener(
-        "click",
-        function () {
+        const nameInput =
+            document.getElementById("customerName");
 
-            const nameInput =
-                document.getElementById(
-                    "customerName"
-                );
+        const mobileInput =
+            document.getElementById("customerMobile");
 
-            const mobileInput =
-                document.getElementById(
-                    "customerMobile"
-                );
-
-            const addressInput =
-                document.getElementById(
-                    "customerAddress"
-                );
+        const addressInput =
+            document.getElementById("customerAddress");
 
 
-            const name =
-                nameInput
-                    ? nameInput.value.trim()
-                    : "";
+        const name =
+            nameInput
+                ? nameInput.value.trim()
+                : "";
+
+        const mobile =
+            mobileInput
+                ? mobileInput.value.trim()
+                : "";
+
+        const address =
+            addressInput
+                ? addressInput.value.trim()
+                : "";
 
 
-            const mobile =
-                mobileInput
-                    ? mobileInput.value.trim()
-                    : "";
+        /* VALIDATION */
 
-
-            const address =
-                addressInput
-                    ? addressInput.value.trim()
-                    : "";
-
-
-            /* VALIDATION */
-
-            if (name === "") {
-
-                showCustomAlert(
-                    "Enter your name"
-                );
-
-                return;
-            }
-
-
-            if (mobile === "") {
-
-                showCustomAlert(
-                    "Enter mobile number"
-                );
-
-                return;
-            }
-
-
-            if (address === "") {
-
-                showCustomAlert(
-                    "Enter your address"
-                );
-
-                return;
-            }
-
-
-            if (cart.length === 0) {
-
-                showCustomAlert(
-                    "Cart is empty"
-                );
-
-                return;
-            }
-
-
-            /* CREATE EMAIL */
-
-            let orderText =
-                "NEW SHOP ORDER\n\n";
-
-
-            orderText +=
-                "Customer Name: " +
-                name +
-                "\n";
-
-
-            orderText +=
-                "Mobile: " +
-                mobile +
-                "\n";
-
-
-            orderText +=
-                "Delivery Address:\n" +
-                address +
-                "\n\n";
-
-
-            orderText +=
-                "PRODUCTS\n";
-
-
-            orderText +=
-                "----------------------\n";
-
-
-            let total = 0;
-
-
-            cart.forEach(function (item) {
-
-                const itemTotal =
-                    Number(item.price) *
-                    Number(item.quantity);
-
-
-                total += itemTotal;
-
-
-                orderText +=
-                    item.name +
-                    " × " +
-                    item.quantity +
-                    " = ₹" +
-                    itemTotal.toFixed(2) +
-                    "\n";
-            });
-
-
-            orderText +=
-                "\nTotal: ₹" +
-                total.toFixed(2);
-
-
-            /* =================================================
-               OPEN GMAIL COMPOSE WINDOW
-            ================================================= */
-
-            const gmailURL =
-                "https://mail.google.com/mail/?view=cm" +
-                "&fs=1" +
-                "&to=" +
-                encodeURIComponent(
-                    SHOPKEEPER_EMAIL
-                ) +
-                "&su=" +
-                encodeURIComponent(
-                    "New Order - My Local Shop"
-                ) +
-                "&body=" +
-                encodeURIComponent(
-                    orderText
-                );
-
-
-            console.log(
-                "Gmail URL:",
-                gmailURL
-            );
-
-
-            /*
-               Open Gmail in a new tab.
-            */
-
-            window.open(
-                gmailURL,
-                "_blank"
-            );
-
+        if (name === "") {
+            showCustomAlert("Enter your name");
+            return;
         }
-    );
+
+        if (mobile === "") {
+            showCustomAlert("Enter mobile number");
+            return;
+        }
+
+        if (address === "") {
+            showCustomAlert("Enter your address");
+            return;
+        }
+
+        if (cart.length === 0) {
+            showCustomAlert("Cart is empty");
+            return;
+        }
+
+
+        /* =================================================
+           CREATE ORDER EMAIL
+        ================================================= */
+
+        let orderText =
+            "NEW SHOP ORDER\n\n";
+
+
+        orderText +=
+            "Customer Name: " +
+            name +
+            "\n";
+
+
+        orderText +=
+            "Mobile: " +
+            mobile +
+            "\n";
+
+
+        orderText +=
+            "Delivery Address:\n" +
+            address +
+            "\n\n";
+
+
+        orderText +=
+            "PRODUCTS\n";
+
+
+        orderText +=
+            "----------------------\n";
+
+
+        let total = 0;
+
+
+        cart.forEach(function (item) {
+
+            const itemTotal =
+                Number(item.price) *
+                Number(item.quantity);
+
+            total += itemTotal;
+
+
+            orderText +=
+                item.name +
+                " × " +
+                item.quantity +
+                " = ₹" +
+                itemTotal.toFixed(2) +
+                "\n";
+        });
+
+
+        orderText +=
+            "\nTotal: ₹" +
+            total.toFixed(2);
+
+
+        /* =================================================
+           OPEN EMAIL APP
+        ================================================= */
+
+        const subject =
+            encodeURIComponent(
+                "New Order - My Local Shop"
+            );
+
+        const body =
+            encodeURIComponent(
+                orderText
+            );
+
+
+        const mailtoURL =
+            "mailto:" +
+            SHOPKEEPER_EMAIL +
+            "?subject=" +
+            subject +
+            "&body=" +
+            body;
+
+
+        console.log(
+            "Opening email app:",
+            mailtoURL
+        );
+
+
+        window.location.href =
+            mailtoURL;
+
+    });
 }
 
 
