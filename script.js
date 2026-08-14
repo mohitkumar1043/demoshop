@@ -15,7 +15,7 @@ const SHOP_LONGITUDE = "75.123456";
 
 // Shopkeeper Gmail address
 // CHANGE THIS
-const SHOPKEEPER_EMAIL = "yourshopkeeper@gmail.com";
+const SHOPKEEPER_EMAIL = "pankajsal880@gmail.com";
 
 // JSON file in the same GitHub repository
 const PRODUCTS_JSON = "./products.json";
