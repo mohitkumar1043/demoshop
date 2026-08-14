@@ -1,23 +1,22 @@
 /* =========================================================
    SHOP CUSTOMER WEBSITE
    Product source: products.json
-   Orders: Gmail/mail client
-   ========================================================= */
+   Orders: Gmail / mail client
+========================================================= */
 
 
 /* =========================================================
    CONFIGURATION
 ========================================================= */
 
-// Your shop's real location
+// Shop location
 const SHOP_LATITUDE = "27.123456";
 const SHOP_LONGITUDE = "75.123456";
 
-// Shopkeeper Gmail address
-// CHANGE THIS
+// Shopkeeper email
 const SHOPKEEPER_EMAIL = "pankajsal880@gmail.com";
 
-// JSON file in the same GitHub repository
+// Product JSON file
 const PRODUCTS_JSON = "./products.json";
 
 
@@ -57,7 +56,7 @@ function showCustomAlert(message) {
 
 
 /* =========================================================
-   LOAD PRODUCTS FROM products.json
+   LOAD PRODUCTS
 ========================================================= */
 
 function loadProducts() {
@@ -66,9 +65,14 @@ function loadProducts() {
         document.getElementById("productList");
 
     if (!container) {
-        console.error("productList not found");
+
+        console.error(
+            "productList element not found"
+        );
+
         return;
     }
+
 
     container.innerHTML = `
         <div class="loading-products">
@@ -76,11 +80,6 @@ function loadProducts() {
         </div>
     `;
 
-
-    /*
-       Date.now() prevents the browser from
-       showing an old cached products.json.
-    */
 
     const url =
         PRODUCTS_JSON + "?v=" + Date.now();
@@ -103,12 +102,43 @@ function loadProducts() {
 
         })
 
-        .then(function (products) {
+        .then(function (data) {
 
             console.log(
-                "Products loaded:",
-                products
+                "Products JSON loaded:",
+                data
             );
+
+
+            /*
+               Supports BOTH formats:
+
+               1. [
+                    {...},
+                    {...}
+                  ]
+
+               2. {
+                    "products": [
+                       {...},
+                       {...}
+                    ]
+                  }
+            */
+
+            let products = data;
+
+
+            if (
+                data &&
+                !Array.isArray(data) &&
+                Array.isArray(data.products)
+            ) {
+
+                products = data.products;
+
+            }
+
 
             displayProducts(products);
 
@@ -120,6 +150,7 @@ function loadProducts() {
                 "Product loading error:",
                 error
             );
+
 
             container.innerHTML = `
                 <div class="no-products">
@@ -158,8 +189,10 @@ function displayProducts(products) {
     if (!Array.isArray(products)) {
 
         console.error(
-            "products.json must contain an array"
+            "Invalid product data:",
+            products
         );
+
 
         container.innerHTML = `
             <div class="no-products">
@@ -179,10 +212,13 @@ function displayProducts(products) {
         products.filter(function (product) {
 
             return (
-                product.available === true ||
-                String(product.available)
-                    .trim()
-                    .toUpperCase() === "YES"
+                product &&
+                (
+                    product.available === true ||
+                    String(product.available)
+                        .trim()
+                        .toUpperCase() === "YES"
+                )
             );
 
         });
@@ -200,14 +236,16 @@ function displayProducts(products) {
     }
 
 
-    availableProducts.forEach(function (product) {
+    availableProducts.forEach(
+        function (product) {
 
-        createProductCard(
-            product,
-            container
-        );
+            createProductCard(
+                product,
+                container
+            );
 
-    });
+        }
+    );
 
 
     initializeProducts();
@@ -231,15 +269,11 @@ function createProductCard(product, container) {
 
 
     card.dataset.id =
-        product.id || "";
+        String(product.id || "");
 
 
     card.dataset.name =
-        product.name || "";
-
-
-    card.dataset.price =
-        product.price || 0;
+        String(product.name || "");
 
 
     /*
@@ -247,7 +281,7 @@ function createProductCard(product, container) {
     */
 
     let imageURL =
-        product.imageURL || "";
+        String(product.imageURL || "");
 
 
     if (imageURL.trim() === "") {
@@ -275,7 +309,7 @@ function createProductCard(product, container) {
 
 
     /*
-       Calculate final price
+       Final price
     */
 
     let finalPrice =
@@ -292,11 +326,11 @@ function createProductCard(product, container) {
 
 
     /*
-       Product description
+       Description
     */
 
     const description =
-        product.description || "";
+        String(product.description || "");
 
 
     card.innerHTML = `
@@ -306,7 +340,6 @@ function createProductCard(product, container) {
             alt="${escapeHTML(product.name || "Product")}"
             onerror="this.src='default-product.jpg'"
         >
-
 
         <div class="product-info">
 
@@ -329,10 +362,10 @@ function createProductCard(product, container) {
                     ? `
                         <span
                             style="
-                                text-decoration:line-through;
-                                color:#888;
-                                font-size:13px;
-                                margin-left:5px;
+                                text-decoration: line-through;
+                                color: #888;
+                                font-size: 13px;
+                                margin-left: 5px;
                             "
                         >
                             ₹${price.toFixed(2)}
@@ -356,7 +389,6 @@ function createProductCard(product, container) {
 
 
             <div class="actions">
-
 
                 <div class="quantity">
 
@@ -390,7 +422,6 @@ function createProductCard(product, container) {
                     Add to Cart
                 </button>
 
-
             </div>
 
         </div>
@@ -399,11 +430,11 @@ function createProductCard(product, container) {
 
 
     /*
-       Store final selling price.
+       Store final price
     */
 
     card.dataset.price =
-        finalPrice;
+        String(finalPrice);
 
 
     container.appendChild(card);
@@ -420,7 +451,7 @@ function escapeHTML(value) {
         document.createElement("div");
 
     div.innerText =
-        value;
+        String(value);
 
     return div.innerHTML;
 }
@@ -453,44 +484,52 @@ function initializeProducts() {
                MINUS
             */
 
-            minus.onclick =
-                function () {
+            if (minus) {
 
-                    let value =
-                        Number(qty.innerText);
+                minus.onclick =
+                    function () {
 
-
-                    if (value > 1) {
-
-                        value--;
-
-                    }
+                        let value =
+                            Number(qty.innerText);
 
 
-                    qty.innerText =
-                        value;
+                        if (value > 1) {
 
-                };
+                            value--;
+
+                        }
+
+
+                        qty.innerText =
+                            String(value);
+
+                    };
+
+            }
 
 
             /*
                PLUS
             */
 
-            plus.onclick =
-                function () {
+            if (plus) {
 
-                    let value =
-                        Number(qty.innerText);
+                plus.onclick =
+                    function () {
+
+                        let value =
+                            Number(qty.innerText);
 
 
-                    value++;
+                        value++;
 
 
-                    qty.innerText =
-                        value;
+                        qty.innerText =
+                            String(value);
 
-                };
+                    };
+
+            }
 
 
             /*
@@ -501,100 +540,108 @@ function initializeProducts() {
                 card.querySelector(".add-cart");
 
 
-            addButton.onclick =
-                function () {
+            if (addButton) {
+
+                addButton.onclick =
+                    function () {
 
 
-                    const id =
-                        card.dataset.id;
+                        const id =
+                            card.dataset.id;
 
 
-                    const name =
-                        card.dataset.name;
+                        const name =
+                            card.dataset.name;
 
 
-                    const price =
-                        Number(
-                            card.dataset.price
+                        const price =
+                            Number(
+                                card.dataset.price
+                            );
+
+
+                        const imageElement =
+                            card.querySelector("img");
+
+
+                        const image =
+                            imageElement
+                                ? imageElement.src
+                                : "";
+
+
+                        const quantity =
+                            Number(
+                                qty.innerText
+                            );
+
+
+                        /*
+                           Find existing product
+                        */
+
+                        let existing =
+                            cart.find(
+                                function (item) {
+
+                                    return (
+                                        item.id === id
+                                    );
+
+                                }
+                            );
+
+
+                        if (existing) {
+
+                            existing.quantity +=
+                                quantity;
+
+                        }
+
+                        else {
+
+                            cart.push({
+
+                                id:
+                                    id,
+
+                                name:
+                                    name,
+
+                                price:
+                                    price,
+
+                                image:
+                                    image,
+
+                                quantity:
+                                    quantity
+
+                            });
+
+                        }
+
+
+                        /*
+                           Reset quantity
+                        */
+
+                        qty.innerText =
+                            "1";
+
+
+                        updateCart();
+
+
+                        showCustomAlert(
+                            name +
+                            " added to cart"
                         );
 
+                    };
 
-                    const image =
-                        card.querySelector(
-                            "img"
-                        ).src;
-
-
-                    const quantity =
-                        Number(
-                            qty.innerText
-                        );
-
-
-                    /*
-                       Check existing item
-                    */
-
-                    let existing =
-                        cart.find(
-                            function (item) {
-
-                                return (
-                                    item.id === id
-                                );
-
-                            }
-                        );
-
-
-                    if (existing) {
-
-                        existing.quantity +=
-                            quantity;
-
-                    }
-
-                    else {
-
-                        cart.push({
-
-                            id:
-                                id,
-
-                            name:
-                                name,
-
-                            price:
-                                price,
-
-                            image:
-                                image,
-
-                            quantity:
-                                quantity
-
-                        });
-
-                    }
-
-
-                    /*
-                       Reset quantity
-                    */
-
-                    qty.innerText =
-                        "1";
-
-
-                    updateCart();
-
-
-                    showCustomAlert(
-                        name +
-                        " added to cart"
-                    );
-
-                };
+            }
 
         });
 }
@@ -626,7 +673,7 @@ function updateCart() {
     if (cartCount) {
 
         cartCount.innerText =
-            count;
+            String(count);
 
     }
 
@@ -715,9 +762,7 @@ function showCart() {
 
 
             const row =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
 
             row.className =
@@ -727,7 +772,7 @@ function showCart() {
             row.innerHTML = `
 
                 <img
-                    src="${item.image}"
+                    src="${escapeHTML(item.image)}"
                     alt="${escapeHTML(item.name)}"
                 >
 
@@ -882,129 +927,134 @@ function removeCart(index) {
    OPEN CART
 ========================================================= */
 
-const cartButton =
-    document.getElementById(
-        "cartButton"
-    );
+function setupCart() {
+
+    const cartButton =
+        document.getElementById(
+            "cartButton"
+        );
 
 
-if (cartButton) {
+    if (cartButton) {
 
-    cartButton.onclick =
-        function () {
+        cartButton.onclick =
+            function () {
 
-            showCart();
-
-
-            const cartModal =
-                document.getElementById(
-                    "cartModal"
-                );
+                showCart();
 
 
-            if (cartModal) {
-
-                cartModal.style.display =
-                    "block";
-
-            }
-
-        };
-}
+                const cartModal =
+                    document.getElementById(
+                        "cartModal"
+                    );
 
 
-/* =========================================================
-   CLOSE CART
-========================================================= */
+                if (cartModal) {
 
-const closeCart =
-    document.getElementById(
-        "closeCart"
-    );
+                    cartModal.style.display =
+                        "block";
 
+                }
 
-if (closeCart) {
+            };
 
-    closeCart.onclick =
-        function () {
-
-            const cartModal =
-                document.getElementById(
-                    "cartModal"
-                );
+    }
 
 
-            if (cartModal) {
+    /*
+       CLOSE CART
+    */
 
-                cartModal.style.display =
-                    "none";
-
-            }
-
-        };
-}
-
-
-/* =========================================================
-   ORDER BUTTON
-========================================================= */
-
-const orderButton =
-    document.getElementById(
-        "orderButton"
-    );
+    const closeCart =
+        document.getElementById(
+            "closeCart"
+        );
 
 
-if (orderButton) {
+    if (closeCart) {
 
-    orderButton.onclick =
-        function () {
+        closeCart.onclick =
+            function () {
 
-
-            if (
-                cart.length === 0
-            ) {
-
-                showCustomAlert(
-                    "Cart is empty"
-                );
-
-                return;
-
-            }
+                const cartModal =
+                    document.getElementById(
+                        "cartModal"
+                    );
 
 
-            showOrder();
+                if (cartModal) {
+
+                    cartModal.style.display =
+                        "none";
+
+                }
+
+            };
+
+    }
 
 
-            const cartModal =
-                document.getElementById(
-                    "cartModal"
-                );
+    /*
+       ORDER BUTTON
+    */
+
+    const orderButton =
+        document.getElementById(
+            "orderButton"
+        );
 
 
-            const orderModal =
-                document.getElementById(
-                    "orderModal"
-                );
+    if (orderButton) {
+
+        orderButton.onclick =
+            function () {
 
 
-            if (cartModal) {
+                if (cart.length === 0) {
 
-                cartModal.style.display =
-                    "none";
+                    showCustomAlert(
+                        "Cart is empty"
+                    );
 
-            }
+                    return;
+
+                }
 
 
-            if (orderModal) {
+                showOrder();
 
-                orderModal.style.display =
-                    "block";
 
-            }
+                const cartModal =
+                    document.getElementById(
+                        "cartModal"
+                    );
 
-        };
+
+                const orderModal =
+                    document.getElementById(
+                        "orderModal"
+                    );
+
+
+                if (cartModal) {
+
+                    cartModal.style.display =
+                        "none";
+
+                }
+
+
+                if (orderModal) {
+
+                    orderModal.style.display =
+                        "block";
+
+                }
+
+            };
+
+    }
+
 }
 
 
@@ -1034,13 +1084,13 @@ function showOrder() {
     cart.forEach(function (item) {
 
 
-        const price =
+        const itemTotal =
             item.price *
             item.quantity;
 
 
         total +=
-            price;
+            itemTotal;
 
 
         container.innerHTML += `
@@ -1058,7 +1108,7 @@ function showOrder() {
 
                 <strong>
 
-                    ₹${price.toFixed(2)}
+                    ₹${itemTotal.toFixed(2)}
 
                 </strong>
 
@@ -1086,210 +1136,224 @@ function showOrder() {
 
 
 /* =========================================================
-   CLOSE ORDER
+   ORDER SETUP
 ========================================================= */
 
-const closeOrder =
-    document.getElementById(
-        "closeOrder"
-    );
+function setupOrder() {
+
+    /*
+       CLOSE ORDER
+    */
+
+    const closeOrder =
+        document.getElementById(
+            "closeOrder"
+        );
 
 
-if (closeOrder) {
+    if (closeOrder) {
 
-    closeOrder.onclick =
-        function () {
+        closeOrder.onclick =
+            function () {
 
-            const orderModal =
-                document.getElementById(
-                    "orderModal"
-                );
-
-
-            if (orderModal) {
-
-                orderModal.style.display =
-                    "none";
-
-            }
-
-        };
-}
+                const orderModal =
+                    document.getElementById(
+                        "orderModal"
+                    );
 
 
-/* =========================================================
-   SEND ORDER
-========================================================= */
+                if (orderModal) {
 
-document.addEventListener("DOMContentLoaded", function () {
+                    orderModal.style.display =
+                        "none";
+
+                }
+
+            };
+
+    }
+
+
+    /*
+       SEND ORDER
+    */
 
     const sendOrder =
-        document.getElementById("sendOrder");
+        document.getElementById(
+            "sendOrder"
+        );
+
 
     if (!sendOrder) {
-        console.error("sendOrder button not found");
+
+        console.error(
+            "sendOrder button not found"
+        );
+
         return;
     }
 
-    sendOrder.addEventListener("click", function () {
 
-        console.log("Send Order button clicked");
-
-        const nameInput =
-            document.getElementById("customerName");
-
-        const mobileInput =
-            document.getElementById("customerMobile");
-
-        const addressInput =
-            document.getElementById("customerAddress");
+    sendOrder.addEventListener(
+        "click",
+        function () {
 
 
-        const name =
-            nameInput
-                ? nameInput.value.trim()
-                : "";
-
-        const mobile =
-            mobileInput
-                ? mobileInput.value.trim()
-                : "";
-
-        const address =
-            addressInput
-                ? addressInput.value.trim()
-                : "";
+            console.log(
+                "Send Order button clicked"
+            );
 
 
-        /* VALIDATION */
-
-        if (name === "") {
-            showCustomAlert("Enter your name");
-            return;
-        }
-
-        if (mobile === "") {
-            showCustomAlert("Enter mobile number");
-            return;
-        }
-
-        if (address === "") {
-            showCustomAlert("Enter your address");
-            return;
-        }
-
-        if (cart.length === 0) {
-            showCustomAlert("Cart is empty");
-            return;
-        }
+            const nameInput =
+                document.getElementById(
+                    "customerName"
+                );
 
 
-        /* CREATE ORDER */
-
-        let orderText =
-            "NEW SHOP ORDER\n\n";
-
-
-        orderText +=
-            "Customer Name: " +
-            name +
-            "\n";
+            const mobileInput =
+                document.getElementById(
+                    "customerMobile"
+                );
 
 
-        orderText +=
-            "Mobile: " +
-            mobile +
-            "\n\n";
+            const addressInput =
+                document.getElementById(
+                    "customerAddress"
+                );
 
 
-        orderText +=
-            "Delivery Address:\n" +
-            address +
-            "\n\n";
+            const name =
+                nameInput
+                    ? nameInput.value.trim()
+                    : "";
 
 
-        orderText +=
-            "PRODUCTS\n";
+            const mobile =
+                mobileInput
+                    ? mobileInput.value.trim()
+                    : "";
 
 
-        orderText +=
-            "----------------------\n";
+            const address =
+                addressInput
+                    ? addressInput.value.trim()
+                    : "";
 
 
-        let total = 0;
+            /*
+               VALIDATION
+            */
+
+            if (name === "") {
+
+                showCustomAlert(
+                    "Enter your name"
+                );
+
+                return;
+            }
 
 
-        cart.forEach(function (item) {
+            if (mobile === "") {
 
-            const itemTotal =
-                Number(item.price) *
-                Number(item.quantity);
+                showCustomAlert(
+                    "Enter mobile number"
+                );
+
+                return;
+            }
 
 
-            total += itemTotal;
+            if (address === "") {
+
+                showCustomAlert(
+                    "Enter your address"
+                );
+
+                return;
+            }
+
+
+            if (cart.length === 0) {
+
+                showCustomAlert(
+                    "Cart is empty"
+                );
+
+                return;
+            }
+
+
+            /*
+               CREATE EMAIL
+            */
+
+            let orderText =
+                "NEW SHOP ORDER\n\n";
 
 
             orderText +=
-                item.name +
-                " × " +
-                item.quantity +
-                " = ₹" +
-                itemTotal.toFixed(2) +
+                "Customer Name: " +
+                name +
                 "\n";
 
-        });
+
+            orderText +=
+                "Mobile: " +
+                mobile +
+                "\n";
 
 
-        orderText +=
-            "\nTotal: ₹" +
-            total.toFixed(2);
+            orderText +=
+                "Delivery Address:\n" +
+                address +
+                "\n\n";
 
 
-        /* EMAIL */
+            orderText +=
+                "PRODUCTS\n";
 
-        const subject =
-            encodeURIComponent(
-                "New Order - My Local Shop"
+
+            orderText +=
+                "----------------------\n";
+
+
+            let total = 0;
+
+
+            cart.forEach(
+                function (item) {
+
+
+                    const itemTotal =
+                        Number(item.price) *
+                        Number(item.quantity);
+
+
+                    total +=
+                        itemTotal;
+
+
+                    orderText +=
+                        item.name +
+                        " × " +
+                        item.quantity +
+                        " = ₹" +
+                        itemTotal.toFixed(2) +
+                        "\n";
+
+                }
             );
 
-
-        const body =
-            encodeURIComponent(
-                orderText
-            );
-
-
-        const mailURL =
-            "mailto:" +
-            SHOPKEEPER_EMAIL +
-            "?subject=" +
-            subject +
-            "&body=" +
-            body;
-
-
-        console.log("Opening email:", mailURL);
-
-
-        window.location.href =
-            mailURL;
-
-    });
-
-});
-
-            /* =================================================
-               TOTAL
-            ================================================= */
 
             orderText +=
                 "\nTotal: ₹" +
                 total.toFixed(2);
 
 
-            /* =================================================
+            /*
                EMAIL SUBJECT
-            ================================================= */
+            */
 
             const subject =
                 encodeURIComponent(
@@ -1297,9 +1361,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
 
-            /* =================================================
+            /*
                EMAIL BODY
-            ================================================= */
+            */
 
             const body =
                 encodeURIComponent(
@@ -1307,9 +1371,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
 
-            /* =================================================
-               CREATE MAILTO URL
-            ================================================= */
+            /*
+               MAILTO
+            */
 
             const mailURL =
                 "mailto:" +
@@ -1320,14 +1384,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 body;
 
 
-            /* =================================================
-               OPEN EMAIL APPLICATION
-            ================================================= */
+            console.log(
+                "Opening email client..."
+            );
+
+
+            /*
+               Open customer's email app
+               with prepared order.
+            */
 
             window.location.href =
                 mailURL;
 
-        };
+        }
+    );
 
 }
 
@@ -1336,20 +1407,27 @@ document.addEventListener("DOMContentLoaded", function () {
    SEARCH
 ========================================================= */
 
-const searchInput =
-    document.getElementById(
-        "searchInput"
-    );
+function setupSearch() {
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
 
 
-if (searchInput) {
+    if (!searchInput) {
+        return;
+    }
 
-    searchInput.oninput =
+
+    searchInput.addEventListener(
+        "input",
         function () {
 
             applyCurrentSearch();
 
-        };
+        }
+    );
 
 }
 
@@ -1367,9 +1445,7 @@ function applyCurrentSearch() {
 
 
     if (!searchInput) {
-
         return;
-
     }
 
 
@@ -1416,19 +1492,26 @@ function applyCurrentSearch() {
 
 }
 
+
 /* =========================================================
    GOOGLE MAP LOCATION
 ========================================================= */
 
-const locationButton =
-    document.getElementById(
-        "locationButton"
-    );
+function setupLocation() {
+
+    const locationButton =
+        document.getElementById(
+            "locationButton"
+        );
 
 
-if (locationButton) {
+    if (!locationButton) {
+        return;
+    }
 
-    locationButton.onclick =
+
+    locationButton.addEventListener(
+        "click",
         function () {
 
 
@@ -1447,74 +1530,60 @@ if (locationButton) {
                 "_blank"
             );
 
-        };
+        }
+    );
+
 }
 
 
 /* =========================================================
-   CLOSE MODALS WHEN CLICKING OUTSIDE
+   CLOSE MODALS OUTSIDE
 ========================================================= */
 
-window.onclick =
-    function (event) {
+function setupModalOutsideClick() {
+
+    window.addEventListener(
+        "click",
+        function (event) {
 
 
-        const cartModal =
-            document.getElementById(
-                "cartModal"
-            );
+            const cartModal =
+                document.getElementById(
+                    "cartModal"
+                );
 
 
-        const orderModal =
-            document.getElementById(
-                "orderModal"
-            );
+            const orderModal =
+                document.getElementById(
+                    "orderModal"
+                );
 
 
-        if (
-            event.target ===
-            cartModal
-        ) {
+            if (
+                cartModal &&
+                event.target === cartModal
+            ) {
 
-            cartModal.style.display =
-                "none";
+                cartModal.style.display =
+                    "none";
+
+            }
+
+
+            if (
+                orderModal &&
+                event.target === orderModal
+            ) {
+
+                orderModal.style.display =
+                    "none";
+
+            }
 
         }
+    );
 
-
-        if (
-            event.target ===
-            orderModal
-        ) {
-
-            orderModal.style.display =
-                "none";
-
-        }
-
-    };
-
-
-/* =========================================================
-   AUTO REFRESH PRODUCTS
-========================================================= */
-
-/*
-   This checks products.json every 30 seconds.
-
-   If the shopkeeper changes products.json,
-   customers can receive the updated products
-   without manually refreshing the page.
-*/
-
-setInterval(
-    function () {
-
-        loadProducts();
-
-    },
-    30000
-);
+}
 
 
 /* =========================================================
@@ -1525,30 +1594,45 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
+        console.log(
+            "SHOP WEBSITE STARTED"
+        );
+
+
+        /*
+           Load products
+        */
+
         loadProducts();
+
+
+        /*
+           Setup buttons
+        */
+
+        setupCart();
+
+        setupOrder();
+
+        setupSearch();
+
+        setupLocation();
+
+        setupModalOutsideClick();
 
     }
 );
-console.log("SCRIPT JS LOADED");
 
-fetch("./products.json?v=" + Date.now())
-    .then(function(response) {
 
-        console.log("HTTP status:", response.status);
+/* =========================================================
+   AUTO REFRESH PRODUCTS
+========================================================= */
 
-        return response.json();
+setInterval(
+    function () {
 
-    })
-    .then(function(data) {
+        loadProducts();
 
-        console.log("PRODUCT JSON:", data);
-
-    })
-    .catch(function(error) {
-
-        console.error(
-            "PRODUCT FETCH ERROR:",
-            error
-        );
-
-    });
+    },
+    30000
+);
