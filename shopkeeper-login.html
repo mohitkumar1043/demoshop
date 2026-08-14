@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shopkeeper Login</title>
+
+    <link rel="stylesheet" href="shopkeeper-login.css">
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <section class="login-card">
+
+            <div class="logo">🏪</div>
+
+            <h1>Shopkeeper Login</h1>
+
+            <p class="subtitle">
+                Login to manage your products
+            </p>
+
+            <div id="loginError" class="error-box"></div>
+
+            <form id="loginForm">
+
+                <label for="username">
+                    Shopkeeper ID
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter Shopkeeper ID"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    id="loginButton"
+                >
+                    <span id="loginText">Login</span>
+                    <span
+                        id="loginLoader"
+                        class="loader"
+                        style="display:none;"
+                    ></span>
+                </button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+    <script src="shopkeeper-login.js"></script>
+
+</body>
+</html>
