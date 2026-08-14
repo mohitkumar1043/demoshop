@@ -983,6 +983,10 @@ function applyCurrentSearch() {
    GET SHOP LOCATION → MAP APP
 ========================================================= */
 
+/* =========================================================
+   GET SHOP LOCATION → MAP APP
+========================================================= */
+
 function setupLocation() {
 
     const locationButton =
@@ -998,22 +1002,81 @@ function setupLocation() {
         const latitude = SHOP_LATITUDE;
         const longitude = SHOP_LONGITUDE;
 
+        if (!latitude || !longitude) {
+            showCustomAlert("Shop location not configured");
+            return;
+        }
+
         /*
-         * Google Maps app URL
+         * Android
+         * Try Google Maps app
          */
-        const mapsAppURL =
+        const androidMapsURL =
             "google.navigation:q=" +
             encodeURIComponent(
                 latitude + "," + longitude
             );
 
         /*
-         * Open Google Maps app
+         * iPhone / iPad
+         * Apple Maps
          */
-        window.location.href = mapsAppURL;
+        const iosMapsURL =
+            "http://maps.apple.com/?daddr=" +
+            encodeURIComponent(
+                latitude + "," + longitude
+            );
+
+        /*
+         * Desktop / fallback
+         * Google Maps
+         */
+        const googleMapsURL =
+            "https://www.google.com/maps/dir/?api=1" +
+            "&destination=" +
+            encodeURIComponent(
+                latitude + "," + longitude
+            );
+
+        const userAgent =
+            navigator.userAgent ||
+            navigator.vendor ||
+            window.opera;
+
+        /*
+         * Android
+         */
+        if (/android/i.test(userAgent)) {
+
+            window.location.href =
+                androidMapsURL;
+
+            return;
+        }
+
+        /*
+         * iPhone / iPad
+         */
+        if (
+            /iPad|iPhone|iPod/.test(userAgent) &&
+            !window.MSStream
+        ) {
+
+            window.location.href =
+                iosMapsURL;
+
+            return;
+        }
+
+        /*
+         * Laptop / Desktop
+         */
+        window.open(
+            googleMapsURL,
+            "_blank"
+        );
 
     });
-
 }
 
 /* =========================================================
