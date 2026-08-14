@@ -1,32 +1,343 @@
-```css
-/* =========================================================
-   GLOBAL
-========================================================= */
-
 * {
     box-sizing: border-box;
 }
 
-html {
-    scroll-behavior: smooth;
-}
-
 body {
     margin: 0;
-    padding: 0;
 
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+    font-family: Arial, sans-serif;
 
-    background:
-        #f4f7fb;
+    background: #f3f4f6;
 
-    color:
-        #1f2937;
+    color: #222;
+}
 
-    min-height: 100vh;
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+
+    background: #1d4ed8;
+
+    color: white;
+
+    padding: 18px 30px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.header h1 {
+    margin: 0 0 5px;
+}
+
+.header p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.logout-button {
+
+    width: auto;
+
+    margin: 0;
+
+    padding: 10px 18px;
+
+    background: white;
+
+    color: #1d4ed8;
+
+    border: none;
+
+    border-radius: 7px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.container {
+
+    width: 100%;
+
+    max-width: 1000px;
+
+    margin: auto;
+
+    padding: 25px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card {
+
+    background: white;
+
+    margin-bottom: 25px;
+
+    padding: 25px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+label {
+
+    display: block;
+
+    margin-top: 15px;
+
+    margin-bottom: 6px;
+
+    font-weight: bold;
+}
+
+input,
+textarea {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 7px;
+
+    font-size: 15px;
+}
+
+textarea {
+
+    min-height: 90px;
+
+    resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+
+    outline: none;
+
+    border-color: #2563eb;
+}
+
+
+/* =========================================================
+   AVAILABLE
+========================================================= */
+
+.available {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 18px;
+}
+
+.available input {
+
+    width: auto;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.save-button,
+.cancel-button,
+.refresh-button {
+
+    border: none;
+
+    border-radius: 7px;
+
+    padding: 12px 18px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.save-button {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    background: #2563eb;
+
+    color: white;
+}
+
+.cancel-button {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    background: #6b7280;
+
+    color: white;
+}
+
+.refresh-button {
+
+    background: #2563eb;
+
+    color: white;
+}
+
+
+/* =========================================================
+   PRODUCT HEADER
+========================================================= */
+
+.list-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   PRODUCT
+========================================================= */
+
+.admin-product {
+
+    display: flex;
+
+    gap: 20px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-product img {
+
+    width: 130px;
+
+    height: 130px;
+
+    object-fit: cover;
+
+    border-radius: 8px;
+
+    background: #eee;
+}
+
+.admin-product-info {
+
+    flex: 1;
+}
+
+.admin-product h3 {
+
+    margin: 5px 0;
+}
+
+.product-id {
+
+    color: #666;
+
+    font-size: 13px;
+}
+
+.product-status {
+
+    font-weight: bold;
+}
+
+.admin-actions {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 10px;
+}
+
+.edit-button,
+.delete-button {
+
+    padding: 8px 14px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+.edit-button {
+
+    background: #f59e0b;
+
+    color: white;
+}
+
+.delete-button {
+
+    background: #dc2626;
+
+    color: white;
+}
+
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+.image-preview {
+
+    margin-top: 10px;
+}
+
+.image-preview img {
+
+    width: 120px;
+
+    height: 120px;
+
+    object-fit: cover;
+
+    border-radius: 8px;
 }
 
 
@@ -41,1001 +352,21 @@ body {
     position: fixed;
 
     top: 20px;
+
     right: 20px;
 
     z-index: 9999;
-
-    max-width: 350px;
-
-    padding: 14px 20px;
-
-    border-radius: 10px;
 
     background: #111827;
 
     color: white;
 
-    font-size: 14px;
-
-    box-shadow:
-        0 8px 25px
-        rgba(0, 0, 0, 0.2);
-}
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-.login-card {
-
-    width: 100%;
-
-    max-width: 430px;
-
-    margin:
-        80px auto;
-
-    padding: 35px;
-
-    background: white;
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 15px 45px
-        rgba(0, 0, 0, 0.10);
-}
-
-
-.login-logo {
-
-    width: 75px;
-    height: 75px;
-
-    margin:
-        0 auto 20px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background:
-        #eef2ff;
-
-    font-size: 38px;
-}
-
-
-.login-card h1 {
-
-    margin:
-        0 0 8px;
-
-    text-align: center;
-
-    font-size: 28px;
-
-    color:
-        #111827;
-}
-
-
-.login-card > p {
-
-    margin:
-        0 0 28px;
-
-    text-align: center;
-
-    color:
-        #6b7280;
-}
-
-
-.login-card label {
-
-    display: block;
-
-    margin:
-        16px 0 7px;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    color:
-        #374151;
-}
-
-
-.login-card input {
-
-    width: 100%;
-
-    padding:
-        13px 14px;
-
-    border:
-        1px solid #d1d5db;
-
-    border-radius: 9px;
-
-    outline: none;
-
-    font-size: 15px;
-
-    background: white;
-
-    color: #111827;
-
-    transition:
-        border-color 0.2s,
-        box-shadow 0.2s;
-}
-
-
-.login-card input:focus {
-
-    border-color:
-        #4f46e5;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(79, 70, 229, 0.12);
-}
-
-
-/* =========================================================
-   LOGIN ERROR
-========================================================= */
-
-#loginError {
-
-    margin-bottom: 15px;
-
-    padding: 11px 13px;
+    padding: 13px 18px;
 
     border-radius: 8px;
 
-    background:
-        #fee2e2;
-
-    color:
-        #991b1b;
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   MAIN BUTTON
-========================================================= */
-
-.main-button {
-
-    width: 100%;
-
-    margin-top: 22px;
-
-    padding:
-        13px 18px;
-
-    border: none;
-
-    border-radius: 9px;
-
-    background:
-        #4f46e5;
-
-    color: white;
-
-    font-size: 15px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s,
-        transform 0.1s;
-}
-
-
-.main-button:hover {
-
-    background:
-        #4338ca;
-}
-
-
-.main-button:active {
-
-    transform:
-        scale(0.98);
-}
-
-
-.main-button:disabled {
-
-    opacity: 0.65;
-
-    cursor:
-        not-allowed;
-}
-
-
-/* =========================================================
-   ADMIN HEADER
-========================================================= */
-
-.admin-header {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    padding:
-        22px 5%;
-
-    background:
-        #111827;
-
-    color: white;
-
     box-shadow:
-        0 4px 15px
-        rgba(0, 0, 0, 0.12);
-}
-
-
-.admin-header h1 {
-
-    margin: 0 0 5px;
-
-    font-size: 24px;
-}
-
-
-.admin-header p {
-
-    margin: 0;
-
-    color:
-        #d1d5db;
-
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-.logout-button {
-
-    padding:
-        10px 18px;
-
-    border:
-        1px solid #ef4444;
-
-    border-radius: 8px;
-
-    background:
-        transparent;
-
-    color:
-        #fca5a5;
-
-    cursor: pointer;
-
-    font-weight: 600;
-
-    transition:
-        background 0.2s,
-        color 0.2s;
-}
-
-
-.logout-button:hover {
-
-    background:
-        #ef4444;
-
-    color:
-        white;
-}
-
-
-/* =========================================================
-   ADMIN CONTAINER
-========================================================= */
-
-.admin-container {
-
-    width: 100%;
-
-    max-width: 1200px;
-
-    margin:
-        30px auto;
-
-    padding:
-        0 20px;
-
-    display: grid;
-
-    grid-template-columns:
-        360px 1fr;
-
-    gap: 25px;
-
-    align-items:
-        start;
-}
-
-
-/* =========================================================
-   CARDS
-========================================================= */
-
-.product-form-card,
-.product-list-card {
-
-    background:
-        white;
-
-    border-radius:
-        15px;
-
-    padding:
-        25px;
-
-    box-shadow:
-        0 8px 30px
-        rgba(0, 0, 0, 0.07);
-}
-
-
-.product-form-card h2,
-.product-list-card h2 {
-
-    margin:
-        0 0 20px;
-
-    color:
-        #111827;
-}
-
-
-/* =========================================================
-   FORM
-========================================================= */
-
-.product-form-card label {
-
-    display: block;
-
-    margin:
-        15px 0 7px;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    color:
-        #374151;
-}
-
-
-.product-form-card input[type="text"],
-.product-form-card input[type="number"],
-.product-form-card input[type="url"],
-.product-form-card textarea {
-
-    width: 100%;
-
-    padding:
-        12px;
-
-    border:
-        1px solid #d1d5db;
-
-    border-radius:
-        8px;
-
-    outline:
-        none;
-
-    font-family:
-        inherit;
-
-    font-size:
-        14px;
-
-    color:
-        #111827;
-
-    background:
-        white;
-}
-
-
-.product-form-card textarea {
-
-    min-height:
-        90px;
-
-    resize:
-        vertical;
-}
-
-
-.product-form-card input:focus,
-.product-form-card textarea:focus {
-
-    border-color:
-        #4f46e5;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(79, 70, 229, 0.10);
-}
-
-
-/* =========================================================
-   PRODUCT ID
-========================================================= */
-
-#productId {
-
-    background:
-        #f3f4f6;
-
-    color:
-        #6b7280;
-
-    cursor:
-        not-allowed;
-}
-
-
-/* =========================================================
-   AVAILABLE
-========================================================= */
-
-.available-label {
-
-    display:
-        flex !important;
-
-    align-items:
-        center;
-
-    gap:
-        8px;
-
-    cursor:
-        pointer;
-}
-
-
-.available-label input {
-
-    width:
-        18px;
-
-    height:
-        18px;
-
-    cursor:
-        pointer;
-}
-
-
-/* =========================================================
-   IMAGE PREVIEW
-========================================================= */
-
-.image-preview {
-
-    margin-top:
-        12px;
-
-    min-height:
-        10px;
-
-    text-align:
-        center;
-}
-
-
-.image-preview img {
-
-    max-width:
-        150px;
-
-    max-height:
-        150px;
-
-    border-radius:
-        10px;
-
-    object-fit:
-        cover;
-
-    border:
-        1px solid #e5e7eb;
-}
-
-
-/* =========================================================
-   CANCEL BUTTON
-========================================================= */
-
-.cancel-button {
-
-    width:
-        100%;
-
-    margin-top:
-        10px;
-
-    padding:
-        12px;
-
-    border:
-        1px solid #d1d5db;
-
-    border-radius:
-        8px;
-
-    background:
-        #f3f4f6;
-
-    color:
-        #374151;
-
-    cursor:
-        pointer;
-
-    font-weight:
-        600;
-}
-
-
-.cancel-button:hover {
-
-    background:
-        #e5e7eb;
-}
-
-
-/* =========================================================
-   PRODUCT HEADER
-========================================================= */
-
-.product-list-header {
-
-    display:
-        flex;
-
-    justify-content:
-        space-between;
-
-    align-items:
-        center;
-
-    gap:
-        15px;
-
-    margin-bottom:
-        20px;
-}
-
-
-.product-list-header h2 {
-
-    margin:
-        0 0 5px;
-}
-
-
-.product-list-header p {
-
-    margin:
-        0;
-
-    color:
-        #6b7280;
-
-    font-size:
-        14px;
-}
-
-
-/* =========================================================
-   REFRESH
-========================================================= */
-
-.refresh-button {
-
-    padding:
-        9px 15px;
-
-    border:
-        1px solid #d1d5db;
-
-    border-radius:
-        8px;
-
-    background:
-        white;
-
-    color:
-        #374151;
-
-    cursor:
-        pointer;
-
-    font-weight:
-        600;
-}
-
-
-.refresh-button:hover {
-
-    background:
-        #f3f4f6;
-}
-
-
-/* =========================================================
-   PRODUCT LIST
-========================================================= */
-
-.admin-product-list {
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    gap:
-        15px;
-}
-
-
-/* =========================================================
-   PRODUCT
-========================================================= */
-
-.admin-product {
-
-    display:
-        flex;
-
-    gap:
-        18px;
-
-    padding:
-        17px;
-
-    border:
-        1px solid #e5e7eb;
-
-    border-radius:
-        12px;
-
-    background:
-        #ffffff;
-
-    transition:
-        box-shadow 0.2s,
-        transform 0.2s;
-}
-
-
-.admin-product:hover {
-
-    box-shadow:
-        0 6px 20px
-        rgba(0, 0, 0, 0.07);
-
-    transform:
-        translateY(-1px);
-}
-
-
-/* =========================================================
-   PRODUCT IMAGE
-========================================================= */
-
-.product-image-container {
-
-    width:
-        125px;
-
-    min-width:
-        125px;
-
-    height:
-        125px;
-
-    overflow:
-        hidden;
-
-    border-radius:
-        10px;
-
-    background:
-        #f3f4f6;
-}
-
-
-.product-image-container img {
-
-    width:
-        100%;
-
-    height:
-        100%;
-
-    object-fit:
-        cover;
-}
-
-
-/* =========================================================
-   PRODUCT INFO
-========================================================= */
-
-.admin-product-info {
-
-    flex:
-        1;
-}
-
-
-.product-id {
-
-    display:
-        inline-block;
-
-    margin-bottom:
-        5px;
-
-    font-size:
-        12px;
-
-    color:
-        #6b7280;
-
-    background:
-        #f3f4f6;
-
-    padding:
-        4px 7px;
-
-    border-radius:
-        5px;
-}
-
-
-.admin-product-info h3 {
-
-    margin:
-        3px 0 7px;
-
-    font-size:
-        18px;
-
-    color:
-        #111827;
-}
-
-
-.admin-product-info p {
-
-    margin:
-        6px 0;
-
-    font-size:
-        14px;
-
-    line-height:
-        1.5;
-}
-
-
-.description {
-
-    color:
-        #6b7280;
-}
-
-
-.product-details {
-
-    display:
-        flex;
-
-    flex-wrap:
-        wrap;
-
-    gap:
-        15px;
-
-    margin-top:
-        8px;
-
-    font-weight:
-        600;
-}
-
-
-.product-status {
-
-    font-weight:
-        600;
-}
-
-
-/* =========================================================
-   ACTIONS
-========================================================= */
-
-.admin-actions {
-
-    display:
-        flex;
-
-    flex-wrap:
-        wrap;
-
-    gap:
-        8px;
-
-    margin-top:
-        12px;
-}
-
-
-.admin-actions button {
-
-    padding:
-        8px 13px;
-
-    border:
-        none;
-
-    border-radius:
-        7px;
-
-    cursor:
-        pointer;
-
-    font-size:
-        13px;
-
-    font-weight:
-        600;
-}
-
-
-.edit-button {
-
-    background:
-        #e0e7ff;
-
-    color:
-        #3730a3;
-}
-
-
-.edit-button:hover {
-
-    background:
-        #c7d2fe;
-}
-
-
-.delete-button {
-
-    background:
-        #fee2e2;
-
-    color:
-        #991b1b;
-}
-
-
-.delete-button:hover {
-
-    background:
-        #fecaca;
-}
-
-
-/* =========================================================
-   EMPTY
-========================================================= */
-
-.empty-products {
-
-    padding:
-        40px 20px;
-
-    text-align:
-        center;
-
-    color:
-        #6b7280;
-
-    border:
-        1px dashed #d1d5db;
-
-    border-radius:
-        10px;
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-.error-box {
-
-    padding:
-        18px;
-
-    border-radius:
-        10px;
-
-    background:
-        #fee2e2;
-
-    color:
-        #991b1b;
-}
-
-
-.error-box p {
-
-    margin-bottom:
-        0;
-}
-
-
-/* =========================================================
-   TABLET
-========================================================= */
-
-@media (max-width: 900px) {
-
-    .admin-container {
-
-        grid-template-columns:
-            1fr;
-
-    }
-
-    .product-form-card {
-
-        max-width:
-            100%;
-    }
-
+        0 5px 20px rgba(0,0,0,0.2);
 }
 
 
@@ -1043,164 +374,52 @@ body {
    MOBILE
 ========================================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 650px) {
 
-    .login-card {
+    .header {
 
-        width:
-            calc(100% - 30px);
+        padding: 15px;
 
-        margin:
-            35px auto;
-
-        padding:
-            25px 20px;
     }
 
+    .header h1 {
 
-    .admin-header {
+        font-size: 20px;
 
-        padding:
-            18px 15px;
-
-        align-items:
-            flex-start;
     }
 
+    .container {
 
-    .admin-header h1 {
+        padding: 15px;
 
-        font-size:
-            19px;
     }
 
+    .card {
 
-    .admin-header p {
+        padding: 18px;
 
-        font-size:
-            12px;
     }
-
-
-    .logout-button {
-
-        padding:
-            8px 11px;
-
-        font-size:
-            12px;
-    }
-
-
-    .admin-container {
-
-        margin:
-            20px auto;
-
-        padding:
-            0 12px;
-
-        gap:
-            15px;
-    }
-
-
-    .product-form-card,
-    .product-list-card {
-
-        padding:
-            18px;
-
-        border-radius:
-            12px;
-    }
-
-
-    .product-list-header {
-
-        align-items:
-            flex-start;
-    }
-
 
     .admin-product {
 
-        flex-direction:
-            column;
+        flex-direction: column;
 
-        gap:
-            12px;
     }
 
+    .admin-product img {
 
-    .product-image-container {
+        width: 100%;
 
-        width:
-            100%;
+        height: 200px;
 
-        height:
-            200px;
     }
 
+    .list-header {
 
-    .admin-product-info h3 {
+        align-items: flex-start;
 
-        font-size:
-            17px;
-    }
+        gap: 10px;
 
-
-    .product-details {
-
-        flex-direction:
-            column;
-
-        gap:
-            5px;
-    }
-
-
-    .admin-actions {
-
-        width:
-            100%;
-    }
-
-
-    .admin-actions button {
-
-        flex:
-            1;
     }
 
 }
-
-
-/* =========================================================
-   VERY SMALL MOBILE
-========================================================= */
-
-@media (max-width: 380px) {
-
-    .login-card {
-
-        padding:
-            20px 15px;
-    }
-
-
-    .admin-header {
-
-        flex-direction:
-            column;
-    }
-
-
-    .logout-button {
-
-        width:
-            100%;
-    }
-
-}
-```
