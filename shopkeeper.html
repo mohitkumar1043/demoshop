@@ -1,109 +1,359 @@
-<section class="form-card">
+<!DOCTYPE html>
+<html lang="en">
 
-    <h2 id="formTitle">
-        ➕ Add Product
-    </h2>
+<head>
 
-    <form id="productForm">
+    <meta charset="UTF-8">
 
-        <!-- PRODUCT ID -->
-        <label>
-            Product ID
-        </label>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-        <input
-            id="productId"
-            type="text"
-            readonly
-            placeholder="Auto generated"
-        >
+    <title>Shopkeeper Product Manager</title>
 
-        <label>
-            Product Name
-        </label>
+    <link
+        rel="stylesheet"
+        href="shopkeeper.css">
 
-        <input
-            id="productName"
-            type="text"
-            required
-            placeholder="Tata Salt">
+</head>
 
-        <label>
-            Description
-        </label>
 
-        <textarea
-            id="productDescription"
-            placeholder="1 kg packet"></textarea>
+<body>
 
-        <label>
-            Price
-        </label>
 
-        <input
-            id="productPrice"
-            type="number"
-            min="0"
-            step="0.01"
-            required
-            placeholder="30">
+<!-- =========================
+     HEADER
+========================= -->
 
-        <label>
-            Discount %
-        </label>
+<header class="admin-header">
 
-        <input
-            id="productDiscount"
-            type="number"
-            min="0"
-            max="100"
-            value="0"
-            placeholder="5">
+    <h1>👨‍💼 Shopkeeper</h1>
 
-        <label>
-            Google Drive Image URL
-        </label>
+    <p>Manage Products</p>
 
-        <input
-            id="productImage"
-            type="url"
-            placeholder="https://...">
+</header>
 
-        <div
-            id="imagePreview"
-            class="image-preview">
-        </div>
 
-        <label class="available-row">
+
+<main class="admin-container">
+
+
+    <!-- =========================
+         LOGIN
+    ========================= -->
+
+    <section
+        id="loginCard"
+        class="form-card">
+
+        <h2>
+            🔐 Shopkeeper Login
+        </h2>
+
+
+        <form id="loginForm">
+
+
+            <label for="shopkeeperEmail">
+
+                Email
+
+            </label>
+
 
             <input
-                id="productAvailable"
-                type="checkbox"
-                checked>
+                id="shopkeeperEmail"
+                type="email"
+                required
+                autocomplete="username"
+                placeholder="Shopkeeper email">
 
-            Product Available
 
-        </label>
+            <label for="shopkeeperPassword">
 
-        <button
-            type="submit"
-            class="save-button"
-            id="saveButton">
+                Password
 
-            💾 Add Product
+            </label>
 
-        </button>
 
-        <button
-            type="button"
-            id="cancelEdit"
-            class="cancel-button"
-            style="display:none;">
+            <input
+                id="shopkeeperPassword"
+                type="password"
+                required
+                autocomplete="current-password"
+                placeholder="Password">
 
-            Cancel Edit
 
-        </button>
+            <button
+                type="submit"
+                class="save-button">
 
-    </form>
+                🔐 Login
 
-</section>
+            </button>
+
+
+        </form>
+
+    </section>
+
+
+
+    <!-- =========================
+         ADMIN AREA
+    ========================= -->
+
+    <div
+        id="adminArea"
+        style="display:none;">
+
+
+
+        <!-- =========================
+             ADD / EDIT PRODUCT
+        ========================= -->
+
+        <section class="form-card">
+
+
+            <h2 id="formTitle">
+
+                Add Product
+
+            </h2>
+
+
+
+            <form id="productForm">
+
+
+                <!-- PRODUCT ID -->
+
+                <label for="productId">
+
+                    Product ID
+
+                </label>
+
+
+                <input
+                    id="productId"
+                    type="text"
+                    readonly
+                    placeholder="Auto generated">
+
+
+
+                <!-- NAME -->
+
+                <label for="productName">
+
+                    Product Name
+
+                </label>
+
+
+                <input
+                    id="productName"
+                    type="text"
+                    required
+                    placeholder="Tata Salt">
+
+
+
+                <!-- DESCRIPTION -->
+
+                <label for="productDescription">
+
+                    Description
+
+                </label>
+
+
+                <textarea
+                    id="productDescription"
+                    placeholder="1 kg packet"></textarea>
+
+
+
+                <!-- PRICE -->
+
+                <label for="productPrice">
+
+                    Price
+
+                </label>
+
+
+                <input
+                    id="productPrice"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    required
+                    placeholder="30">
+
+
+
+                <!-- DISCOUNT -->
+
+                <label for="productDiscount">
+
+                    Discount %
+
+                </label>
+
+
+                <input
+                    id="productDiscount"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value="0"
+                    placeholder="5">
+
+
+
+                <!-- IMAGE -->
+
+                <label for="productImage">
+
+                    Product Image URL
+
+                </label>
+
+
+                <input
+                    id="productImage"
+                    type="url"
+                    placeholder="https://...">
+
+
+
+                <div
+                    id="imagePreview"
+                    class="image-preview">
+                </div>
+
+
+
+                <!-- AVAILABLE -->
+
+                <label class="available-row">
+
+                    <input
+                        id="productAvailable"
+                        type="checkbox"
+                        checked>
+
+                    Product Available
+
+                </label>
+
+
+
+                <!-- SAVE -->
+
+                <button
+                    type="submit"
+                    class="save-button"
+                    id="saveButton">
+
+                    💾 Save Product
+
+                </button>
+
+
+
+                <!-- CANCEL -->
+
+                <button
+                    type="button"
+                    id="cancelEdit"
+                    class="cancel-button"
+                    style="display:none;">
+
+                    Cancel Edit
+
+                </button>
+
+
+            </form>
+
+        </section>
+
+
+
+        <!-- =========================
+             PRODUCT LIST
+        ========================= -->
+
+        <section class="products-card">
+
+
+            <div class="products-title">
+
+
+                <div>
+
+                    <h2>
+                        Products
+                    </h2>
+
+                    <p>
+                        Total:
+                        <span id="productCount">
+                            0
+                        </span>
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="refreshButton">
+
+                    🔄 Refresh
+
+                </button>
+
+
+            </div>
+
+
+
+            <div id="adminProductList">
+
+                Loading products...
+
+            </div>
+
+
+        </section>
+
+
+    </div>
+
+
+</main>
+
+
+
+<!-- =========================
+     ALERT
+========================= -->
+
+<div
+    id="adminAlert"
+    class="admin-alert">
+</div>
+
+
+
+<script src="shopkeeper.js"></script>
+
+
+</body>
+
+</html>
