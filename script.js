@@ -1145,11 +1145,6 @@ if (sendOrder) {
                 );
 
 
-            const messageInput =
-                document.getElementById(
-                    "customerMessage"
-                );
-
 
             const name =
                 nameInput
@@ -1163,10 +1158,13 @@ if (sendOrder) {
                 : "";
 
 
-            const message =
-                messageInput
-                ? messageInput.value.trim()
-                : "";
+         const addressInput =
+    document.getElementById("customerAddress");
+
+const address =
+    addressInput
+        ? addressInput.value.trim()
+        : "";
 
 
             /*
