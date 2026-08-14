@@ -1132,7 +1132,6 @@ if (sendOrder) {
     sendOrder.onclick =
         function () {
 
-
             const nameInput =
                 document.getElementById(
                     "customerName"
@@ -1145,31 +1144,33 @@ if (sendOrder) {
                 );
 
 
+            const addressInput =
+                document.getElementById(
+                    "customerAddress"
+                );
+
 
             const name =
                 nameInput
-                ? nameInput.value.trim()
-                : "";
+                    ? nameInput.value.trim()
+                    : "";
 
 
             const mobile =
                 mobileInput
-                ? mobileInput.value.trim()
-                : "";
+                    ? mobileInput.value.trim()
+                    : "";
 
 
-         const addressInput =
-    document.getElementById("customerAddress");
-
-const address =
-    addressInput
-        ? addressInput.value.trim()
-        : "";
+            const address =
+                addressInput
+                    ? addressInput.value.trim()
+                    : "";
 
 
-            /*
+            /* =================================================
                VALIDATION
-            */
+            ================================================= */
 
             if (name === "") {
 
@@ -1191,6 +1192,16 @@ const address =
             }
 
 
+            if (address === "") {
+
+                showCustomAlert(
+                    "Enter your address"
+                );
+
+                return;
+            }
+
+
             if (cart.length === 0) {
 
                 showCustomAlert(
@@ -1201,9 +1212,9 @@ const address =
             }
 
 
-            /*
+            /* =================================================
                CREATE ORDER TEXT
-            */
+            ================================================= */
 
             let orderText =
                 "NEW SHOP ORDER\n\n";
@@ -1218,6 +1229,12 @@ const address =
             orderText +=
                 "Mobile: " +
                 mobile +
+                "\n\n";
+
+
+            orderText +=
+                "Delivery Address:\n" +
+                address +
                 "\n\n";
 
 
@@ -1256,24 +1273,18 @@ const address =
             );
 
 
+            /* =================================================
+               TOTAL
+            ================================================= */
+
             orderText +=
                 "\nTotal: ₹" +
-                total.toFixed(2) +
-                "\n";
+                total.toFixed(2);
 
 
-            if (message !== "") {
-
-                orderText +=
-                    "\nCustomer Message:\n" +
-                    message;
-
-            }
-
-
-            /*
-               Gmail/mail client
-            */
+            /* =================================================
+               EMAIL SUBJECT
+            ================================================= */
 
             const subject =
                 encodeURIComponent(
@@ -1281,11 +1292,19 @@ const address =
                 );
 
 
+            /* =================================================
+               EMAIL BODY
+            ================================================= */
+
             const body =
                 encodeURIComponent(
                     orderText
                 );
 
+
+            /* =================================================
+               CREATE MAILTO URL
+            ================================================= */
 
             const mailURL =
                 "mailto:" +
@@ -1296,21 +1315,15 @@ const address =
                 body;
 
 
-            /*
-               Open email application
-            */
+            /* =================================================
+               OPEN EMAIL APPLICATION
+            ================================================= */
 
             window.location.href =
                 mailURL;
 
-
-            /*
-               Do NOT immediately clear cart.
-               Customer can return if email
-               application was not opened.
-            */
-
         };
+
 }
 
 
@@ -1332,6 +1345,7 @@ if (searchInput) {
             applyCurrentSearch();
 
         };
+
 }
 
 
@@ -1348,7 +1362,9 @@ function applyCurrentSearch() {
 
 
     if (!searchInput) {
+
         return;
+
     }
 
 
@@ -1392,8 +1408,8 @@ function applyCurrentSearch() {
 
             }
         );
-}
 
+}
 
 /* =========================================================
    GOOGLE MAP LOCATION
