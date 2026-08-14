@@ -912,8 +912,13 @@ function setupSendOrder() {
             return;
         }
 
-        if (mobile === "") {
-            showCustomAlert("Enter mobile number");
+       
+        if (!/^[0-9]{10}$/.test(mobile)) {
+
+            showCustomAlert(
+                "Enter a valid 10-digit mobile number"
+            );
+
             return;
         }
 
