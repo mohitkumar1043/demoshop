@@ -9,660 +9,1009 @@ body {
 
     font-family:
         Arial,
-        Helvetica,
         sans-serif;
 
-    background: #f3f5f9;
+    background:
+        #f4f5f7;
 
-    color: #222;
-
-    min-height: 100vh;
-
+    color:
+        #222;
 }
 
+
+/* =====================================================
+   LOGIN
+===================================================== */
 
 .page {
 
-    min-height: 100vh;
+    min-height:
+        100vh;
 
-    display: flex;
+    display:
+        flex;
 
-}
+    align-items:
+        center;
 
+    justify-content:
+        center;
 
-/* =================================
-   BRAND SECTION
-================================= */
-
-.brand-section {
-
-    width: 50%;
-
-    min-height: 100vh;
-
-    background:
-        linear-gradient(
-            135deg,
-            #111827,
-            #1f2937
-        );
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 40px;
-
-}
-
-
-.brand-content {
-
-    max-width: 430px;
-
-}
-
-
-.shop-icon {
-
-    width: 90px;
-
-    height: 90px;
-
-    border-radius: 22px;
-
-    background: rgba(255,255,255,.12);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 45px;
-
-    margin-bottom: 25px;
-
-}
-
-
-.brand-content h1 {
-
-    font-size: 38px;
-
-    margin-bottom: 10px;
-
-}
-
-
-.brand-content > p {
-
-    color: #cbd5e1;
-
-    font-size: 17px;
-
-}
-
-
-.features {
-
-    margin-top: 40px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 18px;
-
-}
-
-
-.feature {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    color: #e5e7eb;
-
-    font-size: 16px;
-
-}
-
-
-.feature span {
-
-    width: 27px;
-
-    height: 27px;
-
-    border-radius: 50%;
-
-    background: #22c55e;
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-weight: bold;
-
-}
-
-
-/* =================================
-   LOGIN SECTION
-================================= */
-
-.login-section {
-
-    width: 50%;
-
-    min-height: 100vh;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 30px;
+    padding:
+        20px;
 
 }
 
 
 .login-card {
 
-    width: 100%;
+    width:
+        100%;
 
-    max-width: 450px;
+    max-width:
+        420px;
 
-    background: white;
+    background:
+        white;
 
-    border-radius: 18px;
+    padding:
+        35px;
 
-    padding: 40px;
+    border-radius:
+        18px;
 
     box-shadow:
-        0 15px 45px
+        0 10px 35px
+        rgba(0,0,0,.12);
+
+}
+
+
+.logo {
+
+    width:
+        65px;
+
+    height:
+        65px;
+
+    margin:
+        0 auto 15px;
+
+    border-radius:
+        16px;
+
+    background:
+        #111;
+
+    color:
+        white;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        32px;
+
+}
+
+
+.login-card h1 {
+
+    text-align:
+        center;
+
+    font-size:
+        25px;
+
+}
+
+
+.subtitle {
+
+    text-align:
+        center;
+
+    color:
+        #777;
+
+    margin-top:
+        7px;
+
+    margin-bottom:
+        25px;
+
+}
+
+
+.login-card label {
+
+    display:
+        block;
+
+    font-weight:
+        bold;
+
+    margin:
+        15px 0 6px;
+
+}
+
+
+.login-card input {
+
+    width:
+        100%;
+
+    height:
+        46px;
+
+    border:
+        1px solid #ccc;
+
+    border-radius:
+        8px;
+
+    padding:
+        0 12px;
+
+    font-size:
+        15px;
+
+    outline:
+        none;
+
+}
+
+
+.login-card input:focus {
+
+    border-color:
+        #1976d2;
+
+}
+
+
+.password-box {
+
+    display:
+        flex;
+
+    border:
+        1px solid #ccc;
+
+    border-radius:
+        8px;
+
+    overflow:
+        hidden;
+
+}
+
+
+.password-box input {
+
+    border:
+        none;
+
+    flex:
+        1;
+
+}
+
+
+.password-box button {
+
+    width:
+        48px;
+
+    border:
+        none;
+
+    background:
+        white;
+
+    cursor:
+        pointer;
+
+    font-size:
+        18px;
+
+}
+
+
+.primary-button {
+
+    width:
+        100%;
+
+    height:
+        48px;
+
+    margin-top:
+        22px;
+
+    border:
+        none;
+
+    border-radius:
+        8px;
+
+    background:
+        #111;
+
+    color:
+        white;
+
+    font-weight:
+        bold;
+
+    font-size:
+        15px;
+
+    cursor:
+        pointer;
+
+}
+
+
+.primary-button:hover {
+
+    background:
+        #333;
+
+}
+
+
+.primary-button:disabled {
+
+    opacity:
+        .6;
+
+    cursor:
+        not-allowed;
+
+}
+
+
+.secure-box {
+
+    margin-top:
+        20px;
+
+    padding:
+        12px;
+
+    border-radius:
+        8px;
+
+    background:
+        #f1f8ff;
+
+    text-align:
+        center;
+
+    font-size:
+        13px;
+
+}
+
+
+.secure-box small {
+
+    display:
+        block;
+
+    color:
+        #777;
+
+    margin-top:
+        4px;
+
+}
+
+
+.error-message {
+
+    display:
+        none;
+
+    background:
+        #ffebee;
+
+    color:
+        #c62828;
+
+    padding:
+        10px;
+
+    border-radius:
+        7px;
+
+    margin-bottom:
+        12px;
+
+    font-size:
+        14px;
+
+}
+
+
+/* =====================================================
+   ADMIN PAGE
+===================================================== */
+
+.admin-page {
+
+    min-height:
+        100vh;
+
+}
+
+
+.admin-header {
+
+    background:
+        #111;
+
+    color:
+        white;
+
+    padding:
+        18px 25px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+}
+
+
+.admin-header h1 {
+
+    font-size:
+        21px;
+
+}
+
+
+.admin-header p {
+
+    color:
+        #aaa;
+
+    margin-top:
+        4px;
+
+    font-size:
+        13px;
+
+}
+
+
+.logout-button {
+
+    background:
+        #d32f2f;
+
+    color:
+        white;
+
+    border:
+        none;
+
+    border-radius:
+        7px;
+
+    padding:
+        10px 16px;
+
+    cursor:
+        pointer;
+
+    font-weight:
+        bold;
+
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.admin-container {
+
+    max-width:
+        900px;
+
+    margin:
+        auto;
+
+    padding:
+        20px;
+
+}
+
+
+.form-card,
+.products-card {
+
+    background:
+        white;
+
+    border-radius:
+        12px;
+
+    padding:
+        20px;
+
+    margin-bottom:
+        20px;
+
+    box-shadow:
+        0 3px 12px
         rgba(0,0,0,.08);
 
 }
 
 
-/* =================================
-   HEADING
-================================= */
+.form-card h2 {
 
-.login-heading h2 {
-
-    font-size: 27px;
-
-    margin-bottom: 8px;
+    margin-bottom:
+        15px;
 
 }
 
 
-.login-heading p {
+/* =====================================================
+   FORM
+===================================================== */
 
-    color: #777;
+.form-card label {
 
-    font-size: 14px;
+    display:
+        block;
 
-}
+    font-weight:
+        bold;
 
-
-/* =================================
-   MOBILE LOGO
-================================= */
-
-.mobile-logo {
-
-    display: none;
-
-    text-align: center;
-
-    margin-bottom: 25px;
+    margin:
+        12px 0 5px;
 
 }
 
 
-.mobile-shop-icon {
+.form-card input,
+.form-card textarea {
 
-    width: 65px;
+    width:
+        100%;
 
-    height: 65px;
+    padding:
+        12px;
 
-    background: #111827;
+    border:
+        1px solid #ccc;
 
-    color: white;
+    border-radius:
+        7px;
 
-    border-radius: 16px;
+    font-size:
+        15px;
 
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin: auto auto 10px;
-
-    font-size: 32px;
-
-}
-
-
-.mobile-logo h2 {
-
-    font-size: 20px;
+    outline:
+        none;
 
 }
 
 
-/* =================================
-   INPUT
-================================= */
+.form-card textarea {
 
-.input-group {
+    min-height:
+        80px;
 
-    margin-top: 22px;
-
-}
-
-
-.input-group label {
-
-    display: block;
-
-    font-size: 14px;
-
-    font-weight: bold;
-
-    margin-bottom: 8px;
+    resize:
+        vertical;
 
 }
 
 
-.input-box {
+#productId {
 
-    height: 50px;
+    background:
+        #eeeeee;
 
-    border: 1px solid #d7dbe2;
+    color:
+        #555;
 
-    border-radius: 9px;
+    font-weight:
+        bold;
 
-    display: flex;
-
-    align-items: center;
-
-    padding: 0 12px;
-
-    transition: .2s;
+    cursor:
+        not-allowed;
 
 }
 
 
-.input-box:focus-within {
+.readonly-text {
 
-    border-color: #2563eb;
+    display:
+        block;
 
-    box-shadow:
-        0 0 0 3px
-        rgba(37,99,235,.10);
+    color:
+        #777;
 
-}
+    font-size:
+        12px;
 
-
-.input-icon {
-
-    font-size: 18px;
-
-    margin-right: 10px;
+    margin-top:
+        5px;
 
 }
 
 
-.input-box input {
+.available-row {
 
-    width: 100%;
+    display:
+        flex !important;
 
-    height: 100%;
+    align-items:
+        center;
 
-    border: none;
-
-    outline: none;
-
-    font-size: 15px;
-
-}
-
-
-.eye-button {
-
-    border: none;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    font-size: 18px;
+    gap:
+        8px;
 
 }
 
 
-/* =================================
-   OPTIONS
-================================= */
+.available-row input {
 
-.login-options {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    margin-top: 15px;
+    width:
+        auto !important;
 
 }
 
 
-.remember {
+.save-button {
 
-    display: flex;
+    width:
+        100%;
 
-    align-items: center;
+    height:
+        46px;
 
-    gap: 7px;
+    margin-top:
+        18px;
 
-    color: #555;
+    border:
+        none;
 
-    font-size: 13px;
+    border-radius:
+        7px;
 
-}
+    background:
+        #111;
 
+    color:
+        white;
 
-.remember input {
+    font-weight:
+        bold;
 
-    width: 15px;
-
-    height: 15px;
-
-}
-
-
-/* =================================
-   LOGIN BUTTON
-================================= */
-
-.login-button {
-
-    width: 100%;
-
-    height: 50px;
-
-    margin-top: 25px;
-
-    border: none;
-
-    border-radius: 9px;
-
-    background: #111827;
-
-    color: white;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: .2s;
+    cursor:
+        pointer;
 
 }
 
 
-.login-button:hover {
+.cancel-button {
 
-    background: #000;
+    width:
+        100%;
 
-    transform: translateY(-1px);
+    height:
+        43px;
 
-}
+    margin-top:
+        8px;
 
+    border:
+        1px solid #ccc;
 
-.login-button:disabled {
+    border-radius:
+        7px;
 
-    opacity: .7;
+    background:
+        white;
 
-    cursor: not-allowed;
-
-}
-
-
-/* =================================
-   LOADER
-================================= */
-
-.loader {
-
-    display: none;
-
-    width: 17px;
-
-    height: 17px;
-
-    border: 2px solid
-        rgba(255,255,255,.4);
-
-    border-top-color: white;
-
-    border-radius: 50%;
-
-    animation:
-        spin .7s linear infinite;
-
-    vertical-align: middle;
-
-    margin-left: 7px;
+    cursor:
+        pointer;
 
 }
 
 
-@keyframes spin {
+/* =====================================================
+   IMAGE
+===================================================== */
 
-    to {
-        transform: rotate(360deg);
-    }
+.image-preview {
 
-}
-
-
-/* =================================
-   ERROR
-================================= */
-
-.login-error {
-
-    display: none;
-
-    margin-top: 20px;
-
-    padding: 11px 13px;
-
-    border-radius: 8px;
-
-    background: #fef2f2;
-
-    color: #dc2626;
-
-    border: 1px solid #fecaca;
-
-    font-size: 13px;
+    margin-top:
+        10px;
 
 }
 
 
-/* =================================
-   SECURITY
-================================= */
+.image-preview img {
 
-.security-info {
+    width:
+        100px;
 
-    margin-top: 25px;
+    height:
+        100px;
 
-    padding: 13px;
+    object-fit:
+        cover;
 
-    background: #f8fafc;
-
-    border-radius: 9px;
-
-    display: flex;
-
-    gap: 10px;
-
-    align-items: center;
+    border-radius:
+        8px;
 
 }
 
 
-.security-info > span {
+/* =====================================================
+   PRODUCTS HEADER
+===================================================== */
 
-    font-size: 20px;
+.products-title {
 
-}
+    display:
+        flex;
 
+    align-items:
+        center;
 
-.security-info strong {
+    justify-content:
+        space-between;
 
-    font-size: 13px;
-
-}
-
-
-.security-info p {
-
-    font-size: 11px;
-
-    color: #777;
-
-    margin-top: 3px;
+    margin-bottom:
+        15px;
 
 }
 
 
-/* =================================
-   FOOTER
-================================= */
+.products-title p {
 
-.login-footer {
+    color:
+        #777;
 
-    text-align: center;
+    font-size:
+        13px;
 
-    margin-top: 25px;
-
-    color: #999;
-
-    font-size: 11px;
+    margin-top:
+        4px;
 
 }
 
 
-.login-footer span {
+.refresh-button {
 
-    margin: 0 5px;
+    border:
+        1px solid #ccc;
+
+    background:
+        white;
+
+    padding:
+        9px 13px;
+
+    border-radius:
+        7px;
+
+    cursor:
+        pointer;
 
 }
 
 
-/* =================================
+/* =====================================================
+   PRODUCT CARD
+===================================================== */
+
+.admin-product {
+
+    border:
+        1px solid #ddd;
+
+    border-radius:
+        10px;
+
+    padding:
+        12px;
+
+    margin-bottom:
+        10px;
+
+    display:
+        flex;
+
+    gap:
+        12px;
+
+}
+
+
+.admin-product img {
+
+    width:
+        100px;
+
+    height:
+        100px;
+
+    object-fit:
+        cover;
+
+    border-radius:
+        8px;
+
+}
+
+
+.admin-product-info {
+
+    flex:
+        1;
+
+}
+
+
+.product-id {
+
+    display:
+        inline-block;
+
+    background:
+        #eeeeee;
+
+    color:
+        #333;
+
+    padding:
+        4px 8px;
+
+    border-radius:
+        5px;
+
+    font-size:
+        12px;
+
+    font-weight:
+        bold;
+
+    margin-bottom:
+        5px;
+
+}
+
+
+.admin-product-info h3 {
+
+    margin-bottom:
+        5px;
+
+}
+
+
+.admin-product-info p {
+
+    color:
+        #666;
+
+    font-size:
+        14px;
+
+    margin-top:
+        3px;
+
+}
+
+
+.admin-actions {
+
+    display:
+        flex;
+
+    gap:
+        7px;
+
+    margin-top:
+        10px;
+
+}
+
+
+.admin-actions button {
+
+    padding:
+        8px 13px;
+
+    border:
+        none;
+
+    border-radius:
+        6px;
+
+    cursor:
+        pointer;
+
+    font-weight:
+        bold;
+
+}
+
+
+.edit-button {
+
+    background:
+        #1976d2;
+
+    color:
+        white;
+
+}
+
+
+.delete-button {
+
+    background:
+        #d32f2f;
+
+    color:
+        white;
+
+}
+
+
+/* =====================================================
+   ALERT
+===================================================== */
+
+.admin-alert {
+
+    display:
+        none;
+
+    position:
+        fixed;
+
+    top:
+        20px;
+
+    left:
+        50%;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        #222;
+
+    color:
+        white;
+
+    padding:
+        13px 20px;
+
+    border-radius:
+        8px;
+
+    z-index:
+        99999;
+
+    font-weight:
+        bold;
+
+}
+
+
+/* =====================================================
    MOBILE
-================================= */
+===================================================== */
 
-@media (max-width: 800px) {
-
-    .page {
-
-        display: block;
-
-    }
-
-
-    .brand-section {
-
-        display: none;
-
-    }
-
-
-    .login-section {
-
-        width: 100%;
-
-        min-height: 100vh;
-
-        padding: 20px;
-
-    }
-
+@media(max-width:600px) {
 
     .login-card {
 
-        max-width: 430px;
-
-        padding: 30px 22px;
-
-        border-radius: 15px;
-
-        box-shadow:
-            0 8px 30px
-            rgba(0,0,0,.07);
+        padding:
+            25px 20px;
 
     }
 
 
-    .mobile-logo {
+    .admin-header {
 
-        display: block;
-
-    }
-
-
-    .login-heading {
-
-        text-align: center;
+        padding:
+            15px;
 
     }
 
 
-    .login-heading h2 {
+    .admin-header h1 {
 
-        font-size: 24px;
-
-    }
-
-}
-
-
-@media (max-width: 400px) {
-
-    .login-section {
-
-        padding: 12px;
+        font-size:
+            18px;
 
     }
 
 
-    .login-card {
+    .admin-container {
 
-        padding: 25px 18px;
+        padding:
+            10px;
+
+    }
+
+
+    .form-card,
+    .products-card {
+
+        padding:
+            15px;
+
+    }
+
+
+    .products-title {
+
+        align-items:
+            flex-start;
+
+    }
+
+
+    .admin-product {
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .admin-product img {
+
+        width:
+            100%;
+
+        height:
+            180px;
+
+    }
+
+
+    .admin-actions {
+
+        width:
+            100%;
+
+    }
+
+
+    .admin-actions button {
+
+        flex:
+            1;
 
     }
 
