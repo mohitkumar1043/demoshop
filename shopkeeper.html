@@ -19,231 +19,48 @@
 
 <body>
 
-    <div class="page">
+<div class="page">
 
-        <!-- LEFT / BRAND AREA -->
-        <div class="brand-section">
+    <!-- =========================
+         BRAND AREA
+    ========================== -->
 
-            <div class="brand-content">
+    <div class="brand-section">
 
-                <div class="shop-icon">
-                    🏪
-                </div>
+        <div class="brand-content">
 
-                <h1>
-                    My Local Shop
-                </h1>
-
-                <p>
-                    Shopkeeper Management Portal
-                </p>
-
-                <div class="features">
-
-                    <div class="feature">
-                        <span>✓</span>
-                        Manage Products
-                    </div>
-
-                    <div class="feature">
-                        <span>✓</span>
-                        Update Prices
-                    </div>
-
-                    <div class="feature">
-                        <span>✓</span>
-                        Manage Stock
-                    </div>
-
-                    <div class="feature">
-                        <span>✓</span>
-                        Secure Access
-                    </div>
-
-                </div>
-
+            <div class="shop-icon">
+                🏪
             </div>
 
-        </div>
+            <h1>
+                My Local Shop
+            </h1>
 
+            <p>
+                Shopkeeper Management Portal
+            </p>
 
-        <!-- LOGIN AREA -->
-        <div class="login-section">
+            <div class="features">
 
-            <div class="login-card">
-
-                <div class="mobile-logo">
-
-                    <div class="mobile-shop-icon">
-                        🏪
-                    </div>
-
-                    <h2>
-                        My Local Shop
-                    </h2>
-
+                <div class="feature">
+                    <span>✓</span>
+                    Manage Products
                 </div>
 
-
-                <div class="login-heading">
-
-                    <h2>
-                        Welcome Back 👋
-                    </h2>
-
-                    <p>
-                        Login to manage your shop
-                    </p>
-
+                <div class="feature">
+                    <span>✓</span>
+                    Update Prices
                 </div>
 
-
-                <!-- ERROR -->
-                <div
-                    id="loginError"
-                    class="login-error">
-
+                <div class="feature">
+                    <span>✓</span>
+                    Manage Stock
                 </div>
 
-
-                <form id="loginForm">
-
-
-                    <!-- USERNAME -->
-
-                    <div class="input-group">
-
-                        <label for="username">
-                            Shopkeeper ID
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">
-                                👤
-                            </span>
-
-                            <input
-                                type="text"
-                                id="username"
-                                placeholder="Enter your shopkeeper ID"
-                                autocomplete="username"
-                                required>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- PASSWORD -->
-
-                    <div class="input-group">
-
-                        <label for="password">
-                            Password
-                        </label>
-
-                        <div class="input-box">
-
-                            <span class="input-icon">
-                                🔒
-                            </span>
-
-                            <input
-                                type="password"
-                                id="password"
-                                placeholder="Enter your password"
-                                autocomplete="current-password"
-                                required>
-
-                            <button
-                                type="button"
-                                id="togglePassword"
-                                class="eye-button"
-                                aria-label="Show password">
-
-                                👁
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- OPTIONS -->
-
-                    <div class="login-options">
-
-                        <label class="remember">
-
-                            <input
-                                type="checkbox"
-                                id="rememberMe">
-
-                            <span>
-                                Remember me
-                            </span>
-
-                        </label>
-
-                    </div>
-
-
-                    <!-- LOGIN BUTTON -->
-
-                    <button
-                        type="submit"
-                        id="loginButton"
-                        class="login-button">
-
-                        <span id="loginText">
-                            Login
-                        </span>
-
-                        <span
-                            id="loginLoader"
-                            class="loader">
-
-                        </span>
-
-                    </button>
-
-
-                </form>
-
-
-                <!-- SECURITY -->
-
-                <div class="security-info">
-
-                    <span>
-                        🔐
-                    </span>
-
-                    <div>
-
-                        <strong>
-                            Secure Login
-                        </strong>
-
-                        <p>
-                            Your shop data is protected.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="login-footer">
-
-                    Shopkeeper Portal
-
-                    <span>•</span>
-
+                <div class="feature">
+                    <span>✓</span>
                     Secure Access
-
                 </div>
 
             </div>
@@ -253,252 +70,562 @@
     </div>
 
 
-    <script>
+    <!-- =========================
+         LOGIN AREA
+    ========================== -->
 
-        /* =========================
-           PASSWORD SHOW / HIDE
-        ========================= */
+    <div class="login-section">
 
-        const password =
-            document.getElementById("password");
+        <div class="login-card">
 
-        const togglePassword =
-            document.getElementById("togglePassword");
+            <!-- MOBILE LOGO -->
 
+            <div class="mobile-logo">
 
-        togglePassword.addEventListener(
-            "click",
-            function () {
+                <div class="mobile-shop-icon">
+                    🏪
+                </div>
 
-                if (
-                    password.type === "password"
-                ) {
+                <h2>
+                    My Local Shop
+                </h2>
 
-                    password.type = "text";
+            </div>
 
-                    togglePassword.innerText = "🙈";
 
-                } else {
+            <!-- HEADING -->
 
-                    password.type = "password";
+            <div class="login-heading">
 
-                    togglePassword.innerText = "👁";
+                <h2>
+                    Welcome Back 👋
+                </h2>
 
-                }
+                <p>
+                    Login to manage your shop
+                </p>
 
-            }
-        );
+            </div>
 
 
-        /* =========================
-           LOGIN
-        ========================= */
+            <!-- ERROR -->
 
-        const loginForm =
-            document.getElementById("loginForm");
+            <div
+                id="loginError"
+                class="login-error">
+            </div>
 
-        const loginButton =
-            document.getElementById("loginButton");
 
-        const loginText =
-            document.getElementById("loginText");
+            <!-- LOGIN FORM -->
 
-        const loginLoader =
-            document.getElementById("loginLoader");
+            <form id="loginForm">
 
-        const loginError =
-            document.getElementById("loginError");
+                <!-- SHOPKEEPER ID -->
 
+                <div class="input-group">
 
-        loginForm.addEventListener(
-            "submit",
-            async function (event) {
+                    <label for="username">
+                        Shopkeeper ID
+                    </label>
 
-                event.preventDefault();
+                    <div class="input-box">
 
+                        <span class="input-icon">
+                            👤
+                        </span>
 
-                const username =
-                    document
-                        .getElementById("username")
-                        .value
-                        .trim();
+                        <input
+                            type="text"
+                            id="username"
+                            placeholder="Enter your Shopkeeper ID"
+                            autocomplete="username"
+                            required>
 
+                    </div>
 
-                const passwordValue =
-                    password.value;
+                </div>
 
 
-                if (!username) {
+                <!-- PASSWORD -->
 
-                    showError(
-                        "Please enter your Shopkeeper ID."
-                    );
+                <div class="input-group">
 
-                    return;
+                    <label for="password">
+                        Password
+                    </label>
 
-                }
+                    <div class="input-box">
 
+                        <span class="input-icon">
+                            🔒
+                        </span>
 
-                if (!passwordValue) {
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required>
 
-                    showError(
-                        "Please enter your password."
-                    );
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="eye-button"
+                            aria-label="Show password">
 
-                    return;
+                            👁
 
-                }
+                        </button>
 
+                    </div>
 
-                /* LOGIN LOADING */
+                </div>
 
-                loginButton.disabled = true;
 
-                loginText.innerText =
-                    "Signing in...";
+                <!-- REMEMBER ME -->
 
-                loginLoader.style.display =
-                    "inline-block";
+                <div class="login-options">
 
-                loginError.style.display =
-                    "none";
+                    <label class="remember">
 
+                        <input
+                            type="checkbox"
+                            id="rememberMe">
 
-                /*
-                 * YOUR CLOUDFLARE WORKER
-                 *
-                 * Replace this URL later.
-                 */
+                        <span>
+                            Remember me
+                        </span>
 
-                const WORKER_URL =
-                    "https://YOUR-WORKER.workers.dev";
+                    </label>
 
+                </div>
 
-                try {
 
-                    const response =
-                        await fetch(
-                            WORKER_URL + "/login",
-                            {
+                <!-- LOGIN BUTTON -->
 
-                                method: "POST",
+                <button
+                    type="submit"
+                    id="loginButton"
+                    class="login-button">
 
-                                headers: {
-                                    "Content-Type":
-                                        "application/json"
-                                },
+                    <span id="loginText">
+                        Login
+                    </span>
 
-                                body:
-                                    JSON.stringify({
+                    <span
+                        id="loginLoader"
+                        class="loader">
+                    </span>
 
-                                        username:
-                                            username,
+                </button>
 
-                                        password:
-                                            passwordValue
+            </form>
 
-                                    })
 
-                            }
-                        );
+            <!-- SECURITY -->
 
+            <div class="security-info">
 
-                    const result =
-                        await response.json();
+                <span>
+                    🔐
+                </span>
 
+                <div>
 
-                    if (!response.ok ||
-                        !result.success) {
+                    <strong>
+                        Secure Login
+                    </strong>
 
-                        throw new Error(
-                            result.message ||
-                            "Invalid login details."
-                        );
+                    <p>
+                        Your shop data is protected.
+                    </p>
 
-                    }
+                </div>
 
+            </div>
 
-                    /*
-                     * SAVE SESSION TOKEN
-                     */
 
-                    if (result.token) {
+            <!-- FOOTER -->
 
-                        localStorage.setItem(
-                            "shopkeeperToken",
-                            result.token
-                        );
+            <div class="login-footer">
 
-                    }
+                Shopkeeper Portal
 
+                <span>•</span>
 
-                    /*
-                     * LOGIN SUCCESS
-                     */
+                Secure Access
 
-                    loginText.innerText =
-                        "Login successful ✓";
+            </div>
 
+        </div>
 
-                    setTimeout(
-                        function () {
+    </div>
 
-                            window.location.href =
-                                "shopkeeper-dashboard.html";
+</div>
 
-                        },
-                        500
-                    );
 
+<!-- =========================
+     LOGIN JAVASCRIPT
+========================== -->
 
-                }
+<script>
 
-                catch (error) {
+/* =========================================================
+   CLOUDFLARE WORKER URL
+========================================================= */
 
-                    console.error(
-                        "Login error:",
-                        error
-                    );
+/*
+   IMPORTANT:
 
+   Replace this AFTER creating your Cloudflare Worker.
 
-                    showError(
-                        error.message ||
-                        "Unable to login. Please try again."
-                    );
+   Example:
 
+   const WORKER_URL =
+       "https://my-shop-worker.example.workers.dev";
+*/
 
-                    loginButton.disabled =
-                        false;
+const WORKER_URL =
+    "https://YOUR-WORKER.workers.dev";
 
 
-                    loginText.innerText =
-                        "Login";
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
+const passwordInput =
+    document.getElementById("password");
 
-                    loginLoader.style.display =
-                        "none";
+const togglePassword =
+    document.getElementById("togglePassword");
 
-                }
+const loginForm =
+    document.getElementById("loginForm");
 
-            }
-        );
+const loginButton =
+    document.getElementById("loginButton");
 
+const loginText =
+    document.getElementById("loginText");
 
-        /* =========================
-           ERROR
-        ========================= */
+const loginLoader =
+    document.getElementById("loginLoader");
 
-        function showError(message) {
+const loginError =
+    document.getElementById("loginError");
 
-            loginError.innerText =
-                "⚠ " + message;
 
-            loginError.style.display =
-                "block";
+/* =========================================================
+   SHOW / HIDE PASSWORD
+========================================================= */
+
+togglePassword.addEventListener(
+    "click",
+    function () {
+
+        if (
+            passwordInput.type ===
+            "password"
+        ) {
+
+            passwordInput.type =
+                "text";
+
+            togglePassword.innerText =
+                "🙈";
+
+            togglePassword.setAttribute(
+                "aria-label",
+                "Hide password"
+            );
+
+        } else {
+
+            passwordInput.type =
+                "password";
+
+            togglePassword.innerText =
+                "👁";
+
+            togglePassword.setAttribute(
+                "aria-label",
+                "Show password"
+            );
 
         }
 
-    </script>
+    }
+);
+
+
+/* =========================================================
+   SHOW ERROR
+========================================================= */
+
+function showError(message) {
+
+    loginError.innerText =
+        "⚠ " + message;
+
+    loginError.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   HIDE ERROR
+========================================================= */
+
+function hideError() {
+
+    loginError.innerText =
+        "";
+
+    loginError.style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+loginForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        hideError();
+
+
+        const username =
+            document
+                .getElementById("username")
+                .value
+                .trim();
+
+
+        const password =
+            passwordInput.value;
+
+
+        /* =========================
+           VALIDATION
+        ========================== */
+
+        if (!username) {
+
+            showError(
+                "Please enter your Shopkeeper ID."
+            );
+
+            return;
+
+        }
+
+
+        if (!password) {
+
+            showError(
+                "Please enter your password."
+            );
+
+            return;
+
+        }
+
+
+        /* =========================
+           LOADING
+        ========================== */
+
+        loginButton.disabled =
+            true;
+
+        loginText.innerText =
+            "Signing in...";
+
+        loginLoader.style.display =
+            "inline-block";
+
+
+        try {
+
+            /* =========================
+               CLOUDFLARE LOGIN
+            ========================== */
+
+            const response =
+                await fetch(
+                    WORKER_URL + "/login",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                username:
+                                    username,
+
+                                password:
+                                    password
+
+                            })
+
+                    }
+                );
+
+
+            /* =========================
+               READ RESPONSE
+            ========================== */
+
+            const result =
+                await response.json();
+
+
+            console.log(
+                "Cloudflare login response:",
+                result
+            );
+
+
+            /* =========================
+               LOGIN FAILED
+            ========================== */
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
+
+                throw new Error(
+                    result.message ||
+                    "Invalid Shopkeeper ID or password."
+                );
+
+            }
+
+
+            /* =========================
+               TOKEN REQUIRED
+            ========================== */
+
+            if (!result.token) {
+
+                throw new Error(
+                    "Security token was not received."
+                );
+
+            }
+
+
+            /* =========================
+               REMEMBER ME
+            ========================== */
+
+            const rememberMe =
+                document
+                    .getElementById(
+                        "rememberMe"
+                    )
+                    .checked;
+
+
+            if (rememberMe) {
+
+                localStorage.setItem(
+                    "shopkeeperToken",
+                    result.token
+                );
+
+            } else {
+
+                sessionStorage.setItem(
+                    "shopkeeperToken",
+                    result.token
+                );
+
+            }
+
+
+            /* =========================
+               SAVE SHOPKEEPER ID
+            ========================== */
+
+            sessionStorage.setItem(
+                "shopkeeperId",
+                username
+            );
+
+
+            /* =========================
+               SUCCESS
+            ========================== */
+
+            loginText.innerText =
+                "Login successful ✓";
+
+            loginLoader.style.display =
+                "none";
+
+
+            /* =========================
+               OPEN DASHBOARD
+            ========================== */
+
+            setTimeout(
+                function () {
+
+                    window.location.href =
+                        "shopkeeper-dashboard.html";
+
+                },
+                500
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "LOGIN ERROR:",
+                error
+            );
+
+
+            showError(
+                error.message ||
+                "Unable to login. Please try again."
+            );
+
+
+            loginButton.disabled =
+                false;
+
+            loginText.innerText =
+                "Login";
+
+            loginLoader.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+</script>
 
 </body>
 
