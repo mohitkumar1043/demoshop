@@ -787,250 +787,141 @@ function showOrder() {
 
 function setupSendOrder() {
 
-    const sendOrder =
-        document.getElementById("sendOrder");
+    const sendOrder = document.getElementById("sendOrder");
 
     if (!sendOrder) {
+        console.error("sendOrder button not found");
+        return;
+    }
 
-        console.error(
-            "sendOrder button not found"
+    sendOrder.addEventListener("click", function () {
+
+        const nameInput = document.getElementById("customerName");
+        const mobileInput = document.getElementById("customerMobile");
+        const addressInput = document.getElementById("customerAddress");
+
+        const name = nameInput ? nameInput.value.trim() : "";
+        const mobile = mobileInput ? mobileInput.value.trim() : "";
+        const address = addressInput ? addressInput.value.trim() : "";
+
+        /* =========================
+           VALIDATION
+        ========================= */
+
+        if (name === "") {
+            showCustomAlert("Enter your name");
+            return;
+        }
+
+        /* Only exactly 10 digits */
+        if (!/^\d{10}$/.test(mobile)) {
+            showCustomAlert("Enter valid 10 digit mobile number");
+            return;
+        }
+
+        if (address === "") {
+            showCustomAlert("Enter your address");
+            return;
+        }
+
+        if (cart.length === 0) {
+            showCustomAlert("Cart is empty");
+            return;
+        }
+
+        /* =========================
+           CREATE ORDER EMAIL
+        ========================= */
+
+        let orderText = "NEW SHOP ORDER\n\n";
+
+        orderText += "Customer Name: " + name + "\n";
+
+        orderText += "Mobile: " + mobile + "\n";
+
+        orderText +=
+            "Delivery Address:\n" +
+            address +
+            "\n\n";
+
+        orderText += "PRODUCTS\n";
+
+        orderText += "----------------------\n";
+
+        let total = 0;
+
+        cart.forEach(function (item) {
+
+            const itemTotal =
+                Number(item.price) *
+                Number(item.quantity);
+
+            total += itemTotal;
+
+            orderText +=
+                item.name +
+                " × " +
+                item.quantity +
+                " = ₹" +
+                itemTotal.toFixed(2) +
+                "\n";
+        });
+
+        orderText +=
+            "\nTotal: ₹" +
+            total.toFixed(2);
+
+        /* =========================
+           OPEN EMAIL APP
+        ========================= */
+
+        const subject = encodeURIComponent(
+            "New Order - My Local Shop"
         );
 
-        return;
-    }
-
-    sendOrder.addEventListener(
-        "click",
-        function () {
-
-            const nameInput =
-                document.getElementById("customerName");
-
-            const mobileInput =
-                document.getElementById("customerMobile");
-
-            const addressInput =
-                document.getElementById("customerAddress");
-
-            const name =
-                nameInput
-                    ? nameInput.value.trim()
-                    : "";
-
-            const mobile =
-                mobileInput
-                    ? mobileInput.value.trim()
-                    : "";
-
-            const address =
-                addressInput
-                    ? addressInput.value.trim()
-                    : "";
-
-
-            /* NAME */
-
-            if (name === "") {
-
-                showCustomAlert(
-                    "Enter your name"
-                );
-
-                return;
-            }
-
-
-            /* EXACTLY 10 DIGITS */
-
-            if (!/^[0-9]{10}$/.test(mobile)) {
-
-                showCustomAlert(
-                    "Enter a valid 10-digit mobile number"
-                );
-
-                return;
-            }
-
-
-            /* ADDRESS */
-
-            if (address === "") {
-
-                showCustomAlert(
-                    "Enter your address"
-                );
-
-                return;
-            }
-
-
-            /* CART */
-
-            if (cart.length === 0) {
-
-                showCustomAlert(
-                    "Cart is empty"
-                );
-
-                return;
-            }
-
-
-            /* CREATE EMAIL */
-
-            let orderText =
-                "NEW SHOP ORDER\n\n";
-
-            orderText +=
-                "Customer Name: " +
-                name +
-                "\n";
-
-            orderText +=
-                "Mobile: " +
-                mobile +
-                "\n";
-
-            orderText +=
-                "Delivery Address:\n" +
-                address +
-                "\n\n";
-
-            orderText +=
-                "PRODUCTS\n";
-
-            orderText +=
-                "----------------------\n";
-
-            let total = 0;
-
-            cart.forEach(function (item) {
-
-                const itemTotal =
-                    Number(item.price) *
-                    Number(item.quantity);
-
-                total += itemTotal;
-
-                orderText +=
-                    item.name +
-                    " × " +
-                    item.quantity +
-                    " = ₹" +
-                    itemTotal.toFixed(2) +
-                    "\n";
-            });
-
-            orderText +=
-                "\nTotal: ₹" +
-                total.toFixed(2);
-
-
-            /* EMAIL */
-
-            const subject =
-                encodeURIComponent(
-                    "New Order - My Local Shop"
-                );
-
-            const body =
-                encodeURIComponent(
-                    orderText
-                );
-
-            const mailtoURL =
-                "mailto:" +
-                SHOPKEEPER_EMAIL +
-                "?subject=" +
-                subject +
-                "&body=" +
-                body;
-
-
-            console.log(
-                "Opening email app"
-            );
-
-
-            /*
-             * Open email app
-             */
-
-            window.location.href =
-                mailtoURL;
-
-
-            /*
-             * Clear cart
-             */
-
-            cart = [];
-
-            updateCart();
-
-
-            /*
-             * Clear customer details
-             */
-
-            if (nameInput) {
-                nameInput.value = "";
-            }
-
-            if (mobileInput) {
-                mobileInput.value = "";
-            }
-
-            if (addressInput) {
-                addressInput.value = "";
-            }
-
-
-            /*
-             * Close order modal
-             */
-
-            const orderModal =
-                document.getElementById("orderModal");
-
-            if (orderModal) {
-
-                orderModal.style.display = "none";
-            }
-
+        const body = encodeURIComponent(
+            orderText
+        );
+
+        const mailtoURL =
+            "mailto:" +
+            SHOPKEEPER_EMAIL +
+            "?subject=" +
+            subject +
+            "&body=" +
+            body;
+
+        console.log("Opening email app");
+
+        /*
+         * Open email application
+         */
+        window.location.href = mailtoURL;
+
+        /*
+         * Clear cart after sending/opening
+         */
+        cart = [];
+
+        updateCart();
+
+        /*
+         * Clear customer details
+         */
+        if (nameInput) {
+            nameInput.value = "";
         }
-    );
-}
 
-
-/* =========================================================
-   CLOSE ORDER
-========================================================= */
-
-function setupCloseOrder() {
-
-    const closeOrder =
-        document.getElementById("closeOrder");
-
-    if (!closeOrder) {
-        return;
-    }
-
-    closeOrder.addEventListener(
-        "click",
-        function () {
-
-            const orderModal =
-                document.getElementById("orderModal");
-
-            if (orderModal) {
-
-                orderModal.style.display = "none";
-            }
+        if (mobileInput) {
+            mobileInput.value = "";
         }
-    );
-}
 
+        if (addressInput) {
+            addressInput.value = "";
+        }
+
+    });
+}
 
 /* =========================================================
    SEARCH
