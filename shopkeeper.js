@@ -1,47 +1,105 @@
+/* =========================================================
+   SHOPKEEPER PRODUCT MANAGER
+
+   ADD
+   EDIT
+   DELETE
+
+   PRODUCT ID:
+   - Automatically generated
+   - Cannot be edited
+   - Existing ID never changes
+========================================================= */
+
+
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
 const WORKER_URL =
     "https://YOUR-WORKER.workers.dev";
 
+
+/* =========================================================
+   GLOBAL
+========================================================= */
 
 let products = [];
 
 let editingId = null;
 
 
-/* =========================
+/* =========================================================
    ALERT
-========================= */
+========================================================= */
 
 function showAlert(message) {
 
-    const alert =
-        document.getElementById(
-            "adminAlert"
-        );
+    const alertBox =
+        document.getElementById("adminAlert");
 
-    alert.innerText = message;
+    if (!alertBox) {
 
-    alert.style.display = "block";
+        alert(message);
 
-    setTimeout(() => {
+        return;
+    }
 
-        alert.style.display = "none";
+    alertBox.innerText =
+        message;
+
+    alertBox.style.display =
+        "block";
+
+    setTimeout(function () {
+
+        alertBox.style.display =
+            "none";
 
     }, 2500);
-
 }
 
 
-/* =========================
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        String(value ?? "");
+
+    return div.innerHTML;
+}
+
+
+/* =========================================================
    LOAD PRODUCTS
-========================= */
+========================================================= */
 
 async function loadProducts() {
+
+    const container =
+        document.getElementById(
+            "adminProductList"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML =
+        "Loading products...";
+
 
     try {
 
         const response =
             await fetch(
-                "products.json?t=" +
+                "products.json?v=" +
                 Date.now(),
                 {
                     cache: "no-store"
@@ -52,14 +110,27 @@ async function loadProducts() {
         if (!response.ok) {
 
             throw new Error(
-                "Unable to load products"
+                "HTTP " +
+                response.status
             );
 
         }
 
 
-        products =
+        const data =
             await response.json();
+
+
+        if (!Array.isArray(data)) {
+
+            throw new Error(
+                "products.json must contain an array"
+            );
+
+        }
+
+
+        products = data;
 
 
         displayProducts();
@@ -68,22 +139,35 @@ async function loadProducts() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "LOAD PRODUCTS ERROR:",
+            error
+        );
 
-        document.getElementById(
-            "adminProductList"
-        ).innerHTML =
 
-            "Unable to load products.";
+        container.innerHTML =
+            `
+            <div class="no-products">
+
+                ❌ Unable to load products.
+
+                <br><br>
+
+                ${escapeHTML(
+                    error.message
+                )}
+
+            </div>
+            `;
 
     }
 
 }
 
 
-/* =========================
-   DISPLAY
-========================= */
+/* =========================================================
+   DISPLAY PRODUCTS
+========================================================= */
 
 function displayProducts() {
 
@@ -93,20 +177,34 @@ function displayProducts() {
         );
 
 
-    container.innerHTML = "";
-
-
-    if (products.length === 0) {
-
-        container.innerHTML =
-            "No products.";
-
+    if (!container) {
         return;
-
     }
 
 
-    products.forEach(product => {
+    container.innerHTML =
+        "";
+
+
+    if (
+        !Array.isArray(products) ||
+        products.length === 0
+    ) {
+
+        container.innerHTML =
+            `
+            <div class="no-products">
+
+                No products available.
+
+            </div>
+            `;
+
+        return;
+    }
+
+
+    products.forEach(function (product) {
 
         const item =
             document.createElement(
@@ -118,33 +216,75 @@ function displayProducts() {
             "admin-product";
 
 
-        item.innerHTML = `
+        const imageURL =
+            product.imageURL ||
+            "default-product.jpg";
+
+
+        const price =
+            Number(product.price) || 0;
+
+
+        const discount =
+            Number(product.discount) || 0;
+
+
+        const available =
+            product.available === true ||
+            String(product.available)
+                .trim()
+                .toUpperCase() === "YES";
+
+
+        item.innerHTML =
+            `
 
             <img
-                src="${product.imageURL || "default-product.jpg"}"
+                src="${escapeHTML(imageURL)}"
+                alt="${escapeHTML(
+                    product.name
+                )}"
                 onerror="
                     this.src='default-product.jpg'
                 "
             >
 
+
             <div class="admin-product-info">
 
+
                 <h3>
-                    ${product.name}
+                    ${escapeHTML(
+                        product.name
+                    )}
                 </h3>
 
-                <p>
-                    ₹${product.price}
-                </p>
 
                 <p>
-                    Discount:
-                    ${product.discount || 0}%
+                    🆔 Product ID:
+                    <strong>
+                        ${escapeHTML(
+                            product.id
+                        )}
+                    </strong>
                 </p>
+
+
+                <p>
+                    💰 Price:
+                    ₹${price.toFixed(2)}
+                </p>
+
+
+                <p>
+                    🏷️ Discount:
+                    ${discount}%
+                </p>
+
 
                 <p>
                     ${
-                        product.available
+                        available
                         ? "✅ Available"
                         : "❌ Not Available"
                     }
@@ -154,29 +294,72 @@ function displayProducts() {
                 <div class="admin-actions">
 
                     <button
+                        type="button"
                         class="edit-button"
-                        onclick="
-                            editProduct(${product.id})
-                        "
+                        data-id="${escapeHTML(
+                            product.id
+                        )}"
                     >
-                        Edit
+
+                        ✏️ Edit
+
                     </button>
 
 
                     <button
+                        type="button"
                         class="delete-button"
-                        onclick="
-                            deleteProduct(${product.id})
-                        "
+                        data-id="${escapeHTML(
+                            product.id
+                        )}"
                     >
-                        Delete
+
+                        🗑️ Delete
+
                     </button>
 
                 </div>
 
+
             </div>
 
-        `;
+            `;
+
+
+        const editButton =
+            item.querySelector(
+                ".edit-button"
+            );
+
+
+        editButton.addEventListener(
+            "click",
+            function () {
+
+                editProduct(
+                    product.id
+                );
+
+            }
+        );
+
+
+        const deleteButton =
+            item.querySelector(
+                ".delete-button"
+            );
+
+
+        deleteButton.addEventListener(
+            "click",
+            function () {
+
+                deleteProduct(
+                    product.id
+                );
+
+            }
+        );
 
 
         container.appendChild(item);
@@ -186,13 +369,42 @@ function displayProducts() {
 }
 
 
-/* =========================
-   ADD / UPDATE
-========================= */
+/* =========================================================
+   GENERATE NEXT PRODUCT ID
+========================================================= */
 
-document.getElementById(
-    "productForm"
-).onsubmit = async function(event) {
+function generateProductId() {
+
+    let highestId = 0;
+
+
+    products.forEach(function (product) {
+
+        const id =
+            Number(product.id);
+
+
+        if (
+            Number.isFinite(id) &&
+            id > highestId
+        ) {
+
+            highestId = id;
+
+        }
+
+    });
+
+
+    return highestId + 1;
+}
+
+
+/* =========================================================
+   ADD / UPDATE PRODUCT
+========================================================= */
+
+async function saveProduct(event) {
 
     event.preventDefault();
 
@@ -237,83 +449,152 @@ document.getElementById(
         ).checked;
 
 
-    if (!name || price < 0) {
+    /* =====================================================
+       VALIDATION
+    ===================================================== */
+
+    if (!name) {
 
         showAlert(
-            "Enter valid product data"
+            "Enter product name"
         );
 
         return;
-
     }
 
+
+    if (
+        !Number.isFinite(price) ||
+        price < 0
+    ) {
+
+        showAlert(
+            "Enter valid price"
+        );
+
+        return;
+    }
+
+
+    if (
+        !Number.isFinite(discount) ||
+        discount < 0 ||
+        discount > 100
+    ) {
+
+        showAlert(
+            "Discount must be between 0 and 100"
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       EDIT EXISTING PRODUCT
+    ===================================================== */
 
     if (editingId !== null) {
 
         const index =
             products.findIndex(
-                product =>
-                    product.id ===
-                    editingId
+                function (product) {
+
+                    return String(
+                        product.id
+                    ) === String(
+                        editingId
+                    );
+
+                }
             );
 
 
-        if (index !== -1) {
+        if (index === -1) {
 
-            products[index] = {
+            showAlert(
+                "Product not found"
+            );
 
-                ...products[index],
-
-                name,
-                description,
-                price,
-                discount,
-                imageURL,
-                available
-
-            };
-
+            return;
         }
 
-    }
 
-    else {
+        /*
+           IMPORTANT:
+           ID is NOT changed.
+        */
 
-        const newProduct = {
+        const oldId =
+            products[index].id;
 
-            id:
-                Date.now(),
 
-            name,
+        products[index] = {
 
-            description,
+            id: oldId,
 
-            price,
+            name: name,
 
-            discount,
+            description: description,
 
-            imageURL,
+            price: price,
 
-            available
+            discount: discount,
+
+            imageURL: imageURL,
+
+            available: available
 
         };
 
 
-        products.push(
-            newProduct
-        );
+        await saveProducts();
 
+
+        return;
     }
+
+
+    /* =====================================================
+       ADD NEW PRODUCT
+    ===================================================== */
+
+    const newId =
+        generateProductId();
+
+
+    const newProduct = {
+
+        id: newId,
+
+        name: name,
+
+        description: description,
+
+        price: price,
+
+        discount: discount,
+
+        imageURL: imageURL,
+
+        available: available
+
+    };
+
+
+    products.push(
+        newProduct
+    );
 
 
     await saveProducts();
 
-};
+}
 
 
-/* =========================
-   SAVE TO GITHUB
-========================= */
+/* =========================================================
+   SAVE TO CLOUDFLARE WORKER
+========================================================= */
 
 async function saveProducts() {
 
@@ -338,19 +619,36 @@ async function saveProducts() {
 
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        products:
-                            products
+                            products:
+                                products
 
-                    })
+                        })
 
                 }
             );
 
 
+        if (!response.ok) {
+
+            throw new Error(
+                "Worker HTTP " +
+                response.status
+            );
+
+        }
+
+
         const result =
             await response.json();
+
+
+        console.log(
+            "Worker response:",
+            result
+        );
 
 
         if (!result.success) {
@@ -364,11 +662,12 @@ async function saveProducts() {
 
 
         showAlert(
-            "Products saved successfully"
+            "✅ Products saved successfully"
         );
 
 
         resetForm();
+
 
         displayProducts();
 
@@ -376,40 +675,103 @@ async function saveProducts() {
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "SAVE ERROR:",
+            error
+        );
+
 
         showAlert(
-            "Unable to save products"
+            "❌ Unable to save products"
         );
+
+
+        /*
+           Reload original data
+           so failed changes don't
+           remain only in browser.
+        */
+
+        await loadProducts();
 
     }
 
 }
 
 
-/* =========================
-   EDIT
-========================= */
+/* =========================================================
+   EDIT PRODUCT
+========================================================= */
 
 function editProduct(id) {
 
     const product =
         products.find(
-            item =>
-                item.id === id
+            function (item) {
+
+                return String(item.id) ===
+                       String(id);
+
+            }
         );
 
 
-    if (!product) return;
+    if (!product) {
+
+        showAlert(
+            "Product not found"
+        );
+
+        return;
+    }
 
 
-    editingId = id;
+    editingId =
+        product.id;
 
+
+    /* =====================================================
+       SHOW FORM AS EDIT
+    ===================================================== */
 
     document.getElementById(
         "formTitle"
     ).innerText =
-        "Update Product";
+        "✏️ Edit Product";
+
+
+    document.getElementById(
+        "saveButton"
+    ).innerText =
+        "💾 Update Product";
+
+
+    document.getElementById(
+        "cancelEdit"
+    ).style.display =
+        "block";
+
+
+    /* =====================================================
+       PRODUCT ID
+       READ ONLY
+    ===================================================== */
+
+    const idInput =
+        document.getElementById(
+            "productId"
+        );
+
+
+    if (idInput) {
+
+        idInput.value =
+            product.id;
+
+        idInput.readOnly =
+            true;
+
+    }
 
 
     document.getElementById(
@@ -448,10 +810,7 @@ function editProduct(id) {
         product.available === true;
 
 
-    document.getElementById(
-        "cancelEdit"
-    ).style.display =
-        "block";
+    updateImagePreview();
 
 
     window.scrollTo({
@@ -465,37 +824,56 @@ function editProduct(id) {
 }
 
 
-/* =========================
-   DELETE
-========================= */
+/* =========================================================
+   DELETE PRODUCT
+========================================================= */
 
 async function deleteProduct(id) {
 
     const product =
         products.find(
-            item =>
-                item.id === id
+            function (item) {
+
+                return String(item.id) ===
+                       String(id);
+
+            }
         );
 
 
-    if (!product) return;
+    if (!product) {
+
+        showAlert(
+            "Product not found"
+        );
+
+        return;
+    }
 
 
     const confirmed =
         confirm(
-            "Delete " +
-            product.name +
-            "?"
+            "Delete product?\n\n" +
+            "Product ID: " +
+            product.id +
+            "\n" +
+            product.name
         );
 
 
-    if (!confirmed) return;
+    if (!confirmed) {
+        return;
+    }
 
 
     products =
         products.filter(
-            item =>
-                item.id !== id
+            function (item) {
+
+                return String(item.id) !==
+                       String(id);
+
+            }
         );
 
 
@@ -504,24 +882,39 @@ async function deleteProduct(id) {
 }
 
 
-/* =========================
-   RESET
-========================= */
+/* =========================================================
+   RESET FORM
+========================================================= */
 
 function resetForm() {
 
-    editingId = null;
+    editingId =
+        null;
 
 
-    document.getElementById(
-        "productForm"
-    ).reset();
+    const form =
+        document.getElementById(
+            "productForm"
+        );
+
+
+    if (form) {
+
+        form.reset();
+
+    }
 
 
     document.getElementById(
         "formTitle"
     ).innerText =
-        "Add Product";
+        "➕ Add Product";
+
+
+    document.getElementById(
+        "saveButton"
+    ).innerText =
+        "💾 Add Product";
 
 
     document.getElementById(
@@ -529,37 +922,42 @@ function resetForm() {
     ).style.display =
         "none";
 
-}
+
+    /*
+       ID is empty when adding.
+       It will be generated automatically
+       during save.
+    */
+
+    const idInput =
+        document.getElementById(
+            "productId"
+        );
 
 
-/* =========================
-   CANCEL
-========================= */
+    if (idInput) {
 
-document.getElementById(
-    "cancelEdit"
-).onclick = resetForm;
+        idInput.value =
+            "";
 
+        idInput.readOnly =
+            true;
 
-/* =========================
-   REFRESH
-========================= */
-
-document.getElementById(
-    "refreshButton"
-).onclick = loadProducts;
+    }
 
 
-/* =========================
-   IMAGE PREVIEW
-========================= */
+    const available =
+        document.getElementById(
+            "productAvailable"
+        );
 
-document.getElementById(
-    "productImage"
-).oninput = function() {
 
-    const url =
-        this.value.trim();
+    if (available) {
+
+        available.checked =
+            true;
+
+    }
 
 
     const preview =
@@ -568,31 +966,181 @@ document.getElementById(
         );
 
 
-    if (!url) {
+    if (preview) {
 
-        preview.innerHTML = "";
-
-        return;
+        preview.innerHTML =
+            "";
 
     }
 
+}
 
-    preview.innerHTML = `
 
+/* =========================================================
+   CANCEL EDIT
+========================================================= */
+
+function setupCancelEdit() {
+
+    const button =
+        document.getElementById(
+            "cancelEdit"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            resetForm();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+function setupRefresh() {
+
+    const button =
+        document.getElementById(
+            "refreshButton"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            loadProducts();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+function updateImagePreview() {
+
+    const input =
+        document.getElementById(
+            "productImage"
+        );
+
+
+    const preview =
+        document.getElementById(
+            "imagePreview"
+        );
+
+
+    if (!input || !preview) {
+        return;
+    }
+
+
+    const url =
+        input.value.trim();
+
+
+    if (!url) {
+
+        preview.innerHTML =
+            "";
+
+        return;
+    }
+
+
+    preview.innerHTML =
+        `
         <img
-            src="${url}"
+            src="${escapeHTML(url)}"
+            alt="Product preview"
             onerror="
                 this.style.display='none'
             "
         >
+        `;
 
-    `;
-
-};
+}
 
 
-/* =========================
+function setupImagePreview() {
+
+    const input =
+        document.getElementById(
+            "productImage"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    input.addEventListener(
+        "input",
+        updateImagePreview
+    );
+
+}
+
+
+/* =========================================================
    START
-========================= */
+========================================================= */
 
-loadProducts();
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        console.log(
+            "SHOPKEEPER JS LOADED"
+        );
+
+
+        const form =
+            document.getElementById(
+                "productForm"
+            );
+
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                saveProduct
+            );
+
+        }
+
+
+        setupCancelEdit();
+
+        setupRefresh();
+
+        setupImagePreview();
+
+        loadProducts();
+
+    }
+);
