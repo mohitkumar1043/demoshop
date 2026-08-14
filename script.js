@@ -980,56 +980,42 @@ function applyCurrentSearch() {
  
 
 /* =========================================================
-   GET SHOP LOCATION → GOOGLE MAPS
+   GOOGLE MAPS - SHOP LOCATION
 ========================================================= */
 
 function setupLocation() {
 
-    const locationButton =
-        document.getElementById("locationButton");
+    const button = document.getElementById("locationButton");
 
-    if (!locationButton) {
+    if (!button) {
         console.error("locationButton not found");
         return;
     }
 
-    locationButton.addEventListener("click", function () {
+    button.onclick = function () {
 
-        const latitude = SHOP_LATITUDE;
-        const longitude = SHOP_LONGITUDE;
+        const lat = SHOP_LATITUDE;
+        const lng = SHOP_LONGITUDE;
 
-        if (!latitude || !longitude) {
+        console.log("Shop latitude:", lat);
+        console.log("Shop longitude:", lng);
 
-            showCustomAlert(
-                "Shop location not configured"
-            );
-
+        if (!lat || !lng) {
+            alert("Shop location is missing");
             return;
         }
 
-        /*
-         * Customer current location
-         * → Shop location
-         */
-        const googleMapsURL =
+        const mapsURL =
             "https://www.google.com/maps/dir/?api=1" +
             "&destination=" +
-            encodeURIComponent(
-                latitude + "," + longitude
-            ) +
-            "&travelmode=driving";
+            lat +
+            "," +
+            lng;
 
-        console.log(
-            "Opening Google Maps:",
-            googleMapsURL
-        );
+        console.log("Opening:", mapsURL);
 
-        window.open(
-            googleMapsURL,
-            "_blank"
-        );
-
-    });
+        window.location.href = mapsURL;
+    };
 }
 
 /* =========================================================
