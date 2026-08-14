@@ -1,12 +1,7 @@
-```javascript
+
 /* =========================================================
    SHOPKEEPER PRODUCT MANAGER
    Cloudflare Worker + GitHub Pages
-========================================================= */
-
-
-/* =========================================================
-   CONFIGURATION
 ========================================================= */
 
 const WORKER_URL =
@@ -15,13 +10,7 @@ const WORKER_URL =
 const PRODUCTS_URL =
     "products.json";
 
-
-/* =========================================================
-   DATA
-========================================================= */
-
 let products = [];
-
 let editingId = null;
 
 
@@ -30,11 +19,7 @@ let editingId = null;
 ========================================================= */
 
 function getToken() {
-
-    return sessionStorage.getItem(
-        "shopkeeperToken"
-    );
-
+    return sessionStorage.getItem("shopkeeperToken");
 }
 
 
@@ -44,33 +29,19 @@ function getToken() {
 
 function showAlert(message) {
 
-    const alertBox =
-        document.getElementById(
-            "adminAlert"
-        );
+    const box = document.getElementById("adminAlert");
 
-    if (!alertBox) {
-
+    if (!box) {
         alert(message);
-
         return;
-
     }
 
-    alertBox.innerText =
-        message;
+    box.textContent = message;
+    box.style.display = "block";
 
-    alertBox.style.display =
-        "block";
-
-
-    setTimeout(function () {
-
-        alertBox.style.display =
-            "none";
-
+    setTimeout(() => {
+        box.style.display = "none";
     }, 3000);
-
 }
 
 
@@ -80,44 +51,29 @@ function showAlert(message) {
 
 function showLoginError(message) {
 
-    const errorBox =
-        document.getElementById(
-            "loginError"
-        );
+    const box = document.getElementById("loginError");
 
-    if (!errorBox) {
-
+    if (!box) {
         alert(message);
-
         return;
-
     }
 
-    errorBox.innerText =
-        "⚠ " + message;
-
-    errorBox.style.display =
-        "block";
-
+    box.textContent = "⚠ " + message;
+    box.style.display = "block";
 }
 
 
 /* =========================================================
-   HTML ESCAPE
+   ESCAPE HTML
 ========================================================= */
 
 function escapeHTML(value) {
 
-    const div =
-        document.createElement(
-            "div"
-        );
+    const div = document.createElement("div");
 
-    div.textContent =
-        String(value ?? "");
+    div.textContent = String(value ?? "");
 
     return div.innerHTML;
-
 }
 
 
@@ -126,9 +82,7 @@ function escapeHTML(value) {
 ========================================================= */
 
 const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
+    document.getElementById("loginForm");
 
 
 if (loginForm) {
@@ -139,29 +93,15 @@ if (loginForm) {
 
             event.preventDefault();
 
-
-            const usernameElement =
+            const username =
                 document.getElementById(
                     "shopkeeperUsername"
-                );
-
-
-            const passwordElement =
-                document.getElementById(
-                    "shopkeeperPassword"
-                );
-
-
-            const username =
-                usernameElement
-                    ? usernameElement.value.trim()
-                    : "";
-
+                ).value.trim();
 
             const password =
-                passwordElement
-                    ? passwordElement.value
-                    : "";
+                document.getElementById(
+                    "shopkeeperPassword"
+                ).value;
 
 
             if (!username) {
@@ -171,7 +111,6 @@ if (loginForm) {
                 );
 
                 return;
-
             }
 
 
@@ -182,7 +121,6 @@ if (loginForm) {
                 );
 
                 return;
-
             }
 
 
@@ -191,12 +129,10 @@ if (loginForm) {
                     "loginButton"
                 );
 
-
             const loginText =
                 document.getElementById(
                     "loginText"
                 );
-
 
             const loginLoader =
                 document.getElementById(
@@ -204,34 +140,20 @@ if (loginForm) {
                 );
 
 
-            if (loginButton) {
+            loginButton.disabled = true;
 
-                loginButton.disabled =
-                    true;
+            loginText.textContent =
+                "Signing in...";
 
-            }
-
-
-            if (loginText) {
-
-                loginText.innerText =
-                    "Signing in...";
-
-            }
-
-
-            if (loginLoader) {
-
-                loginLoader.style.display =
-                    "inline-block";
-
-            }
+            loginLoader.style.display =
+                "inline-block";
 
 
             try {
 
                 console.log(
-                    "Sending login request..."
+                    "Login URL:",
+                    WORKER_URL + "/login"
                 );
 
 
@@ -239,27 +161,21 @@ if (loginForm) {
                     await fetch(
                         WORKER_URL + "/login",
                         {
-
                             method: "POST",
 
                             headers: {
-
                                 "Content-Type":
                                     "application/json"
-
                             },
 
                             body:
                                 JSON.stringify({
-
                                     username:
                                         username,
 
                                     password:
                                         password
-
                                 })
-
                         }
                     );
 
@@ -271,13 +187,11 @@ if (loginForm) {
 
 
                 const result =
-                    await readJSON(
-                        response
-                    );
+                    await readJSON(response);
 
 
                 console.log(
-                    "Login response:",
+                    "Login result:",
                     result
                 );
 
@@ -291,22 +205,20 @@ if (loginForm) {
                         result.message ||
                         "Invalid login details."
                     );
-
                 }
 
 
                 if (!result.token) {
 
                     throw new Error(
-                        "Security token was not received."
+                        "Token was not received from Worker."
                     );
-
                 }
 
 
-                /* =========================
-                   SAVE JWT
-                ========================== */
+                /*
+                   Store JWT only in sessionStorage.
+                */
 
                 sessionStorage.setItem(
                     "shopkeeperToken",
@@ -314,38 +226,31 @@ if (loginForm) {
                 );
 
 
-                if (loginText) {
-
-                    loginText.innerText =
-                        "Login successful ✓";
-
-                }
+                loginText.textContent =
+                    "Login successful ✓";
 
 
-                /* =========================
-                   SHOW ADMIN AREA
-                ========================== */
+                /*
+                   Show admin area.
+                */
 
-                setTimeout(function () {
-
-                    document.getElementById(
-                        "loginCard"
-                    ).style.display =
-                        "none";
+                document.getElementById(
+                    "loginCard"
+                ).style.display = "none";
 
 
-                    document.getElementById(
-                        "adminArea"
-                    ).style.display =
-                        "block";
+                document.getElementById(
+                    "adminArea"
+                ).style.display = "block";
 
 
-                    loadProducts();
+                loginLoader.style.display =
+                    "none";
 
-                }, 500);
+
+                loadProducts();
 
             }
-
             catch (error) {
 
                 console.error(
@@ -360,34 +265,20 @@ if (loginForm) {
                 );
 
 
-                if (loginButton) {
-
-                    loginButton.disabled =
-                        false;
-
-                }
+                loginButton.disabled =
+                    false;
 
 
-                if (loginText) {
-
-                    loginText.innerText =
-                        "Login";
-
-                }
+                loginText.textContent =
+                    "Login";
 
 
-                if (loginLoader) {
-
-                    loginLoader.style.display =
-                        "none";
-
-                }
-
+                loginLoader.style.display =
+                    "none";
             }
 
         }
     );
-
 }
 
 
@@ -405,42 +296,25 @@ function logout() {
 
     editingId = null;
 
+
     document.getElementById(
         "adminArea"
-    ).style.display =
-        "none";
+    ).style.display = "none";
 
 
     document.getElementById(
         "loginCard"
-    ).style.display =
-        "block";
+    ).style.display = "block";
 
 
-    const username =
-        document.getElementById(
-            "shopkeeperUsername"
-        );
-
-    const password =
-        document.getElementById(
-            "shopkeeperPassword"
-        );
+    document.getElementById(
+        "shopkeeperUsername"
+    ).value = "";
 
 
-    if (username) {
-
-        username.value = "";
-
-    }
-
-
-    if (password) {
-
-        password.value = "";
-
-    }
-
+    document.getElementById(
+        "shopkeeperPassword"
+    ).value = "";
 }
 
 
@@ -463,11 +337,8 @@ async function loadProducts() {
                 "?t=" +
                 Date.now(),
                 {
-
                     method: "GET",
-
                     cache: "no-store"
-
                 }
             );
 
@@ -478,7 +349,6 @@ async function loadProducts() {
                 "Unable to load products. HTTP " +
                 response.status
             );
-
         }
 
 
@@ -491,12 +361,10 @@ async function loadProducts() {
             throw new Error(
                 "products.json must contain an array."
             );
-
         }
 
 
-        products =
-            data;
+        products = data;
 
 
         displayProducts();
@@ -507,7 +375,6 @@ async function loadProducts() {
         );
 
     }
-
     catch (error) {
 
         console.error(
@@ -526,21 +393,22 @@ async function loadProducts() {
 
             container.innerHTML =
                 `
-                <p>
-                    Unable to load products.
-                </p>
+                <div class="error-box">
 
-                <p>
-                    ${escapeHTML(
-                        error.message
-                    )}
-                </p>
+                    <strong>
+                        Unable to load products
+                    </strong>
+
+                    <p>
+                        ${escapeHTML(
+                            error.message
+                        )}
+                    </p>
+
+                </div>
                 `;
-
         }
-
     }
-
 }
 
 
@@ -557,14 +425,11 @@ function displayProducts() {
 
 
     if (!container) {
-
         return;
-
     }
 
 
-    container.innerHTML =
-        "";
+    container.innerHTML = "";
 
 
     const count =
@@ -574,31 +439,29 @@ function displayProducts() {
 
 
     if (count) {
-
-        count.innerText =
+        count.textContent =
             products.length;
-
     }
 
 
     if (products.length === 0) {
 
         container.innerHTML =
-            "<p>No products available.</p>";
+            `
+            <div class="empty-products">
+                No products available.
+            </div>
+            `;
 
         return;
-
     }
 
 
     const sortedProducts =
         [...products].sort(
-            function (a, b) {
-
-                return Number(a.id) -
-                    Number(b.id);
-
-            }
+            (a, b) =>
+                Number(a.id) -
+                Number(b.id)
         );
 
 
@@ -624,28 +487,33 @@ function displayProducts() {
                 product.available === true ||
                 String(product.available)
                     .trim()
-                    .toUpperCase() ===
-                "YES";
+                    .toUpperCase() === "YES";
 
 
             item.innerHTML =
                 `
-                <img
-                    src="${escapeHTML(image)}"
-                    alt="${escapeHTML(product.name)}"
-                    onerror="
-                        this.src='default-product.jpg'
-                    "
-                >
+                <div class="product-image-container">
+
+                    <img
+                        src="${escapeHTML(image)}"
+                        alt="${escapeHTML(
+                            product.name
+                        )}"
+                        onerror="
+                            this.src='default-product.jpg'
+                        "
+                    >
+
+                </div>
+
 
                 <div class="admin-product-info">
 
-                    <div class="product-id">
-
+                    <span class="product-id">
                         Product ID:
                         ${escapeHTML(product.id)}
+                    </span>
 
-                    </div>
 
                     <h3>
                         ${escapeHTML(
@@ -653,25 +521,32 @@ function displayProducts() {
                         )}
                     </h3>
 
-                    <p>
+
+                    <p class="description">
                         ${escapeHTML(
                             product.description || ""
                         )}
                     </p>
 
-                    <p>
-                        Price:
-                        ₹${Number(
-                            product.price || 0
-                        ).toFixed(2)}
-                    </p>
 
-                    <p>
-                        Discount:
-                        ${Number(
-                            product.discount || 0
-                        )}%
-                    </p>
+                    <div class="product-details">
+
+                        <span>
+                            Price:
+                            ₹${Number(
+                                product.price || 0
+                            ).toFixed(2)}
+                        </span>
+
+                        <span>
+                            Discount:
+                            ${Number(
+                                product.discount || 0
+                            )}%
+                        </span>
+
+                    </div>
+
 
                     <p class="product-status">
 
@@ -683,6 +558,7 @@ function displayProducts() {
 
                     </p>
 
+
                     <div class="admin-actions">
 
                         <button
@@ -691,6 +567,7 @@ function displayProducts() {
                         >
                             ✏️ Edit
                         </button>
+
 
                         <button
                             type="button"
@@ -705,49 +582,25 @@ function displayProducts() {
                 `;
 
 
-            const editButton =
-                item.querySelector(
-                    ".edit-button"
-                );
-
-
-            const deleteButton =
-                item.querySelector(
-                    ".delete-button"
-                );
-
-
-            editButton.addEventListener(
+            item.querySelector(
+                ".edit-button"
+            ).addEventListener(
                 "click",
-                function () {
-
-                    editProduct(
-                        product.id
-                    );
-
-                }
+                () => editProduct(product.id)
             );
 
 
-            deleteButton.addEventListener(
+            item.querySelector(
+                ".delete-button"
+            ).addEventListener(
                 "click",
-                function () {
-
-                    deleteProduct(
-                        product.id
-                    );
-
-                }
+                () => deleteProduct(product.id)
             );
 
 
-            container.appendChild(
-                item
-            );
-
+            container.appendChild(item);
         }
     );
-
 }
 
 
@@ -817,7 +670,6 @@ if (productForm) {
                 );
 
                 return;
-
             }
 
 
@@ -831,7 +683,6 @@ if (productForm) {
                 );
 
                 return;
-
             }
 
 
@@ -846,29 +697,17 @@ if (productForm) {
                 );
 
                 return;
-
             }
 
 
             const product = {
 
-                name:
-                    name,
-
-                description:
-                    description,
-
-                price:
-                    price,
-
-                discount:
-                    discount,
-
-                imageURL:
-                    imageURL,
-
-                available:
-                    available
+                name,
+                description,
+                price,
+                discount,
+                imageURL,
+                available
 
             };
 
@@ -877,35 +716,22 @@ if (productForm) {
 
                 product.id =
                     editingId;
-
             }
 
 
-            await saveProductsToWorker(
+            await saveProducts(
                 product
             );
-
         }
     );
-
 }
 
 
 /* =========================================================
    SAVE PRODUCTS
-   IMPORTANT:
-
-   Your Worker currently expects:
-
-   {
-       products: [...]
-   }
-
 ========================================================= */
 
-async function saveProductsToWorker(
-    product
-) {
+async function saveProducts(product) {
 
     const token =
         getToken();
@@ -916,40 +742,33 @@ async function saveProductsToWorker(
         showLoginAgain();
 
         return;
-
     }
 
 
     try {
 
         showAlert(
-            "Saving product..."
+            editingId !== null
+                ? "Updating product..."
+                : "Adding product..."
         );
 
 
-        /*
-           Make a copy of current
-           products.
-        */
-
-        let newProducts =
+        let finalProducts =
             [...products];
 
 
+        /*
+           EDIT
+        */
+
         if (editingId !== null) {
 
-            /*
-               UPDATE
-            */
-
             const index =
-                newProducts.findIndex(
-                    function (item) {
-
-                        return String(item.id) ===
-                            String(editingId);
-
-                    }
+                finalProducts.findIndex(
+                    item =>
+                        String(item.id) ===
+                        String(editingId)
                 );
 
 
@@ -958,35 +777,29 @@ async function saveProductsToWorker(
                 throw new Error(
                     "Product not found."
                 );
-
             }
 
 
-            newProducts[index] = {
+            finalProducts[index] = {
 
-                ...newProducts[index],
+                ...finalProducts[index],
 
                 ...product,
 
                 id:
-                    newProducts[index].id
+                    finalProducts[index].id
 
             };
-
         }
+
+
+        /*
+           ADD
+        */
 
         else {
 
-            /*
-               NEW PRODUCT
-
-               Temporary ID is used only
-               for the browser request.
-
-               Worker will assign permanent ID.
-            */
-
-            newProducts.push({
+            finalProducts.push({
 
                 ...product,
 
@@ -995,14 +808,20 @@ async function saveProductsToWorker(
                     Date.now()
 
             });
-
         }
 
 
+        /*
+           Your Worker expects:
+
+           {
+               products: [...]
+           }
+        */
+
         const response =
             await fetch(
-                WORKER_URL +
-                "/products",
+                WORKER_URL + "/products",
                 {
 
                     method: "POST",
@@ -1015,25 +834,19 @@ async function saveProductsToWorker(
                         "Authorization":
                             "Bearer " +
                             token
-
                     },
 
                     body:
                         JSON.stringify({
-
                             products:
-                                newProducts
-
+                                finalProducts
                         })
-
                 }
             );
 
 
         const result =
-            await readJSON(
-                response
-            );
+            await readJSON(response);
 
 
         if (
@@ -1044,7 +857,6 @@ async function saveProductsToWorker(
             showLoginAgain();
 
             return;
-
         }
 
 
@@ -1057,13 +869,8 @@ async function saveProductsToWorker(
                 result.message ||
                 "Unable to save products."
             );
-
         }
 
-
-        /*
-           Worker returns final products.
-        */
 
         if (
             Array.isArray(
@@ -1073,6 +880,15 @@ async function saveProductsToWorker(
 
             products =
                 result.products;
+        }
+        else {
+
+            /*
+               Worker may not return products
+               in some versions.
+            */
+
+            await loadProducts();
 
         }
 
@@ -1086,10 +902,10 @@ async function saveProductsToWorker(
 
         resetForm();
 
+
         displayProducts();
 
     }
-
     catch (error) {
 
         console.error(
@@ -1102,9 +918,7 @@ async function saveProductsToWorker(
             error.message ||
             "Unable to save product."
         );
-
     }
-
 }
 
 
@@ -1116,12 +930,9 @@ function editProduct(id) {
 
     const product =
         products.find(
-            function (item) {
-
-                return String(item.id) ===
-                    String(id);
-
-            }
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -1132,7 +943,6 @@ function editProduct(id) {
         );
 
         return;
-
     }
 
 
@@ -1142,7 +952,7 @@ function editProduct(id) {
 
     document.getElementById(
         "formTitle"
-    ).innerText =
+    ).textContent =
         "Update Product";
 
 
@@ -1188,35 +998,22 @@ function editProduct(id) {
         product.available === true ||
         String(product.available)
             .trim()
-            .toUpperCase() ===
-        "YES";
+            .toUpperCase() === "YES";
 
 
     updateImagePreview();
 
 
-    const cancelButton =
-        document.getElementById(
-            "cancelEdit"
-        );
-
-
-    if (cancelButton) {
-
-        cancelButton.style.display =
-            "block";
-
-    }
+    document.getElementById(
+        "cancelEdit"
+    ).style.display =
+        "block";
 
 
     window.scrollTo({
-
         top: 0,
-
         behavior: "smooth"
-
     });
-
 }
 
 
@@ -1228,12 +1025,9 @@ async function deleteProduct(id) {
 
     const product =
         products.find(
-            function (item) {
-
-                return String(item.id) ===
-                    String(id);
-
-            }
+            item =>
+                String(item.id) ===
+                String(id)
         );
 
 
@@ -1244,7 +1038,6 @@ async function deleteProduct(id) {
         );
 
         return;
-
     }
 
 
@@ -1259,9 +1052,7 @@ async function deleteProduct(id) {
 
 
     if (!confirmed) {
-
         return;
-
     }
 
 
@@ -1274,7 +1065,6 @@ async function deleteProduct(id) {
         showLoginAgain();
 
         return;
-
     }
 
 
@@ -1285,30 +1075,17 @@ async function deleteProduct(id) {
         );
 
 
-        /*
-           Remove product locally.
-        */
-
-        const newProducts =
+        const finalProducts =
             products.filter(
-                function (item) {
-
-                    return String(item.id) !==
-                        String(id);
-
-                }
+                item =>
+                    String(item.id) !==
+                    String(id)
             );
 
 
-        /*
-           Send complete product array
-           to the Worker.
-        */
-
         const response =
             await fetch(
-                WORKER_URL +
-                "/products",
+                WORKER_URL + "/products",
                 {
 
                     method: "POST",
@@ -1321,25 +1098,19 @@ async function deleteProduct(id) {
                         "Authorization":
                             "Bearer " +
                             token
-
                     },
 
                     body:
                         JSON.stringify({
-
                             products:
-                                newProducts
-
+                                finalProducts
                         })
-
                 }
             );
 
 
         const result =
-            await readJSON(
-                response
-            );
+            await readJSON(response);
 
 
         if (
@@ -1350,7 +1121,6 @@ async function deleteProduct(id) {
             showLoginAgain();
 
             return;
-
         }
 
 
@@ -1363,7 +1133,6 @@ async function deleteProduct(id) {
                 result.message ||
                 "Unable to delete product."
             );
-
         }
 
 
@@ -1375,27 +1144,24 @@ async function deleteProduct(id) {
 
             products =
                 result.products;
-
         }
         else {
 
             products =
-                newProducts;
-
+                finalProducts;
         }
-
-
-        showAlert(
-            "Product deleted successfully."
-        );
 
 
         resetForm();
 
         displayProducts();
 
-    }
 
+        showAlert(
+            "Product deleted successfully."
+        );
+
+    }
     catch (error) {
 
         console.error(
@@ -1408,9 +1174,7 @@ async function deleteProduct(id) {
             error.message ||
             "Unable to delete product."
         );
-
     }
-
 }
 
 
@@ -1425,20 +1189,14 @@ async function readJSON(response) {
         return await response.json();
 
     }
-
-    catch (error) {
+    catch {
 
         return {
-
             success: false,
-
             message:
                 "Invalid response from server."
-
         };
-
     }
-
 }
 
 
@@ -1468,7 +1226,6 @@ function showLoginAgain() {
         "loginCard"
     ).style.display =
         "block";
-
 }
 
 
@@ -1478,8 +1235,7 @@ function showLoginAgain() {
 
 function resetForm() {
 
-    editingId =
-        null;
+    editingId = null;
 
 
     const form =
@@ -1489,15 +1245,13 @@ function resetForm() {
 
 
     if (form) {
-
         form.reset();
-
     }
 
 
     document.getElementById(
         "formTitle"
-    ).innerText =
+    ).textContent =
         "Add Product";
 
 
@@ -1513,33 +1267,16 @@ function resetForm() {
         true;
 
 
-    const cancelButton =
-        document.getElementById(
-            "cancelEdit"
-        );
+    document.getElementById(
+        "cancelEdit"
+    ).style.display =
+        "none";
 
 
-    if (cancelButton) {
-
-        cancelButton.style.display =
-            "none";
-
-    }
-
-
-    const preview =
-        document.getElementById(
-            "imagePreview"
-        );
-
-
-    if (preview) {
-
-        preview.innerHTML =
-            "";
-
-    }
-
+    document.getElementById(
+        "imagePreview"
+    ).innerHTML =
+        "";
 }
 
 
@@ -1557,13 +1294,8 @@ if (cancelEdit) {
 
     cancelEdit.addEventListener(
         "click",
-        function () {
-
-            resetForm();
-
-        }
+        resetForm
     );
-
 }
 
 
@@ -1581,13 +1313,8 @@ if (refreshButton) {
 
     refreshButton.addEventListener(
         "click",
-        function () {
-
-            loadProducts();
-
-        }
+        loadProducts
     );
-
 }
 
 
@@ -1607,7 +1334,6 @@ if (logoutButton) {
         "click",
         logout
     );
-
 }
 
 
@@ -1627,13 +1353,8 @@ if (productImage) {
         "input",
         updateImagePreview
     );
-
 }
 
-
-/* =========================================================
-   IMAGE PREVIEW
-========================================================= */
 
 function updateImagePreview() {
 
@@ -1650,9 +1371,7 @@ function updateImagePreview() {
 
 
     if (!input || !preview) {
-
         return;
-
     }
 
 
@@ -1666,7 +1385,6 @@ function updateImagePreview() {
             "";
 
         return;
-
     }
 
 
@@ -1680,22 +1398,16 @@ function updateImagePreview() {
             "
         >
         `;
-
 }
 
 
 /* =========================================================
-   START
+   PAGE START
 ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
-
-        /*
-           If an existing JWT is present,
-           show dashboard directly.
-        */
 
         const token =
             getToken();
@@ -1716,10 +1428,7 @@ document.addEventListener(
 
 
             loadProducts();
-
         }
 
     }
 );
-```
-
