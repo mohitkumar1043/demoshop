@@ -1,7 +1,7 @@
 /* =========================================================
    SHOP CUSTOMER WEBSITE
    Products: products.json
-   Order: Gmail prepared email
+   Orders: Gmail prepared email
 ========================================================= */
 
 
@@ -30,11 +30,8 @@ let cart = [];
 
 function showCustomAlert(message) {
 
-    const alertBox =
-        document.getElementById("customAlert");
-
-    const alertMessage =
-        document.getElementById("customAlertMessage");
+    const alertBox = document.getElementById("customAlert");
+    const alertMessage = document.getElementById("customAlertMessage");
 
     if (!alertBox || !alertMessage) {
         alert(message);
@@ -42,7 +39,6 @@ function showCustomAlert(message) {
     }
 
     alertMessage.innerText = message;
-
     alertBox.style.display = "block";
 
     setTimeout(function () {
@@ -69,20 +65,16 @@ function escapeHTML(value) {
    LOAD PRODUCTS
 ========================================================= */
 
-function loadProducts() {
+async function loadProducts() {
 
-    const container =
-        document.getElementById("productList");
+    const container = document.getElementById("productList");
 
     if (!container) {
 
-        console.error(
-            "ERROR: productList element not found"
-        );
+        console.error("productList element not found");
 
         return;
     }
-
 
     container.innerHTML = `
         <div class="loading-products">
@@ -90,94 +82,59 @@ function loadProducts() {
         </div>
     `;
 
+    try {
 
-    const url =
-        PRODUCTS_JSON + "?v=" + Date.now();
+        const response = await fetch(
+            PRODUCTS_JSON + "?v=" + Date.now(),
+            {
+                cache: "no-store"
+            }
+        );
 
+        console.log(
+            "products.json HTTP status:",
+            response.status
+        );
 
-    console.log(
-        "Fetching:",
-        url
-    );
+        if (!response.ok) {
 
-
-    fetch(url)
-
-        .then(function (response) {
-
-            console.log(
-                "products.json status:",
+            throw new Error(
+                "products.json HTTP error: " +
                 response.status
             );
+        }
 
+        const products = await response.json();
 
-            if (!response.ok) {
+        console.log(
+            "products.json loaded:",
+            products
+        );
 
-                throw new Error(
-                    "HTTP " + response.status
-                );
+        if (!Array.isArray(products)) {
 
-            }
-
-
-            return response.json();
-
-        })
-
-
-        .then(function (products) {
-
-            console.log(
-                "products.json data:",
-                products
+            throw new Error(
+                "products.json must contain a JSON array"
             );
+        }
 
+        displayProducts(products);
 
-            /*
-             * YOUR JSON IS DIRECT ARRAY
-             *
-             * [
-             *   {...},
-             *   {...}
-             * ]
-             */
+    } catch (error) {
 
-            if (!Array.isArray(products)) {
+        console.error(
+            "PRODUCT LOADING ERROR:",
+            error
+        );
 
-                throw new Error(
-                    "products.json must contain an array"
-                );
-
-            }
-
-
-            displayProducts(products);
-
-        })
-
-
-        .catch(function (error) {
-
-            console.error(
-                "PRODUCT LOADING ERROR:",
-                error
-            );
-
-
-            container.innerHTML = `
-                <div class="no-products">
-
-                    Unable to load products.
-
-                    <br><br>
-
-                    ${escapeHTML(error.message)}
-
-                </div>
-            `;
-
-        });
-
+        container.innerHTML = `
+            <div class="no-products">
+                Unable to load products.
+                <br><br>
+                ${escapeHTML(error.message)}
+            </div>
+        `;
+    }
 }
 
 
@@ -190,14 +147,11 @@ function displayProducts(products) {
     const container =
         document.getElementById("productList");
 
-
     if (!container) {
         return;
     }
 
-
     container.innerHTML = "";
-
 
     const availableProducts =
         products.filter(function (product) {
@@ -211,12 +165,10 @@ function displayProducts(products) {
 
         });
 
-
     console.log(
         "Available products:",
         availableProducts
     );
-
 
     if (availableProducts.length === 0) {
 
@@ -229,7 +181,6 @@ function displayProducts(products) {
         return;
     }
 
-
     availableProducts.forEach(function (product) {
 
         createProductCard(
@@ -239,11 +190,9 @@ function displayProducts(products) {
 
     });
 
-
     initializeProducts();
 
     applyCurrentSearch();
-
 }
 
 
@@ -256,63 +205,43 @@ function createProductCard(product, container) {
     const card =
         document.createElement("div");
 
-
-    card.className =
-        "product-card";
-
+    card.className = "product-card";
 
     card.dataset.id =
         String(product.id ?? "");
 
-
     card.dataset.name =
         String(product.name ?? "");
-
 
     const price =
         Number(product.price) || 0;
 
-
     const discount =
         Number(product.discount) || 0;
 
-
-    let finalPrice =
-        price;
-
+    let finalPrice = price;
 
     if (discount > 0) {
 
         finalPrice =
-            price -
-            (price * discount / 100);
-
+            price - (price * discount / 100);
     }
-
-
-    let imageURL =
-        String(product.imageURL ?? "").trim();
-
-
-    if (imageURL === "") {
-
-        imageURL =
-            "default-product.jpg";
-
-    }
-
 
     const name =
         String(product.name ?? "Product");
 
-
     const description =
         String(product.description ?? "");
 
+    let imageURL =
+        String(product.imageURL ?? "").trim();
+
+    if (imageURL === "") {
+        imageURL = "default-product.jpg";
+    }
 
     card.dataset.price =
         String(finalPrice);
-
 
     card.innerHTML = `
 
@@ -322,18 +251,15 @@ function createProductCard(product, container) {
             onerror="this.src='default-product.jpg'"
         >
 
-
         <div class="product-info">
 
             <h3>
                 ${escapeHTML(name)}
             </h3>
 
-
             <p>
                 ${escapeHTML(description)}
             </p>
-
 
             <div class="price">
 
@@ -358,7 +284,6 @@ function createProductCard(product, container) {
 
             </div>
 
-
             ${
                 discount > 0
                 ? `
@@ -368,7 +293,6 @@ function createProductCard(product, container) {
                 `
                 : ""
             }
-
 
             <div class="actions">
 
@@ -381,11 +305,9 @@ function createProductCard(product, container) {
                         −
                     </button>
 
-
                     <span class="qty">
                         1
                     </span>
-
 
                     <button
                         type="button"
@@ -395,7 +317,6 @@ function createProductCard(product, container) {
                     </button>
 
                 </div>
-
 
                 <button
                     type="button"
@@ -409,9 +330,7 @@ function createProductCard(product, container) {
         </div>
     `;
 
-
     container.appendChild(card);
-
 }
 
 
@@ -425,27 +344,28 @@ function initializeProducts() {
         .querySelectorAll(".product-card")
         .forEach(function (card) {
 
-
             const minus =
                 card.querySelector(".minus");
-
 
             const plus =
                 card.querySelector(".plus");
 
-
             const qty =
                 card.querySelector(".qty");
-
 
             const addButton =
                 card.querySelector(".add-cart");
 
-
-            if (!minus || !plus || !qty || !addButton) {
+            if (
+                !minus ||
+                !plus ||
+                !qty ||
+                !addButton
+            ) {
                 return;
             }
 
+            /* MINUS */
 
             minus.addEventListener(
                 "click",
@@ -454,18 +374,17 @@ function initializeProducts() {
                     let value =
                         Number(qty.innerText) || 1;
 
-
                     if (value > 1) {
                         value--;
                     }
 
-
                     qty.innerText =
                         value;
-
                 }
             );
 
+
+            /* PLUS */
 
             plus.addEventListener(
                 "click",
@@ -474,37 +393,38 @@ function initializeProducts() {
                     let value =
                         Number(qty.innerText) || 1;
 
-
                     value++;
-
 
                     qty.innerText =
                         value;
-
                 }
             );
 
+
+            /* ADD TO CART */
 
             addButton.addEventListener(
                 "click",
                 function () {
 
-
                     const id =
                         card.dataset.id;
-
 
                     const name =
                         card.dataset.name;
 
-
                     const price =
-                        Number(card.dataset.price) || 0;
+                        Number(
+                            card.dataset.price
+                        ) || 0;
 
+                    const imageElement =
+                        card.querySelector("img");
 
                     const image =
-                        card.querySelector("img").src;
-
+                        imageElement
+                            ? imageElement.src
+                            : "";
 
                     const quantity =
                         Number(qty.innerText) || 1;
@@ -538,26 +458,23 @@ function initializeProducts() {
                             quantity: quantity
 
                         });
-
                     }
 
 
-                    qty.innerText =
-                        "1";
+                    qty.innerText = "1";
 
 
                     updateCart();
 
 
                     showCustomAlert(
-                        name + " added to cart"
+                        name +
+                        " added to cart"
                     );
-
                 }
             );
 
         });
-
 }
 
 
@@ -569,29 +486,22 @@ function updateCart() {
 
     let count = 0;
 
-
     cart.forEach(function (item) {
 
-        count +=
-            item.quantity;
+        count += item.quantity;
 
     });
 
-
     const cartCount =
         document.getElementById("cartCount");
-
 
     if (cartCount) {
 
         cartCount.innerText =
             count;
-
     }
 
-
     showCart();
-
 }
 
 
@@ -604,19 +514,19 @@ function showCart() {
     const container =
         document.getElementById("cartItems");
 
-
     const empty =
         document.getElementById("emptyCart");
-
 
     const bottom =
         document.getElementById("cartBottom");
 
-
-    if (!container || !empty || !bottom) {
+    if (
+        !container ||
+        !empty ||
+        !bottom
+    ) {
         return;
     }
-
 
     container.innerHTML = "";
 
@@ -626,10 +536,8 @@ function showCart() {
         empty.style.display =
             "block";
 
-
         bottom.style.display =
             "none";
-
 
         return;
     }
@@ -637,7 +545,6 @@ function showCart() {
 
     empty.style.display =
         "none";
-
 
     bottom.style.display =
         "block";
@@ -652,14 +559,11 @@ function showCart() {
             item.price *
             item.quantity;
 
-
-        total +=
-            itemTotal;
+        total += itemTotal;
 
 
         const row =
             document.createElement("div");
-
 
         row.className =
             "cart-row";
@@ -672,18 +576,15 @@ function showCart() {
                 alt="${escapeHTML(item.name)}"
             >
 
-
             <div class="cart-info">
 
                 <strong>
                     ${escapeHTML(item.name)}
                 </strong>
 
-
                 <div>
                     ₹${item.price.toFixed(2)}
                 </div>
-
 
                 <div class="cart-controls">
 
@@ -694,11 +595,9 @@ function showCart() {
                         −
                     </button>
 
-
                     <span>
                         ${item.quantity}
                     </span>
-
 
                     <button
                         type="button"
@@ -709,11 +608,9 @@ function showCart() {
 
                 </div>
 
-
                 <div>
                     ₹${itemTotal.toFixed(2)}
                 </div>
-
 
                 <button
                     type="button"
@@ -735,14 +632,11 @@ function showCart() {
     const cartTotal =
         document.getElementById("cartTotal");
 
-
     if (cartTotal) {
 
         cartTotal.innerText =
             "₹" + total.toFixed(2);
-
     }
-
 }
 
 
@@ -756,12 +650,9 @@ function cartPlus(index) {
         return;
     }
 
-
     cart[index].quantity++;
 
-
     updateCart();
-
 }
 
 
@@ -775,19 +666,14 @@ function cartMinus(index) {
         return;
     }
 
-
     cart[index].quantity--;
-
 
     if (cart[index].quantity <= 0) {
 
         cart.splice(index, 1);
-
     }
 
-
     updateCart();
-
 }
 
 
@@ -801,24 +687,20 @@ function removeCart(index) {
         return;
     }
 
-
     cart.splice(index, 1);
 
-
     updateCart();
-
 }
 
 
 /* =========================================================
-   OPEN CART
+   CART SETUP
 ========================================================= */
 
 function setupCart() {
 
     const cartButton =
         document.getElementById("cartButton");
-
 
     if (cartButton) {
 
@@ -828,27 +710,23 @@ function setupCart() {
 
                 showCart();
 
-
                 const cartModal =
-                    document.getElementById("cartModal");
-
+                    document.getElementById(
+                        "cartModal"
+                    );
 
                 if (cartModal) {
 
                     cartModal.style.display =
                         "block";
-
                 }
-
             }
         );
-
     }
 
 
     const closeCart =
         document.getElementById("closeCart");
-
 
     if (closeCart) {
 
@@ -857,21 +735,18 @@ function setupCart() {
             function () {
 
                 const cartModal =
-                    document.getElementById("cartModal");
-
+                    document.getElementById(
+                        "cartModal"
+                    );
 
                 if (cartModal) {
 
                     cartModal.style.display =
                         "none";
-
                 }
-
             }
         );
-
     }
-
 }
 
 
@@ -884,16 +759,13 @@ function setupOrderButton() {
     const orderButton =
         document.getElementById("orderButton");
 
-
     if (!orderButton) {
         return;
     }
 
-
     orderButton.addEventListener(
         "click",
         function () {
-
 
             if (cart.length === 0) {
 
@@ -904,23 +776,24 @@ function setupOrderButton() {
                 return;
             }
 
-
             showOrder();
 
 
             const cartModal =
-                document.getElementById("cartModal");
-
+                document.getElementById(
+                    "cartModal"
+                );
 
             const orderModal =
-                document.getElementById("orderModal");
+                document.getElementById(
+                    "orderModal"
+                );
 
 
             if (cartModal) {
 
                 cartModal.style.display =
                     "none";
-
             }
 
 
@@ -928,12 +801,9 @@ function setupOrderButton() {
 
                 orderModal.style.display =
                     "block";
-
             }
-
         }
     );
-
 }
 
 
@@ -946,14 +816,11 @@ function showOrder() {
     const container =
         document.getElementById("orderItems");
 
-
     if (!container) {
         return;
     }
 
-
     container.innerHTML = "";
-
 
     let total = 0;
 
@@ -964,9 +831,7 @@ function showOrder() {
             item.price *
             item.quantity;
 
-
-        total +=
-            itemTotal;
+        total += itemTotal;
 
 
         container.innerHTML += `
@@ -978,41 +843,34 @@ function showOrder() {
                     × ${item.quantity}
                 </span>
 
-
                 <strong>
                     ₹${itemTotal.toFixed(2)}
                 </strong>
 
             </div>
-
         `;
-
     });
 
 
     const orderTotal =
         document.getElementById("orderTotal");
 
-
     if (orderTotal) {
 
         orderTotal.innerText =
             "₹" + total.toFixed(2);
-
     }
-
 }
 
 
 /* =========================================================
-   SEND ORDER -> GMAIL
+   SEND ORDER → GMAIL
 ========================================================= */
 
 function setupSendOrder() {
 
     const sendOrder =
         document.getElementById("sendOrder");
-
 
     if (!sendOrder) {
 
@@ -1028,17 +886,20 @@ function setupSendOrder() {
         "click",
         function () {
 
-
             const nameInput =
-                document.getElementById("customerName");
-
+                document.getElementById(
+                    "customerName"
+                );
 
             const mobileInput =
-                document.getElementById("customerMobile");
-
+                document.getElementById(
+                    "customerMobile"
+                );
 
             const addressInput =
-                document.getElementById("customerAddress");
+                document.getElementById(
+                    "customerAddress"
+                );
 
 
             const name =
@@ -1058,6 +919,8 @@ function setupSendOrder() {
                     ? addressInput.value.trim()
                     : "";
 
+
+            /* VALIDATION */
 
             if (name === "") {
 
@@ -1114,7 +977,7 @@ function setupSendOrder() {
             orderText +=
                 "Mobile: " +
                 mobile +
-                "\n\n";
+                "\n";
 
 
             orderText +=
@@ -1137,12 +1000,11 @@ function setupSendOrder() {
             cart.forEach(function (item) {
 
                 const itemTotal =
-                    item.price *
-                    item.quantity;
+                    Number(item.price) *
+                    Number(item.quantity);
 
 
-                total +=
-                    itemTotal;
+                total += itemTotal;
 
 
                 orderText +=
@@ -1152,7 +1014,6 @@ function setupSendOrder() {
                     " = ₹" +
                     itemTotal.toFixed(2) +
                     "\n";
-
             });
 
 
@@ -1161,7 +1022,9 @@ function setupSendOrder() {
                 total.toFixed(2);
 
 
-            /* OPEN GMAIL */
+            /* =================================================
+               OPEN GMAIL COMPOSE WINDOW
+            ================================================= */
 
             const gmailURL =
                 "https://mail.google.com/mail/?view=cm" +
@@ -1181,9 +1044,14 @@ function setupSendOrder() {
 
 
             console.log(
-                "Opening Gmail..."
+                "Gmail URL:",
+                gmailURL
             );
 
+
+            /*
+               Open Gmail in a new tab.
+            */
 
             window.open(
                 gmailURL,
@@ -1192,7 +1060,6 @@ function setupSendOrder() {
 
         }
     );
-
 }
 
 
@@ -1205,7 +1072,6 @@ function setupCloseOrder() {
     const closeOrder =
         document.getElementById("closeOrder");
 
-
     if (!closeOrder) {
         return;
     }
@@ -1216,19 +1082,17 @@ function setupCloseOrder() {
         function () {
 
             const orderModal =
-                document.getElementById("orderModal");
-
+                document.getElementById(
+                    "orderModal"
+                );
 
             if (orderModal) {
 
                 orderModal.style.display =
                     "none";
-
             }
-
         }
     );
-
 }
 
 
@@ -1239,8 +1103,9 @@ function setupCloseOrder() {
 function setupSearch() {
 
     const searchInput =
-        document.getElementById("searchInput");
-
+        document.getElementById(
+            "searchInput"
+        );
 
     if (!searchInput) {
         return;
@@ -1255,15 +1120,15 @@ function setupSearch() {
 
         }
     );
-
 }
 
 
 function applyCurrentSearch() {
 
     const searchInput =
-        document.getElementById("searchInput");
-
+        document.getElementById(
+            "searchInput"
+        );
 
     if (!searchInput) {
         return;
@@ -1280,33 +1145,30 @@ function applyCurrentSearch() {
         .querySelectorAll(".product-card")
         .forEach(function (card) {
 
-
             const name =
                 (
                     card.dataset.name || ""
-                )
-                .toLowerCase();
+                ).toLowerCase();
 
 
             card.style.display =
                 name.includes(text)
                     ? "flex"
                     : "none";
-
         });
-
 }
 
 
 /* =========================================================
-   GOOGLE MAP
+   GOOGLE MAP LOCATION
 ========================================================= */
 
 function setupLocation() {
 
     const locationButton =
-        document.getElementById("locationButton");
-
+        document.getElementById(
+            "locationButton"
+        );
 
     if (!locationButton) {
         return;
@@ -1316,7 +1178,6 @@ function setupLocation() {
     locationButton.addEventListener(
         "click",
         function () {
-
 
             const url =
                 "https://www.google.com/maps/dir/?api=1" +
@@ -1332,10 +1193,8 @@ function setupLocation() {
                 url,
                 "_blank"
             );
-
         }
     );
-
 }
 
 
@@ -1349,37 +1208,38 @@ function setupModalOutsideClick() {
         "click",
         function (event) {
 
-
             const cartModal =
-                document.getElementById("cartModal");
-
+                document.getElementById(
+                    "cartModal"
+                );
 
             const orderModal =
-                document.getElementById("orderModal");
+                document.getElementById(
+                    "orderModal"
+                );
 
 
             if (
+                cartModal &&
                 event.target === cartModal
             ) {
 
                 cartModal.style.display =
                     "none";
-
             }
 
 
             if (
+                orderModal &&
                 event.target === orderModal
             ) {
 
                 orderModal.style.display =
                     "none";
-
             }
 
         }
     );
-
 }
 
 
@@ -1392,7 +1252,7 @@ document.addEventListener(
     function () {
 
         console.log(
-            "SCRIPT JS LOADED"
+            "SCRIPT JS LOADED SUCCESSFULLY"
         );
 
 
