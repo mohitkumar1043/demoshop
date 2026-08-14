@@ -120,90 +120,99 @@ document
     );
 
 
-/* =========================================================
-   LOAD PRODUCTS
-========================================================= */
-
 async function loadProducts() {
 
     if (!checkLogin()) {
         return;
     }
 
+    const token = getToken();
 
     try {
 
-        showAlert(
-            "Loading products..."
+        showAlert("Loading products...");
+
+        const response = await fetch(
+            WORKER_URL + "/products",
+            {
+                method: "GET",
+
+                headers: {
+                    "Authorization":
+                        "Bearer " + token
+                },
+
+                cache: "no-store"
+            }
         );
 
+        const result =
+            await readJSON(response);
 
-        const response =
-            await fetch(
-                PRODUCTS_URL +
-                "?t=" +
-                Date.now(),
-                {
-                    cache: "no-store"
-                }
-            );
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
 
-
-        if (!response.ok) {
-
-            throw new Error(
-                "products.json HTTP " +
-                response.status
-            );
-
+            handleSessionExpired();
+            return;
         }
 
-
-        const data =
-            await response.json();
-
-
-        if (!Array.isArray(data)) {
+        if (
+            !response.ok ||
+            !result.success
+        ) {
 
             throw new Error(
-                "products.json must contain an array."
+                result.message ||
+                "Unable to load products."
             );
-
         }
 
+        if (!Array.isArray(result.products)) {
+
+            throw new Error(
+                "Invalid products data received from Worker."
+            );
+        }
 
         products =
-            data;
-
+            result.products;
 
         displayProducts();
 
-
         showAlert(
-            "Products loaded"
+            "Products loaded successfully."
         );
 
     }
-    catch(error) {
+    catch (error) {
 
         console.error(
             "LOAD PRODUCTS ERROR:",
             error
         );
 
-
-        document
-            .getElementById(
+        const container =
+            document.getElementById(
                 "adminProductList"
-            )
-            .innerHTML =
-                "<p>Unable to load products.</p>" +
-                "<p>" +
-                error.message +
-                "</p>";
+            );
 
+        if (container) {
+
+            container.innerHTML = `
+                <p>
+                    Unable to load products.
+                </p>
+
+                <p>
+                    ${escapeHTML(
+                        error.message
+                    )}
+                </p>
+            `;
+        }
     }
-
 }
 
 
