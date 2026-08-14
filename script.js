@@ -65,14 +65,9 @@ function loadProducts() {
         document.getElementById("productList");
 
     if (!container) {
-
-        console.error(
-            "productList element not found"
-        );
-
+        console.error("productList not found");
         return;
     }
-
 
     container.innerHTML = `
         <div class="loading-products">
@@ -80,77 +75,53 @@ function loadProducts() {
         </div>
     `;
 
-
     const url =
-        PRODUCTS_JSON + "?v=" + Date.now();
-
+        "./products.json?v=" + Date.now();
 
     fetch(url)
-
         .then(function (response) {
 
+            console.log(
+                "products.json HTTP status:",
+                response.status
+            );
+
             if (!response.ok) {
-
                 throw new Error(
-                    "Unable to load products. HTTP status: " +
-                    response.status
+                    "HTTP Error: " + response.status
                 );
-
             }
 
             return response.json();
 
         })
-
-        .then(function (data) {
+        .then(function (products) {
 
             console.log(
-                "Products JSON loaded:",
-                data
+                "Products loaded:",
+                products
             );
 
-
             /*
-               Supports BOTH formats:
+             * Your products.json is a direct array.
+             */
+            if (!Array.isArray(products)) {
 
-               1. [
-                    {...},
-                    {...}
-                  ]
-
-               2. {
-                    "products": [
-                       {...},
-                       {...}
-                    ]
-                  }
-            */
-
-            let products = data;
-
-
-            if (
-                data &&
-                !Array.isArray(data) &&
-                Array.isArray(data.products)
-            ) {
-
-                products = data.products;
+                throw new Error(
+                    "products.json must contain an array"
+                );
 
             }
-
 
             displayProducts(products);
 
         })
-
         .catch(function (error) {
 
             console.error(
-                "Product loading error:",
+                "PRODUCT FETCH ERROR:",
                 error
             );
-
 
             container.innerHTML = `
                 <div class="no-products">
@@ -159,14 +130,14 @@ function loadProducts() {
 
                     <br><br>
 
-                    Please try again later.
+                    Error:
+                    ${escapeHTML(error.message)}
 
                 </div>
             `;
 
         });
 }
-
 
 /* =========================================================
    DISPLAY PRODUCTS
