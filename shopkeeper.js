@@ -1,6 +1,7 @@
+```javascript
 /* =========================================================
    SHOPKEEPER PRODUCT MANAGER
-   Cloudflare Worker secured version
+   Cloudflare Worker + GitHub Pages
 ========================================================= */
 
 
@@ -25,7 +26,7 @@ let editingId = null;
 
 
 /* =========================================================
-   SECURITY
+   TOKEN
 ========================================================= */
 
 function getToken() {
@@ -68,47 +69,54 @@ function showAlert(message) {
         alertBox.style.display =
             "none";
 
-    }, 2500);
+    }, 3000);
 
 }
 
 
 /* =========================================================
-   HTML SECURITY
+   LOGIN ERROR
+========================================================= */
+
+function showLoginError(message) {
+
+    const errorBox =
+        document.getElementById(
+            "loginError"
+        );
+
+    if (!errorBox) {
+
+        alert(message);
+
+        return;
+
+    }
+
+    errorBox.innerText =
+        "⚠ " + message;
+
+    errorBox.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
 ========================================================= */
 
 function escapeHTML(value) {
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     div.textContent =
         String(value ?? "");
 
     return div.innerHTML;
-
-}
-
-
-/* =========================================================
-   CHECK LOGIN
-========================================================= */
-
-function checkLogin() {
-
-    const token =
-        getToken();
-
-    if (!token) {
-
-        window.location.href =
-            "shopkeeper.html";
-
-        return false;
-
-    }
-
-    return true;
 
 }
 
@@ -134,13 +142,13 @@ if (loginForm) {
 
             const usernameElement =
                 document.getElementById(
-                    "username"
+                    "shopkeeperUsername"
                 );
 
 
             const passwordElement =
                 document.getElementById(
-                    "password"
+                    "shopkeeperPassword"
                 );
 
 
@@ -222,10 +230,14 @@ if (loginForm) {
 
             try {
 
+                console.log(
+                    "Sending login request..."
+                );
+
+
                 const response =
                     await fetch(
-                        WORKER_URL +
-                        "/login",
+                        WORKER_URL + "/login",
                         {
 
                             method: "POST",
@@ -252,21 +264,22 @@ if (loginForm) {
                     );
 
 
-                let result = {};
+                console.log(
+                    "Login HTTP status:",
+                    response.status
+                );
 
-                try {
 
-                    result =
-                        await response.json();
-
-                }
-                catch (jsonError) {
-
-                    throw new Error(
-                        "Invalid server response."
+                const result =
+                    await readJSON(
+                        response
                     );
 
-                }
+
+                console.log(
+                    "Login response:",
+                    result
+                );
 
 
                 if (
@@ -291,12 +304,9 @@ if (loginForm) {
                 }
 
 
-                /*
-                   Store only the session token.
-
-                   GitHub token is NEVER stored
-                   in browser.
-                */
+                /* =========================
+                   SAVE JWT
+                ========================== */
 
                 sessionStorage.setItem(
                     "shopkeeperToken",
@@ -312,19 +322,30 @@ if (loginForm) {
                 }
 
 
-                /*
-                   Go to dashboard.
-                */
+                /* =========================
+                   SHOW ADMIN AREA
+                ========================== */
 
                 setTimeout(function () {
 
-                    window.location.href =
-                        "shopkeeper-dashboard.html";
+                    document.getElementById(
+                        "loginCard"
+                    ).style.display =
+                        "none";
+
+
+                    document.getElementById(
+                        "adminArea"
+                    ).style.display =
+                        "block";
+
+
+                    loadProducts();
 
                 }, 500);
 
-
             }
+
             catch (error) {
 
                 console.error(
@@ -371,37 +392,6 @@ if (loginForm) {
 
 
 /* =========================================================
-   LOGIN ERROR
-========================================================= */
-
-function showLoginError(message) {
-
-    const errorBox =
-        document.getElementById(
-            "loginError"
-        );
-
-
-    if (!errorBox) {
-
-        alert(message);
-
-        return;
-
-    }
-
-
-    errorBox.innerText =
-        "⚠ " + message;
-
-
-    errorBox.style.display =
-        "block";
-
-}
-
-
-/* =========================================================
    LOGOUT
 ========================================================= */
 
@@ -411,10 +401,45 @@ function logout() {
         "shopkeeperToken"
     );
 
+    products = [];
+
     editingId = null;
 
-    window.location.href =
-        "shopkeeper.html";
+    document.getElementById(
+        "adminArea"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "loginCard"
+    ).style.display =
+        "block";
+
+
+    const username =
+        document.getElementById(
+            "shopkeeperUsername"
+        );
+
+    const password =
+        document.getElementById(
+            "shopkeeperPassword"
+        );
+
+
+    if (username) {
+
+        username.value = "";
+
+    }
+
+
+    if (password) {
+
+        password.value = "";
+
+    }
 
 }
 
@@ -424,13 +449,6 @@ function logout() {
 ========================================================= */
 
 async function loadProducts() {
-
-    if (!checkLogin()) {
-
-        return;
-
-    }
-
 
     try {
 
@@ -445,9 +463,11 @@ async function loadProducts() {
                 "?t=" +
                 Date.now(),
                 {
+
                     method: "GET",
 
                     cache: "no-store"
+
                 }
             );
 
@@ -469,7 +489,7 @@ async function loadProducts() {
         if (!Array.isArray(data)) {
 
             throw new Error(
-                "Invalid products.json format."
+                "products.json must contain an array."
             );
 
         }
@@ -486,12 +506,12 @@ async function loadProducts() {
             "Products loaded"
         );
 
-
     }
+
     catch (error) {
 
         console.error(
-            "LOAD ERROR:",
+            "LOAD PRODUCTS ERROR:",
             error
         );
 
@@ -511,7 +531,9 @@ async function loadProducts() {
                 </p>
 
                 <p>
-                    ${escapeHTML(error.message)}
+                    ${escapeHTML(
+                        error.message
+                    )}
                 </p>
                 `;
 
@@ -569,12 +591,6 @@ function displayProducts() {
     }
 
 
-    /*
-       Sort only for display.
-
-       IDs are NOT changed.
-    */
-
     const sortedProducts =
         [...products].sort(
             function (a, b) {
@@ -609,7 +625,7 @@ function displayProducts() {
                 String(product.available)
                     .trim()
                     .toUpperCase() ===
-                    "YES";
+                "YES";
 
 
             item.innerHTML =
@@ -622,60 +638,42 @@ function displayProducts() {
                     "
                 >
 
+                <div class="admin-product-info">
 
-                <div
-                    class="admin-product-info">
-
-
-                    <div
-                        class="product-id">
+                    <div class="product-id">
 
                         Product ID:
                         ${escapeHTML(product.id)}
 
                     </div>
 
-
                     <h3>
-
                         ${escapeHTML(
                             product.name
                         )}
-
                     </h3>
 
-
                     <p>
-
                         ${escapeHTML(
                             product.description || ""
                         )}
-
                     </p>
 
-
                     <p>
-
                         Price:
                         ₹${Number(
                             product.price || 0
                         ).toFixed(2)}
-
                     </p>
 
-
                     <p>
-
                         Discount:
                         ${Number(
                             product.discount || 0
                         )}%
-
                     </p>
 
-
-                    <p
-                        class="product-status">
+                    <p class="product-status">
 
                         ${
                             available
@@ -685,43 +683,27 @@ function displayProducts() {
 
                     </p>
 
-
-                    <div
-                        class="admin-actions">
-
+                    <div class="admin-actions">
 
                         <button
                             type="button"
                             class="edit-button"
-                            data-id="${escapeHTML(product.id)}">
-
+                        >
                             ✏️ Edit
-
                         </button>
-
 
                         <button
                             type="button"
                             class="delete-button"
-                            data-id="${escapeHTML(product.id)}">
-
+                        >
                             🗑 Delete
-
                         </button>
 
-
                     </div>
-
 
                 </div>
                 `;
 
-
-            /*
-               Event listeners instead of
-               putting user data directly
-               inside onclick.
-            */
 
             const editButton =
                 item.querySelector(
@@ -786,13 +768,6 @@ if (productForm) {
         async function (event) {
 
             event.preventDefault();
-
-
-            if (!checkLogin()) {
-
-                return;
-
-            }
 
 
             const name =
@@ -875,68 +850,40 @@ if (productForm) {
             }
 
 
-            /*
-               IMPORTANT:
+            const product = {
 
-               ID is NOT generated here.
+                name:
+                    name,
 
-               Cloudflare Worker generates
-               the ID when adding.
-            */
+                description:
+                    description,
+
+                price:
+                    price,
+
+                discount:
+                    discount,
+
+                imageURL:
+                    imageURL,
+
+                available:
+                    available
+
+            };
+
 
             if (editingId !== null) {
 
-                await updateProductOnServer({
-
-                    id:
-                        editingId,
-
-                    name:
-                        name,
-
-                    description:
-                        description,
-
-                    price:
-                        price,
-
-                    discount:
-                        discount,
-
-                    imageURL:
-                        imageURL,
-
-                    available:
-                        available
-
-                });
+                product.id =
+                    editingId;
 
             }
-            else {
 
-                await addProductOnServer({
 
-                    name:
-                        name,
-
-                    description:
-                        description,
-
-                    price:
-                        price,
-
-                    discount:
-                        discount,
-
-                    imageURL:
-                        imageURL,
-
-                    available:
-                        available
-
-                });
-
-            }
+            await saveProductsToWorker(
+                product
+            );
 
         }
     );
@@ -945,10 +892,20 @@ if (productForm) {
 
 
 /* =========================================================
-   ADD PRODUCT
+   SAVE PRODUCTS
+   IMPORTANT:
+
+   Your Worker currently expects:
+
+   {
+       products: [...]
+   }
+
 ========================================================= */
 
-async function addProductOnServer(product) {
+async function saveProductsToWorker(
+    product
+) {
 
     const token =
         getToken();
@@ -956,9 +913,7 @@ async function addProductOnServer(product) {
 
     if (!token) {
 
-        showAlert(
-            "Please login first."
-        );
+        showLoginAgain();
 
         return;
 
@@ -968,8 +923,80 @@ async function addProductOnServer(product) {
     try {
 
         showAlert(
-            "Adding product..."
+            "Saving product..."
         );
+
+
+        /*
+           Make a copy of current
+           products.
+        */
+
+        let newProducts =
+            [...products];
+
+
+        if (editingId !== null) {
+
+            /*
+               UPDATE
+            */
+
+            const index =
+                newProducts.findIndex(
+                    function (item) {
+
+                        return String(item.id) ===
+                            String(editingId);
+
+                    }
+                );
+
+
+            if (index === -1) {
+
+                throw new Error(
+                    "Product not found."
+                );
+
+            }
+
+
+            newProducts[index] = {
+
+                ...newProducts[index],
+
+                ...product,
+
+                id:
+                    newProducts[index].id
+
+            };
+
+        }
+
+        else {
+
+            /*
+               NEW PRODUCT
+
+               Temporary ID is used only
+               for the browser request.
+
+               Worker will assign permanent ID.
+            */
+
+            newProducts.push({
+
+                ...product,
+
+                id:
+                    "new-" +
+                    Date.now()
+
+            });
+
+        }
 
 
         const response =
@@ -994,11 +1021,8 @@ async function addProductOnServer(product) {
                     body:
                         JSON.stringify({
 
-                            action:
-                                "add",
-
-                            product:
-                                product
+                            products:
+                                newProducts
 
                         })
 
@@ -1007,7 +1031,9 @@ async function addProductOnServer(product) {
 
 
         const result =
-            await readJSON(response);
+            await readJSON(
+                response
+            );
 
 
         if (
@@ -1015,7 +1041,7 @@ async function addProductOnServer(product) {
             response.status === 403
         ) {
 
-            handleSessionExpired();
+            showLoginAgain();
 
             return;
 
@@ -1029,49 +1055,52 @@ async function addProductOnServer(product) {
 
             throw new Error(
                 result.message ||
-                "Unable to add product."
+                "Unable to save products."
             );
 
         }
 
 
         /*
-           Worker returns the newly
-           generated product ID.
+           Worker returns final products.
         */
 
-        if (result.product) {
+        if (
+            Array.isArray(
+                result.products
+            )
+        ) {
 
-            console.log(
-                "New Product ID:",
-                result.product.id
-            );
+            products =
+                result.products;
 
         }
 
 
         showAlert(
-            "Product added successfully."
+            editingId !== null
+                ? "Product updated successfully."
+                : "Product added successfully."
         );
 
 
         resetForm();
 
-
-        await loadProducts();
+        displayProducts();
 
     }
+
     catch (error) {
 
         console.error(
-            "ADD ERROR:",
+            "SAVE ERROR:",
             error
         );
 
 
         showAlert(
             error.message ||
-            "Unable to add product."
+            "Unable to save product."
         );
 
     }
@@ -1084,13 +1113,6 @@ async function addProductOnServer(product) {
 ========================================================= */
 
 function editProduct(id) {
-
-    if (!checkLogin()) {
-
-        return;
-
-    }
-
 
     const product =
         products.find(
@@ -1124,23 +1146,10 @@ function editProduct(id) {
         "Update Product";
 
 
-    /*
-       Product ID is displayed
-       but cannot be changed.
-    */
-
-    const idInput =
-        document.getElementById(
-            "productId"
-        );
-
-
-    idInput.value =
+    document.getElementById(
+        "productId"
+    ).value =
         product.id;
-
-
-    idInput.readOnly =
-        true;
 
 
     document.getElementById(
@@ -1180,7 +1189,7 @@ function editProduct(id) {
         String(product.available)
             .trim()
             .toUpperCase() ===
-            "YES";
+        "YES";
 
 
     updateImagePreview();
@@ -1212,137 +1221,10 @@ function editProduct(id) {
 
 
 /* =========================================================
-   UPDATE PRODUCT ON SERVER
-========================================================= */
-
-async function updateProductOnServer(product) {
-
-    const token =
-        getToken();
-
-
-    if (!token) {
-
-        showAlert(
-            "Please login first."
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        showAlert(
-            "Updating product..."
-        );
-
-
-        const response =
-            await fetch(
-                WORKER_URL +
-                "/products",
-                {
-
-                    method: "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json",
-
-                        "Authorization":
-                            "Bearer " +
-                            token
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            action:
-                                "edit",
-
-                            product:
-                                product
-
-                        })
-
-                }
-            );
-
-
-        const result =
-            await readJSON(response);
-
-
-        if (
-            response.status === 401 ||
-            response.status === 403
-        ) {
-
-            handleSessionExpired();
-
-            return;
-
-        }
-
-
-        if (
-            !response.ok ||
-            !result.success
-        ) {
-
-            throw new Error(
-                result.message ||
-                "Unable to update product."
-            );
-
-        }
-
-
-        showAlert(
-            "Product updated successfully."
-        );
-
-
-        resetForm();
-
-
-        await loadProducts();
-
-    }
-    catch (error) {
-
-        console.error(
-            "UPDATE ERROR:",
-            error
-        );
-
-
-        showAlert(
-            error.message ||
-            "Unable to update product."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
    DELETE PRODUCT
 ========================================================= */
 
 async function deleteProduct(id) {
-
-    if (!checkLogin()) {
-
-        return;
-
-    }
-
 
     const product =
         products.find(
@@ -1387,12 +1269,41 @@ async function deleteProduct(id) {
         getToken();
 
 
+    if (!token) {
+
+        showLoginAgain();
+
+        return;
+
+    }
+
+
     try {
 
         showAlert(
             "Deleting product..."
         );
 
+
+        /*
+           Remove product locally.
+        */
+
+        const newProducts =
+            products.filter(
+                function (item) {
+
+                    return String(item.id) !==
+                        String(id);
+
+                }
+            );
+
+
+        /*
+           Send complete product array
+           to the Worker.
+        */
 
         const response =
             await fetch(
@@ -1416,11 +1327,8 @@ async function deleteProduct(id) {
                     body:
                         JSON.stringify({
 
-                            action:
-                                "delete",
-
-                            productId:
-                                product.id
+                            products:
+                                newProducts
 
                         })
 
@@ -1429,7 +1337,9 @@ async function deleteProduct(id) {
 
 
         const result =
-            await readJSON(response);
+            await readJSON(
+                response
+            );
 
 
         if (
@@ -1437,7 +1347,7 @@ async function deleteProduct(id) {
             response.status === 403
         ) {
 
-            handleSessionExpired();
+            showLoginAgain();
 
             return;
 
@@ -1457,15 +1367,22 @@ async function deleteProduct(id) {
         }
 
 
-        /*
-           IMPORTANT:
+        if (
+            Array.isArray(
+                result.products
+            )
+        ) {
 
-           Frontend does NOT generate
-           the next ID.
+            products =
+                result.products;
 
-           The Worker permanently
-           remembers used IDs.
-        */
+        }
+        else {
+
+            products =
+                newProducts;
+
+        }
 
 
         showAlert(
@@ -1475,10 +1392,10 @@ async function deleteProduct(id) {
 
         resetForm();
 
-
-        await loadProducts();
+        displayProducts();
 
     }
+
     catch (error) {
 
         console.error(
@@ -1498,7 +1415,7 @@ async function deleteProduct(id) {
 
 
 /* =========================================================
-   READ JSON SAFELY
+   READ JSON
 ========================================================= */
 
 async function readJSON(response) {
@@ -1508,6 +1425,7 @@ async function readJSON(response) {
         return await response.json();
 
     }
+
     catch (error) {
 
         return {
@@ -1528,7 +1446,7 @@ async function readJSON(response) {
    SESSION EXPIRED
 ========================================================= */
 
-function handleSessionExpired() {
+function showLoginAgain() {
 
     sessionStorage.removeItem(
         "shopkeeperToken"
@@ -1540,8 +1458,16 @@ function handleSessionExpired() {
     );
 
 
-    window.location.href =
-        "shopkeeper.html";
+    document.getElementById(
+        "adminArea"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "loginCard"
+    ).style.display =
+        "block";
 
 }
 
@@ -1569,35 +1495,22 @@ function resetForm() {
     }
 
 
-    const title =
-        document.getElementById(
-            "formTitle"
-        );
+    document.getElementById(
+        "formTitle"
+    ).innerText =
+        "Add Product";
 
 
-    if (title) {
-
-        title.innerText =
-            "Add Product";
-
-    }
+    document.getElementById(
+        "productId"
+    ).value =
+        "";
 
 
-    const idInput =
-        document.getElementById(
-            "productId"
-        );
-
-
-    if (idInput) {
-
-        idInput.value =
-            "";
-
-        idInput.readOnly =
-            true;
-
-    }
+    document.getElementById(
+        "productAvailable"
+    ).checked =
+        true;
 
 
     const cancelButton =
@@ -1610,20 +1523,6 @@ function resetForm() {
 
         cancelButton.style.display =
             "none";
-
-    }
-
-
-    const available =
-        document.getElementById(
-            "productAvailable"
-        );
-
-
-    if (available) {
-
-        available.checked =
-            true;
 
     }
 
@@ -1693,6 +1592,26 @@ if (refreshButton) {
 
 
 /* =========================================================
+   LOGOUT BUTTON
+========================================================= */
+
+const logoutButton =
+    document.getElementById(
+        "logoutButton"
+    );
+
+
+if (logoutButton) {
+
+    logoutButton.addEventListener(
+        "click",
+        logout
+    );
+
+}
+
+
+/* =========================================================
    IMAGE PREVIEW
 ========================================================= */
 
@@ -1713,7 +1632,7 @@ if (productImage) {
 
 
 /* =========================================================
-   UPDATE IMAGE PREVIEW
+   IMAGE PREVIEW
 ========================================================= */
 
 function updateImagePreview() {
@@ -1766,7 +1685,7 @@ function updateImagePreview() {
 
 
 /* =========================================================
-   DASHBOARD START
+   START
 ========================================================= */
 
 document.addEventListener(
@@ -1774,31 +1693,33 @@ document.addEventListener(
     function () {
 
         /*
-           Only run dashboard functions
-           when dashboard elements exist.
+           If an existing JWT is present,
+           show dashboard directly.
         */
 
-        const adminArea =
+        const token =
+            getToken();
+
+
+        if (token) {
+
+            document.getElementById(
+                "loginCard"
+            ).style.display =
+                "none";
+
+
             document.getElementById(
                 "adminArea"
-            );
+            ).style.display =
+                "block";
 
 
-        if (!adminArea) {
-
-            return;
-
-        }
-
-
-        if (!checkLogin()) {
-
-            return;
+            loadProducts();
 
         }
-
-
-        loadProducts();
 
     }
 );
+```
+
