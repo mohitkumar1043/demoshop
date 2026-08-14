@@ -1,39 +1,27 @@
 ```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Shopkeeper Product Manager</title>
 
-    <link
-        rel="stylesheet"
-        href="shopkeeper.css"
-    >
+    <link rel="stylesheet" href="shopkeeper.css">
 </head>
 
 <body>
 
-    <!-- =====================================================
-         ALERT
-    ====================================================== -->
-
     <div id="adminAlert"></div>
 
-
-    <!-- =====================================================
+    <!-- =========================
          LOGIN
-    ====================================================== -->
+    ========================== -->
 
-    <section
-        id="loginCard"
-        class="login-card"
-    >
+    <section id="loginCard" class="login-card">
 
         <div class="login-logo">
             🏪
@@ -41,10 +29,11 @@
 
         <h1>Shopkeeper Login</h1>
 
-        <p>
-            Login to manage your products
-        </p>
+        <p>Login to manage your products</p>
 
+        <div id="loginError"
+             style="display:none;">
+        </div>
 
         <form id="loginForm">
 
@@ -61,7 +50,6 @@
                 required
             >
 
-
             <label for="shopkeeperPassword">
                 Password
             </label>
@@ -75,12 +63,19 @@
                 required
             >
 
-
             <button
                 type="submit"
+                id="loginButton"
                 class="main-button"
             >
-                Login
+                <span id="loginText">Login</span>
+
+                <span
+                    id="loginLoader"
+                    style="display:none;"
+                >
+                    ⏳
+                </span>
             </button>
 
         </form>
@@ -88,16 +83,14 @@
     </section>
 
 
-    <!-- =====================================================
+    <!-- =========================
          ADMIN AREA
-    ====================================================== -->
+    ========================== -->
 
     <section
         id="adminArea"
         style="display:none;"
     >
-
-        <!-- HEADER -->
 
         <header class="admin-header">
 
@@ -113,12 +106,10 @@
 
             </div>
 
-
             <button
                 type="button"
                 id="logoutButton"
                 class="logout-button"
-                onclick="logout()"
             >
                 Logout
             </button>
@@ -128,10 +119,9 @@
 
         <main class="admin-container">
 
-
-            <!-- =================================================
+            <!-- =========================
                  PRODUCT FORM
-            ================================================== -->
+            ========================== -->
 
             <section class="product-form-card">
 
@@ -139,10 +129,7 @@
                     Add Product
                 </h2>
 
-
                 <form id="productForm">
-
-                    <!-- PRODUCT ID -->
 
                     <label for="productId">
                         Product ID
@@ -156,8 +143,6 @@
                     >
 
 
-                    <!-- NAME -->
-
                     <label for="productName">
                         Product Name
                     </label>
@@ -170,8 +155,6 @@
                     >
 
 
-                    <!-- DESCRIPTION -->
-
                     <label for="productDescription">
                         Description
                     </label>
@@ -181,8 +164,6 @@
                         placeholder="Enter product description"
                     ></textarea>
 
-
-                    <!-- PRICE -->
 
                     <label for="productPrice">
                         Price
@@ -198,8 +179,6 @@
                     >
 
 
-                    <!-- DISCOUNT -->
-
                     <label for="productDiscount">
                         Discount (%)
                     </label>
@@ -214,8 +193,6 @@
                     >
 
 
-                    <!-- IMAGE -->
-
                     <label for="productImage">
                         Product Image URL
                     </label>
@@ -227,15 +204,11 @@
                     >
 
 
-                    <!-- IMAGE PREVIEW -->
-
                     <div
                         id="imagePreview"
                         class="image-preview"
                     ></div>
 
-
-                    <!-- AVAILABLE -->
 
                     <label class="available-label">
 
@@ -249,8 +222,6 @@
 
                     </label>
 
-
-                    <!-- BUTTONS -->
 
                     <button
                         type="submit"
@@ -274,9 +245,9 @@
             </section>
 
 
-            <!-- =================================================
+            <!-- =========================
                  PRODUCT LIST
-            ================================================== -->
+            ========================== -->
 
             <section class="product-list-card">
 
@@ -313,9 +284,7 @@
                     id="adminProductList"
                     class="admin-product-list"
                 >
-
                     Loading products...
-
                 </div>
 
             </section>
@@ -325,14 +294,14 @@
     </section>
 
 
-    <!-- =====================================================
-         JAVASCRIPT
-    ====================================================== -->
-
     <script src="shopkeeper.js"></script>
 
 </body>
+
 </html>
 ```
+
+
+
 
 
