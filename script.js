@@ -980,11 +980,7 @@ function applyCurrentSearch() {
  
 
 /* =========================================================
-   GET SHOP LOCATION → MAP APP
-========================================================= */
-
-/* =========================================================
-   GET SHOP LOCATION → MAP APP
+   SHOP LOCATION
 ========================================================= */
 
 function setupLocation() {
@@ -999,84 +995,32 @@ function setupLocation() {
 
     locationButton.addEventListener("click", function () {
 
-        const latitude = SHOP_LATITUDE;
-        const longitude = SHOP_LONGITUDE;
+        const lat = SHOP_LATITUDE;
+        const lng = SHOP_LONGITUDE;
 
-        if (!latitude || !longitude) {
-            showCustomAlert("Shop location not configured");
+        if (!lat || !lng) {
+            alert("Shop location not configured");
             return;
         }
 
         /*
-         * Android
-         * Try Google Maps app
+         * Google Maps app / Android
          */
-        const androidMapsURL =
+        const googleMapsApp =
             "google.navigation:q=" +
-            encodeURIComponent(
-                latitude + "," + longitude
-            );
+            lat +
+            "," +
+            lng;
 
-        /*
-         * iPhone / iPad
-         * Apple Maps
-         */
-        const iosMapsURL =
-            "http://maps.apple.com/?daddr=" +
-            encodeURIComponent(
-                latitude + "," + longitude
-            );
-
-        /*
-         * Desktop / fallback
-         * Google Maps
-         */
-        const googleMapsURL =
-            "https://www.google.com/maps/dir/?api=1" +
-            "&destination=" +
-            encodeURIComponent(
-                latitude + "," + longitude
-            );
-
-        const userAgent =
-            navigator.userAgent ||
-            navigator.vendor ||
-            window.opera;
-
-        /*
-         * Android
-         */
-        if (/android/i.test(userAgent)) {
-
-            window.location.href =
-                androidMapsURL;
-
-            return;
-        }
-
-        /*
-         * iPhone / iPad
-         */
-        if (
-            /iPad|iPhone|iPod/.test(userAgent) &&
-            !window.MSStream
-        ) {
-
-            window.location.href =
-                iosMapsURL;
-
-            return;
-        }
-
-        /*
-         * Laptop / Desktop
-         */
-        window.open(
-            googleMapsURL,
-            "_blank"
+        console.log(
+            "Opening Google Maps:",
+            googleMapsApp
         );
 
+        window.location.href = googleMapsApp;
+
     });
+
 }
 
 /* =========================================================
