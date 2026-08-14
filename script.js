@@ -9,8 +9,8 @@
    CONFIGURATION
 ========================================================= */
 
-const SHOP_LATITUDE = "27.123456";
-const SHOP_LONGITUDE = "75.123456";
+const SHOP_LATITUDE = "27.842087";
+const SHOP_LONGITUDE = "75.264468";
 
 const SHOPKEEPER_EMAIL = "pankajsal880@gmail.com";
 
