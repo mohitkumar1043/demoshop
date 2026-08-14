@@ -1,297 +1,230 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Shopkeeper Product Manager</title>
+    <title>Shopkeeper Dashboard</title>
 
-    <link rel="stylesheet" href="shopkeeper.css">
+    <link
+        rel="stylesheet"
+        href="shopkeeper.css"
+    >
+
 </head>
 
 <body>
 
     <div id="adminAlert"></div>
 
-    <!-- =========================
-         LOGIN
-    ========================== -->
 
-    <section id="loginCard" class="login-card">
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-        <div class="login-logo">
-            🏪
+    <header class="header">
+
+        <div>
+
+            <h1>
+                🏪 Shopkeeper Dashboard
+            </h1>
+
+            <p>
+                Manage your products
+            </p>
+
         </div>
 
-        <h1>Shopkeeper Login</h1>
+        <button
+            id="logoutButton"
+            class="logout-button"
+        >
+            Logout
+        </button>
 
-        <p>Login to manage your products</p>
+    </header>
 
-        <div id="loginError"
-             style="display:none;">
-        </div>
 
-        <form id="loginForm">
+    <main class="container">
 
-            <label for="shopkeeperUsername">
-                Shopkeeper ID
-            </label>
 
-            <input
-                type="text"
-                id="shopkeeperUsername"
-                name="username"
-                placeholder="Enter shopkeeper ID"
-                autocomplete="username"
-                required
-            >
+        <!-- =================================================
+             ADD / EDIT PRODUCT
+        ================================================== -->
 
-            <label for="shopkeeperPassword">
-                Password
-            </label>
+        <section class="card">
 
-            <input
-                type="password"
-                id="shopkeeperPassword"
-                name="password"
-                placeholder="Enter password"
-                autocomplete="current-password"
-                required
-            >
+            <h2 id="formTitle">
+                Add Product
+            </h2>
 
-            <button
-                type="submit"
-                id="loginButton"
-                class="main-button"
-            >
-                <span id="loginText">Login</span>
 
-                <span
-                    id="loginLoader"
-                    style="display:none;"
+            <form id="productForm">
+
+
+                <label>
+                    Product ID
+                </label>
+
+                <input
+                    type="text"
+                    id="productId"
+                    readonly
+                    placeholder="Automatic"
                 >
-                    ⏳
-                </span>
-            </button>
-
-        </form>
-
-    </section>
 
 
-    <!-- =========================
-         ADMIN AREA
-    ========================== -->
+                <label>
+                    Product Name
+                </label>
 
-    <section
-        id="adminArea"
-        style="display:none;"
-    >
-
-        <header class="admin-header">
-
-            <div>
-
-                <h1>
-                    Shopkeeper Product Manager
-                </h1>
-
-                <p>
-                    Manage your shop products
-                </p>
-
-            </div>
-
-            <button
-                type="button"
-                id="logoutButton"
-                class="logout-button"
-            >
-                Logout
-            </button>
-
-        </header>
+                <input
+                    type="text"
+                    id="productName"
+                    placeholder="Enter product name"
+                    required
+                >
 
 
-        <main class="admin-container">
+                <label>
+                    Description
+                </label>
 
-            <!-- =========================
-                 PRODUCT FORM
-            ========================== -->
-
-            <section class="product-form-card">
-
-                <h2 id="formTitle">
-                    Add Product
-                </h2>
-
-                <form id="productForm">
-
-                    <label for="productId">
-                        Product ID
-                    </label>
-
-                    <input
-                        type="text"
-                        id="productId"
-                        readonly
-                        placeholder="Automatic"
-                    >
+                <textarea
+                    id="productDescription"
+                    placeholder="Enter product description"
+                ></textarea>
 
 
-                    <label for="productName">
-                        Product Name
-                    </label>
+                <label>
+                    Price
+                </label>
 
-                    <input
-                        type="text"
-                        id="productName"
-                        placeholder="Enter product name"
-                        required
-                    >
-
-
-                    <label for="productDescription">
-                        Description
-                    </label>
-
-                    <textarea
-                        id="productDescription"
-                        placeholder="Enter product description"
-                    ></textarea>
+                <input
+                    type="number"
+                    id="productPrice"
+                    min="0"
+                    step="0.01"
+                    placeholder="Enter price"
+                    required
+                >
 
 
-                    <label for="productPrice">
-                        Price
-                    </label>
+                <label>
+                    Discount (%)
+                </label>
 
-                    <input
-                        type="number"
-                        id="productPrice"
-                        min="0"
-                        step="0.01"
-                        placeholder="Enter price"
-                        required
-                    >
-
-
-                    <label for="productDiscount">
-                        Discount (%)
-                    </label>
-
-                    <input
-                        type="number"
-                        id="productDiscount"
-                        min="0"
-                        max="100"
-                        step="1"
-                        value="0"
-                    >
+                <input
+                    type="number"
+                    id="productDiscount"
+                    min="0"
+                    max="100"
+                    value="0"
+                >
 
 
-                    <label for="productImage">
-                        Product Image URL
-                    </label>
+                <label>
+                    Product Image URL
+                </label>
 
-                    <input
-                        type="url"
-                        id="productImage"
-                        placeholder="https://example.com/image.jpg"
-                    >
-
-
-                    <div
-                        id="imagePreview"
-                        class="image-preview"
-                    ></div>
-
-
-                    <label class="available-label">
-
-                        <input
-                            type="checkbox"
-                            id="productAvailable"
-                            checked
-                        >
-
-                        Product Available
-
-                    </label>
-
-
-                    <button
-                        type="submit"
-                        class="main-button"
-                    >
-                        Save Product
-                    </button>
-
-
-                    <button
-                        type="button"
-                        id="cancelEdit"
-                        class="cancel-button"
-                        style="display:none;"
-                    >
-                        Cancel Edit
-                    </button>
-
-                </form>
-
-            </section>
-
-
-            <!-- =========================
-                 PRODUCT LIST
-            ========================== -->
-
-            <section class="product-list-card">
-
-                <div class="product-list-header">
-
-                    <div>
-
-                        <h2>
-                            Products
-                        </h2>
-
-                        <p>
-                            Total:
-                            <strong id="productCount">
-                                0
-                            </strong>
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        id="refreshButton"
-                        class="refresh-button"
-                    >
-                        Refresh
-                    </button>
-
-                </div>
+                <input
+                    type="url"
+                    id="productImage"
+                    placeholder="https://example.com/image.jpg"
+                >
 
 
                 <div
-                    id="adminProductList"
-                    class="admin-product-list"
+                    id="imagePreview"
+                    class="image-preview"
+                ></div>
+
+
+                <label class="available">
+
+                    <input
+                        type="checkbox"
+                        id="productAvailable"
+                        checked
+                    >
+
+                    Product Available
+
+                </label>
+
+
+                <button
+                    type="submit"
+                    class="save-button"
                 >
-                    Loading products...
+                    Save Product
+                </button>
+
+
+                <button
+                    type="button"
+                    id="cancelEdit"
+                    class="cancel-button"
+                    style="display:none;"
+                >
+                    Cancel Edit
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             PRODUCT LIST
+        ================================================== -->
+
+        <section class="card">
+
+            <div class="list-header">
+
+                <div>
+
+                    <h2>
+                        Products
+                    </h2>
+
+                    <p>
+                        Total:
+                        <strong id="productCount">
+                            0
+                        </strong>
+                    </p>
+
                 </div>
 
-            </section>
 
-        </main>
+                <button
+                    id="refreshButton"
+                    class="refresh-button"
+                >
+                    Refresh
+                </button>
 
-    </section>
+            </div>
+
+
+            <div
+                id="adminProductList"
+            >
+                Loading products...
+            </div>
+
+        </section>
+
+    </main>
 
 
     <script src="shopkeeper.js"></script>
@@ -299,9 +232,3 @@
 </body>
 
 </html>
-```
-
-
-
-
-
