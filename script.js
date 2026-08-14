@@ -1,7 +1,7 @@
 /* =========================================================
    SHOP CUSTOMER WEBSITE
    Products: products.json
-   Orders: Gmail prepared email
+   Order: Email App
 ========================================================= */
 
 
@@ -65,14 +65,12 @@ function escapeHTML(value) {
    LOAD PRODUCTS
 ========================================================= */
 
-async function loadProducts() {
+function loadProducts() {
 
     const container = document.getElementById("productList");
 
     if (!container) {
-
-        console.error("productList element not found");
-
+        console.error("productList not found");
         return;
     }
 
@@ -82,59 +80,57 @@ async function loadProducts() {
         </div>
     `;
 
-    try {
+    const url = PRODUCTS_JSON + "?v=" + Date.now();
 
-        const response = await fetch(
-            PRODUCTS_JSON + "?v=" + Date.now(),
-            {
-                cache: "no-store"
-            }
-        );
+    console.log("Fetching products:", url);
 
-        console.log(
-            "products.json HTTP status:",
-            response.status
-        );
+    fetch(url)
 
-        if (!response.ok) {
+        .then(function (response) {
 
-            throw new Error(
-                "products.json HTTP error: " +
+            console.log(
+                "products.json HTTP status:",
                 response.status
             );
-        }
 
-        const products = await response.json();
+            if (!response.ok) {
+                throw new Error(
+                    "HTTP Error: " + response.status
+                );
+            }
 
-        console.log(
-            "products.json loaded:",
-            products
-        );
+            return response.json();
+        })
 
-        if (!Array.isArray(products)) {
+        .then(function (products) {
 
-            throw new Error(
-                "products.json must contain a JSON array"
+            console.log("Products received:", products);
+
+            if (!Array.isArray(products)) {
+
+                throw new Error(
+                    "products.json must contain an array"
+                );
+            }
+
+            displayProducts(products);
+        })
+
+        .catch(function (error) {
+
+            console.error(
+                "PRODUCT LOADING ERROR:",
+                error
             );
-        }
 
-        displayProducts(products);
-
-    } catch (error) {
-
-        console.error(
-            "PRODUCT LOADING ERROR:",
-            error
-        );
-
-        container.innerHTML = `
-            <div class="no-products">
-                Unable to load products.
-                <br><br>
-                ${escapeHTML(error.message)}
-            </div>
-        `;
-    }
+            container.innerHTML = `
+                <div class="no-products">
+                    Unable to load products.
+                    <br><br>
+                    ${escapeHTML(error.message)}
+                </div>
+            `;
+        });
 }
 
 
@@ -144,8 +140,7 @@ async function loadProducts() {
 
 function displayProducts(products) {
 
-    const container =
-        document.getElementById("productList");
+    const container = document.getElementById("productList");
 
     if (!container) {
         return;
@@ -153,22 +148,16 @@ function displayProducts(products) {
 
     container.innerHTML = "";
 
-    const availableProducts =
-        products.filter(function (product) {
+    const availableProducts = products.filter(function (product) {
 
-            return (
-                product.available === true ||
-                String(product.available)
-                    .trim()
-                    .toUpperCase() === "YES"
-            );
+        return (
+            product.available === true ||
+            String(product.available)
+                .trim()
+                .toUpperCase() === "YES"
+        );
 
-        });
-
-    console.log(
-        "Available products:",
-        availableProducts
-    );
+    });
 
     if (availableProducts.length === 0) {
 
@@ -183,10 +172,7 @@ function displayProducts(products) {
 
     availableProducts.forEach(function (product) {
 
-        createProductCard(
-            product,
-            container
-        );
+        createProductCard(product, container);
 
     });
 
@@ -202,22 +188,17 @@ function displayProducts(products) {
 
 function createProductCard(product, container) {
 
-    const card =
-        document.createElement("div");
+    const card = document.createElement("div");
 
     card.className = "product-card";
 
-    card.dataset.id =
-        String(product.id ?? "");
+    card.dataset.id = String(product.id ?? "");
 
-    card.dataset.name =
-        String(product.name ?? "");
+    card.dataset.name = String(product.name ?? "");
 
-    const price =
-        Number(product.price) || 0;
+    const price = Number(product.price) || 0;
 
-    const discount =
-        Number(product.discount) || 0;
+    const discount = Number(product.discount) || 0;
 
     let finalPrice = price;
 
@@ -227,18 +208,18 @@ function createProductCard(product, container) {
             price - (price * discount / 100);
     }
 
-    const name =
-        String(product.name ?? "Product");
-
-    const description =
-        String(product.description ?? "");
-
     let imageURL =
         String(product.imageURL ?? "").trim();
 
     if (imageURL === "") {
         imageURL = "default-product.jpg";
     }
+
+    const name =
+        String(product.name ?? "Product");
+
+    const description =
+        String(product.description ?? "");
 
     card.dataset.price =
         String(finalPrice);
@@ -267,31 +248,31 @@ function createProductCard(product, container) {
 
                 ${
                     discount > 0
-                    ? `
-                        <span
-                            style="
-                                text-decoration: line-through;
-                                color: #888;
-                                font-size: 13px;
-                                margin-left: 5px;
-                            "
-                        >
-                            ₹${price.toFixed(2)}
-                        </span>
-                    `
-                    : ""
+                        ? `
+                            <span
+                                style="
+                                    text-decoration: line-through;
+                                    color: #888;
+                                    font-size: 13px;
+                                    margin-left: 5px;
+                                "
+                            >
+                                ₹${price.toFixed(2)}
+                            </span>
+                        `
+                        : ""
                 }
 
             </div>
 
             ${
                 discount > 0
-                ? `
-                    <div class="product-discount">
-                        ${discount}% OFF
-                    </div>
-                `
-                : ""
+                    ? `
+                        <div class="product-discount">
+                            ${discount}% OFF
+                        </div>
+                    `
+                    : ""
             }
 
             <div class="actions">
@@ -356,16 +337,9 @@ function initializeProducts() {
             const addButton =
                 card.querySelector(".add-cart");
 
-            if (
-                !minus ||
-                !plus ||
-                !qty ||
-                !addButton
-            ) {
+            if (!minus || !plus || !qty || !addButton) {
                 return;
             }
-
-            /* MINUS */
 
             minus.addEventListener(
                 "click",
@@ -378,13 +352,9 @@ function initializeProducts() {
                         value--;
                     }
 
-                    qty.innerText =
-                        value;
+                    qty.innerText = value;
                 }
             );
-
-
-            /* PLUS */
 
             plus.addEventListener(
                 "click",
@@ -395,13 +365,9 @@ function initializeProducts() {
 
                     value++;
 
-                    qty.innerText =
-                        value;
+                    qty.innerText = value;
                 }
             );
-
-
-            /* ADD TO CART */
 
             addButton.addEventListener(
                 "click",
@@ -414,9 +380,7 @@ function initializeProducts() {
                         card.dataset.name;
 
                     const price =
-                        Number(
-                            card.dataset.price
-                        ) || 0;
+                        Number(card.dataset.price) || 0;
 
                     const imageElement =
                         card.querySelector("img");
@@ -429,7 +393,6 @@ function initializeProducts() {
                     const quantity =
                         Number(qty.innerText) || 1;
 
-
                     const existing =
                         cart.find(function (item) {
 
@@ -437,11 +400,9 @@ function initializeProducts() {
 
                         });
 
-
                     if (existing) {
 
-                        existing.quantity +=
-                            quantity;
+                        existing.quantity += quantity;
 
                     } else {
 
@@ -456,20 +417,15 @@ function initializeProducts() {
                             image: image,
 
                             quantity: quantity
-
                         });
                     }
 
-
                     qty.innerText = "1";
-
 
                     updateCart();
 
-
                     showCustomAlert(
-                        name +
-                        " added to cart"
+                        name + " added to cart"
                     );
                 }
             );
@@ -497,8 +453,7 @@ function updateCart() {
 
     if (cartCount) {
 
-        cartCount.innerText =
-            count;
+        cartCount.innerText = count;
     }
 
     showCart();
@@ -520,54 +475,39 @@ function showCart() {
     const bottom =
         document.getElementById("cartBottom");
 
-    if (
-        !container ||
-        !empty ||
-        !bottom
-    ) {
+    if (!container || !empty || !bottom) {
         return;
     }
 
     container.innerHTML = "";
 
-
     if (cart.length === 0) {
 
-        empty.style.display =
-            "block";
+        empty.style.display = "block";
 
-        bottom.style.display =
-            "none";
+        bottom.style.display = "none";
 
         return;
     }
 
+    empty.style.display = "none";
 
-    empty.style.display =
-        "none";
-
-    bottom.style.display =
-        "block";
-
+    bottom.style.display = "block";
 
     let total = 0;
-
 
     cart.forEach(function (item, index) {
 
         const itemTotal =
-            item.price *
-            item.quantity;
+            Number(item.price) *
+            Number(item.quantity);
 
         total += itemTotal;
-
 
         const row =
             document.createElement("div");
 
-        row.className =
-            "cart-row";
-
+        row.className = "cart-row";
 
         row.innerHTML = `
 
@@ -583,7 +523,7 @@ function showCart() {
                 </strong>
 
                 <div>
-                    ₹${item.price.toFixed(2)}
+                    ₹${Number(item.price).toFixed(2)}
                 </div>
 
                 <div class="cart-controls">
@@ -623,11 +563,8 @@ function showCart() {
             </div>
         `;
 
-
         container.appendChild(row);
-
     });
-
 
     const cartTotal =
         document.getElementById("cartTotal");
@@ -711,19 +648,15 @@ function setupCart() {
                 showCart();
 
                 const cartModal =
-                    document.getElementById(
-                        "cartModal"
-                    );
+                    document.getElementById("cartModal");
 
                 if (cartModal) {
 
-                    cartModal.style.display =
-                        "block";
+                    cartModal.style.display = "block";
                 }
             }
         );
     }
-
 
     const closeCart =
         document.getElementById("closeCart");
@@ -735,14 +668,11 @@ function setupCart() {
             function () {
 
                 const cartModal =
-                    document.getElementById(
-                        "cartModal"
-                    );
+                    document.getElementById("cartModal");
 
                 if (cartModal) {
 
-                    cartModal.style.display =
-                        "none";
+                    cartModal.style.display = "none";
                 }
             }
         );
@@ -778,29 +708,20 @@ function setupOrderButton() {
 
             showOrder();
 
-
             const cartModal =
-                document.getElementById(
-                    "cartModal"
-                );
+                document.getElementById("cartModal");
 
             const orderModal =
-                document.getElementById(
-                    "orderModal"
-                );
-
+                document.getElementById("orderModal");
 
             if (cartModal) {
 
-                cartModal.style.display =
-                    "none";
+                cartModal.style.display = "none";
             }
-
 
             if (orderModal) {
 
-                orderModal.style.display =
-                    "block";
+                orderModal.style.display = "block";
             }
         }
     );
@@ -824,15 +745,13 @@ function showOrder() {
 
     let total = 0;
 
-
     cart.forEach(function (item) {
 
         const itemTotal =
-            item.price *
-            item.quantity;
+            Number(item.price) *
+            Number(item.quantity);
 
         total += itemTotal;
-
 
         container.innerHTML += `
 
@@ -851,7 +770,6 @@ function showOrder() {
         `;
     });
 
-
     const orderTotal =
         document.getElementById("orderTotal");
 
@@ -864,7 +782,7 @@ function showOrder() {
 
 
 /* =========================================================
-   SEND ORDER → GMAIL
+   SEND ORDER → EMAIL APP
 ========================================================= */
 
 function setupSendOrder() {
@@ -873,210 +791,215 @@ function setupSendOrder() {
         document.getElementById("sendOrder");
 
     if (!sendOrder) {
-        console.error("sendOrder button not found");
+
+        console.error(
+            "sendOrder button not found"
+        );
+
         return;
     }
 
-    sendOrder.addEventListener("click", function () {
+    sendOrder.addEventListener(
+        "click",
+        function () {
 
-        const nameInput =
-            document.getElementById("customerName");
+            const nameInput =
+                document.getElementById("customerName");
 
-        const mobileInput =
-            document.getElementById("customerMobile");
+            const mobileInput =
+                document.getElementById("customerMobile");
 
-        const addressInput =
-            document.getElementById("customerAddress");
+            const addressInput =
+                document.getElementById("customerAddress");
 
+            const name =
+                nameInput
+                    ? nameInput.value.trim()
+                    : "";
 
-        const name =
-            nameInput
-                ? nameInput.value.trim()
-                : "";
+            const mobile =
+                mobileInput
+                    ? mobileInput.value.trim()
+                    : "";
 
-        const mobile =
-            mobileInput
-                ? mobileInput.value.trim()
-                : "";
-
-        const address =
-            addressInput
-                ? addressInput.value.trim()
-                : "";
-
-
-        /* VALIDATION */
-
-        if (name === "") {
-            showCustomAlert("Enter your name");
-            return;
-        }
-
-       
-        if (!/^[0-9]{10}$/.test(mobile)) {
-
-            showCustomAlert(
-                "Enter a valid 10-digit mobile number"
-            );
-
-            return;
-        }
-
-        if (address === "") {
-            showCustomAlert("Enter your address");
-            return;
-        }
-
-        if (cart.length === 0) {
-            showCustomAlert("Cart is empty");
-            return;
-        }
+            const address =
+                addressInput
+                    ? addressInput.value.trim()
+                    : "";
 
 
-        /* =================================================
-           CREATE ORDER EMAIL
-        ================================================= */
+            /* NAME */
 
-        let orderText =
-            "NEW SHOP ORDER\n\n";
+            if (name === "") {
 
+                showCustomAlert(
+                    "Enter your name"
+                );
 
-        orderText +=
-            "Customer Name: " +
-            name +
-            "\n";
+                return;
+            }
 
 
-        orderText +=
-            "Mobile: " +
-            mobile +
-            "\n";
+            /* EXACTLY 10 DIGITS */
+
+            if (!/^[0-9]{10}$/.test(mobile)) {
+
+                showCustomAlert(
+                    "Enter a valid 10-digit mobile number"
+                );
+
+                return;
+            }
 
 
-        orderText +=
-            "Delivery Address:\n" +
-            address +
-            "\n\n";
+            /* ADDRESS */
+
+            if (address === "") {
+
+                showCustomAlert(
+                    "Enter your address"
+                );
+
+                return;
+            }
 
 
-        orderText +=
-            "PRODUCTS\n";
+            /* CART */
+
+            if (cart.length === 0) {
+
+                showCustomAlert(
+                    "Cart is empty"
+                );
+
+                return;
+            }
 
 
-        orderText +=
-            "----------------------\n";
+            /* CREATE EMAIL */
 
-
-        let total = 0;
-
-
-        cart.forEach(function (item) {
-
-            const itemTotal =
-                Number(item.price) *
-                Number(item.quantity);
-
-            total += itemTotal;
-
+            let orderText =
+                "NEW SHOP ORDER\n\n";
 
             orderText +=
-                item.name +
-                " × " +
-                item.quantity +
-                " = ₹" +
-                itemTotal.toFixed(2) +
+                "Customer Name: " +
+                name +
                 "\n";
-        });
+
+            orderText +=
+                "Mobile: " +
+                mobile +
+                "\n";
+
+            orderText +=
+                "Delivery Address:\n" +
+                address +
+                "\n\n";
+
+            orderText +=
+                "PRODUCTS\n";
+
+            orderText +=
+                "----------------------\n";
+
+            let total = 0;
+
+            cart.forEach(function (item) {
+
+                const itemTotal =
+                    Number(item.price) *
+                    Number(item.quantity);
+
+                total += itemTotal;
+
+                orderText +=
+                    item.name +
+                    " × " +
+                    item.quantity +
+                    " = ₹" +
+                    itemTotal.toFixed(2) +
+                    "\n";
+            });
+
+            orderText +=
+                "\nTotal: ₹" +
+                total.toFixed(2);
 
 
-        orderText +=
-            "\nTotal: ₹" +
-            total.toFixed(2);
+            /* EMAIL */
+
+            const subject =
+                encodeURIComponent(
+                    "New Order - My Local Shop"
+                );
+
+            const body =
+                encodeURIComponent(
+                    orderText
+                );
+
+            const mailtoURL =
+                "mailto:" +
+                SHOPKEEPER_EMAIL +
+                "?subject=" +
+                subject +
+                "&body=" +
+                body;
 
 
-        /* =================================================
-           OPEN EMAIL APP
-        ================================================= */
-
-        const subject =
-            encodeURIComponent(
-                "New Order - My Local Shop"
+            console.log(
+                "Opening email app"
             );
 
-        const body =
-            encodeURIComponent(
-                orderText
-            );
+
+            /*
+             * Open email app
+             */
+
+            window.location.href =
+                mailtoURL;
 
 
-        const mailtoURL =
-            "mailto:" +
-            SHOPKEEPER_EMAIL +
-            "?subject=" +
-            subject +
-            "&body=" +
-            body;
+            /*
+             * Clear cart
+             */
+
+            cart = [];
+
+            updateCart();
 
 
-        console.log(
-            "Opening email app:",
-            mailtoURL
-        );
+            /*
+             * Clear customer details
+             */
+
+            if (nameInput) {
+                nameInput.value = "";
+            }
+
+            if (mobileInput) {
+                mobileInput.value = "";
+            }
+
+            if (addressInput) {
+                addressInput.value = "";
+            }
 
 
-        window.location.href =
-            mailtoURL;
+            /*
+             * Close order modal
+             */
 
-    });
-   
-        /*
-           Open email application
-        */
+            const orderModal =
+                document.getElementById("orderModal");
 
-        window.location.href =
-            mailtoURL;
+            if (orderModal) {
 
+                orderModal.style.display = "none";
+            }
 
-        /* =================================================
-           CLEAR CART
-        ================================================= */
-
-        cart = [];
-
-
-        updateCart();
-
-
-        /*
-           Clear customer details
-        */
-
-        if (nameInput) {
-            nameInput.value = "";
         }
-
-        if (mobileInput) {
-            mobileInput.value = "";
-        }
-
-        if (addressInput) {
-            addressInput.value = "";
-        }
-
-
-        /*
-           Close order modal
-        */
-
-        const orderModal =
-            document.getElementById("orderModal");
-
-
-        if (orderModal) {
-            orderModal.style.display = "none";
-        }
-
-    });
+    );
 }
 
 
@@ -1093,20 +1016,16 @@ function setupCloseOrder() {
         return;
     }
 
-
     closeOrder.addEventListener(
         "click",
         function () {
 
             const orderModal =
-                document.getElementById(
-                    "orderModal"
-                );
+                document.getElementById("orderModal");
 
             if (orderModal) {
 
-                orderModal.style.display =
-                    "none";
+                orderModal.style.display = "none";
             }
         }
     );
@@ -1120,21 +1039,17 @@ function setupCloseOrder() {
 function setupSearch() {
 
     const searchInput =
-        document.getElementById(
-            "searchInput"
-        );
+        document.getElementById("searchInput");
 
     if (!searchInput) {
         return;
     }
-
 
     searchInput.addEventListener(
         "input",
         function () {
 
             applyCurrentSearch();
-
         }
     );
 }
@@ -1143,20 +1058,16 @@ function setupSearch() {
 function applyCurrentSearch() {
 
     const searchInput =
-        document.getElementById(
-            "searchInput"
-        );
+        document.getElementById("searchInput");
 
     if (!searchInput) {
         return;
     }
 
-
     const text =
         searchInput.value
             .toLowerCase()
             .trim();
-
 
     document
         .querySelectorAll(".product-card")
@@ -1167,7 +1078,6 @@ function applyCurrentSearch() {
                     card.dataset.name || ""
                 ).toLowerCase();
 
-
             card.style.display =
                 name.includes(text)
                     ? "flex"
@@ -1177,20 +1087,17 @@ function applyCurrentSearch() {
 
 
 /* =========================================================
-   GOOGLE MAP LOCATION
+   GOOGLE MAP
 ========================================================= */
 
 function setupLocation() {
 
     const locationButton =
-        document.getElementById(
-            "locationButton"
-        );
+        document.getElementById("locationButton");
 
     if (!locationButton) {
         return;
     }
-
 
     locationButton.addEventListener(
         "click",
@@ -1204,7 +1111,6 @@ function setupLocation() {
                     "," +
                     SHOP_LONGITUDE
                 );
-
 
             window.open(
                 url,
@@ -1226,35 +1132,26 @@ function setupModalOutsideClick() {
         function (event) {
 
             const cartModal =
-                document.getElementById(
-                    "cartModal"
-                );
+                document.getElementById("cartModal");
 
             const orderModal =
-                document.getElementById(
-                    "orderModal"
-                );
-
+                document.getElementById("orderModal");
 
             if (
                 cartModal &&
                 event.target === cartModal
             ) {
 
-                cartModal.style.display =
-                    "none";
+                cartModal.style.display = "none";
             }
-
 
             if (
                 orderModal &&
                 event.target === orderModal
             ) {
 
-                orderModal.style.display =
-                    "none";
+                orderModal.style.display = "none";
             }
-
         }
     );
 }
@@ -1268,10 +1165,7 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        console.log(
-            "SCRIPT JS LOADED SUCCESSFULLY"
-        );
-
+        console.log("SCRIPT JS LOADED");
 
         loadProducts();
 
