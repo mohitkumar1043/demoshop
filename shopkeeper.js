@@ -1,5 +1,6 @@
 /* =========================================================
    SHOPKEEPER PRODUCT MANAGER
+   Cloudflare Worker secured version
 ========================================================= */
 
 
@@ -14,19 +15,6 @@ const PRODUCTS_URL =
     "products.json";
 
 
-/*
-   IMPORTANT
-
-   This email is NOT security.
-
-   Real security must be handled by
-   the Cloudflare Worker.
-*/
-
-const SHOPKEEPER_EMAIL =
-    "pankajsal880@gmail.com";
-
-
 /* =========================================================
    DATA
 ========================================================= */
@@ -36,274 +24,8 @@ let products = [];
 let editingId = null;
 
 
-/*
-   Highest ID ever seen during this session.
-
-   Deleted IDs are never selected again
-   during the session.
-*/
-
-let highestKnownId = 0;
-
-
 /* =========================================================
-   SECURITY SESSION
-========================================================= */
-
-let loggedIn = false;
-
-
-/* =========================================================
-   ALERT
-========================================================= */
-
-function showAlert(message) {
-
-    const alert =
-        document.getElementById(
-            "adminAlert"
-        );
-
-
-    if (!alert) {
-
-        alert(message);
-
-        return;
-
-    }
-
-
-    alert.innerText =
-        message;
-
-
-    alert.style.display =
-        "block";
-
-
-    setTimeout(function () {
-
-        alert.style.display =
-            "none";
-
-    }, 2500);
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHTML(value) {
-
-    const div =
-        document.createElement("div");
-
-
-    div.textContent =
-        String(value ?? "");
-
-
-    return div.innerHTML;
-
-}
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-document.getElementById(
-    "loginForm"
-).addEventListener(
-    "submit",
-    async function (event) {
-
-        event.preventDefault();
-
-
-        const email =
-            document.getElementById(
-                "shopkeeperEmail"
-            ).value.trim();
-
-
-        const password =
-            document.getElementById(
-                "shopkeeperPassword"
-            ).value;
-
-
-        if (!email || !password) {
-
-            showAlert(
-                "Enter email and password"
-            );
-
-            return;
-
-        }
-
-
-        try {
-
-            showAlert(
-                "Checking login..."
-            );
-
-
-            /*
-               IMPORTANT:
-
-               Login must be checked by
-               Cloudflare Worker.
-
-               Do NOT check password like:
-
-               if(password === "1234")
-
-               because anyone can see
-               JavaScript source code.
-            */
-
-
-            const response =
-                await fetch(
-                    WORKER_URL +
-                    "/login",
-                    {
-
-                        method: "POST",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/json"
-
-                        },
-
-                        body: JSON.stringify({
-
-                            email:
-                                email,
-
-                            password:
-                                password
-
-                        })
-
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Login failed"
-                );
-
-            }
-
-
-            const result =
-                await response.json();
-
-
-            if (!result.success) {
-
-                throw new Error(
-                    result.message ||
-                    "Invalid login"
-                );
-
-            }
-
-
-            /*
-               Worker should return a token.
-            */
-
-            if (!result.token) {
-
-                throw new Error(
-                    "No security token received"
-                );
-
-            }
-
-
-            sessionStorage.setItem(
-                "shopkeeperToken",
-                result.token
-            );
-
-
-            loggedIn = true;
-
-
-            document.getElementById(
-                "loginCard"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "adminArea"
-            ).style.display =
-                "block";
-
-
-            showAlert(
-                "Login successful"
-            );
-
-
-            loadProducts();
-
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "LOGIN ERROR:",
-                error
-            );
-
-
-            showAlert(
-                "Invalid email or password"
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-function logout() {
-
-    sessionStorage.removeItem(
-        "shopkeeperToken"
-    );
-
-
-    loggedIn = false;
-
-
-    location.reload();
-
-}
-
-
-/* =========================================================
-   GET SECURITY TOKEN
+   SECURITY
 ========================================================= */
 
 function getToken() {
@@ -316,44 +38,383 @@ function getToken() {
 
 
 /* =========================================================
-   GET NEXT ID
+   ALERT
 ========================================================= */
 
-function getNextProductId() {
+function showAlert(message) {
 
-    let highest =
-        highestKnownId;
+    const alertBox =
+        document.getElementById(
+            "adminAlert"
+        );
+
+    if (!alertBox) {
+
+        alert(message);
+
+        return;
+
+    }
+
+    alertBox.innerText =
+        message;
+
+    alertBox.style.display =
+        "block";
 
 
-    products.forEach(
-        function (product) {
+    setTimeout(function () {
 
-            const id =
-                Number(product.id);
+        alertBox.style.display =
+            "none";
+
+    }, 2500);
+
+}
 
 
-            if (
-                Number.isInteger(id) &&
-                id > highest
-            ) {
+/* =========================================================
+   HTML SECURITY
+========================================================= */
 
-                highest = id;
+function escapeHTML(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        String(value ?? "");
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================================
+   CHECK LOGIN
+========================================================= */
+
+function checkLogin() {
+
+    const token =
+        getToken();
+
+    if (!token) {
+
+        window.location.href =
+            "shopkeeper.html";
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+const loginForm =
+    document.getElementById(
+        "loginForm"
+    );
+
+
+if (loginForm) {
+
+    loginForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const usernameElement =
+                document.getElementById(
+                    "username"
+                );
+
+
+            const passwordElement =
+                document.getElementById(
+                    "password"
+                );
+
+
+            const username =
+                usernameElement
+                    ? usernameElement.value.trim()
+                    : "";
+
+
+            const password =
+                passwordElement
+                    ? passwordElement.value
+                    : "";
+
+
+            if (!username) {
+
+                showLoginError(
+                    "Please enter your Shopkeeper ID."
+                );
+
+                return;
+
+            }
+
+
+            if (!password) {
+
+                showLoginError(
+                    "Please enter your password."
+                );
+
+                return;
+
+            }
+
+
+            const loginButton =
+                document.getElementById(
+                    "loginButton"
+                );
+
+
+            const loginText =
+                document.getElementById(
+                    "loginText"
+                );
+
+
+            const loginLoader =
+                document.getElementById(
+                    "loginLoader"
+                );
+
+
+            if (loginButton) {
+
+                loginButton.disabled =
+                    true;
+
+            }
+
+
+            if (loginText) {
+
+                loginText.innerText =
+                    "Signing in...";
+
+            }
+
+
+            if (loginLoader) {
+
+                loginLoader.style.display =
+                    "inline-block";
+
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        WORKER_URL +
+                        "/login",
+                        {
+
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    username:
+                                        username,
+
+                                    password:
+                                        password
+
+                                })
+
+                        }
+                    );
+
+
+                let result = {};
+
+                try {
+
+                    result =
+                        await response.json();
+
+                }
+                catch (jsonError) {
+
+                    throw new Error(
+                        "Invalid server response."
+                    );
+
+                }
+
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    throw new Error(
+                        result.message ||
+                        "Invalid login details."
+                    );
+
+                }
+
+
+                if (!result.token) {
+
+                    throw new Error(
+                        "Security token was not received."
+                    );
+
+                }
+
+
+                /*
+                   Store only the session token.
+
+                   GitHub token is NEVER stored
+                   in browser.
+                */
+
+                sessionStorage.setItem(
+                    "shopkeeperToken",
+                    result.token
+                );
+
+
+                if (loginText) {
+
+                    loginText.innerText =
+                        "Login successful ✓";
+
+                }
+
+
+                /*
+                   Go to dashboard.
+                */
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        "shopkeeper-dashboard.html";
+
+                }, 500);
+
+
+            }
+            catch (error) {
+
+                console.error(
+                    "LOGIN ERROR:",
+                    error
+                );
+
+
+                showLoginError(
+                    error.message ||
+                    "Unable to login."
+                );
+
+
+                if (loginButton) {
+
+                    loginButton.disabled =
+                        false;
+
+                }
+
+
+                if (loginText) {
+
+                    loginText.innerText =
+                        "Login";
+
+                }
+
+
+                if (loginLoader) {
+
+                    loginLoader.style.display =
+                        "none";
+
+                }
 
             }
 
         }
     );
 
-
-    const nextId =
-        highest + 1;
+}
 
 
-    highestKnownId =
-        nextId;
+/* =========================================================
+   LOGIN ERROR
+========================================================= */
+
+function showLoginError(message) {
+
+    const errorBox =
+        document.getElementById(
+            "loginError"
+        );
 
 
-    return nextId;
+    if (!errorBox) {
+
+        alert(message);
+
+        return;
+
+    }
+
+
+    errorBox.innerText =
+        "⚠ " + message;
+
+
+    errorBox.style.display =
+        "block";
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout() {
+
+    sessionStorage.removeItem(
+        "shopkeeperToken"
+    );
+
+    editingId = null;
+
+    window.location.href =
+        "shopkeeper.html";
 
 }
 
@@ -364,7 +425,19 @@ function getNextProductId() {
 
 async function loadProducts() {
 
+    if (!checkLogin()) {
+
+        return;
+
+    }
+
+
     try {
+
+        showAlert(
+            "Loading products..."
+        );
+
 
         const response =
             await fetch(
@@ -372,8 +445,9 @@ async function loadProducts() {
                 "?t=" +
                 Date.now(),
                 {
-                    cache:
-                        "no-store"
+                    method: "GET",
+
+                    cache: "no-store"
                 }
             );
 
@@ -381,7 +455,7 @@ async function loadProducts() {
         if (!response.ok) {
 
             throw new Error(
-                "HTTP " +
+                "Unable to load products. HTTP " +
                 response.status
             );
 
@@ -395,7 +469,7 @@ async function loadProducts() {
         if (!Array.isArray(data)) {
 
             throw new Error(
-                "Invalid products.json"
+                "Invalid products.json format."
             );
 
         }
@@ -405,36 +479,15 @@ async function loadProducts() {
             data;
 
 
-        /*
-           Find highest existing ID.
-        */
-
-        products.forEach(
-            function (product) {
-
-                const id =
-                    Number(product.id);
-
-
-                if (
-                    Number.isInteger(id) &&
-                    id > highestKnownId
-                ) {
-
-                    highestKnownId =
-                        id;
-
-                }
-
-            }
-        );
-
-
         displayProducts();
 
 
-    }
+        showAlert(
+            "Products loaded"
+        );
 
+
+    }
     catch (error) {
 
         console.error(
@@ -443,14 +496,26 @@ async function loadProducts() {
         );
 
 
-        document.getElementById(
-            "adminProductList"
-        ).innerHTML =
-
-            "Unable to load products.<br><br>" +
-            escapeHTML(
-                error.message
+        const container =
+            document.getElementById(
+                "adminProductList"
             );
+
+
+        if (container) {
+
+            container.innerHTML =
+                `
+                <p>
+                    Unable to load products.
+                </p>
+
+                <p>
+                    ${escapeHTML(error.message)}
+                </p>
+                `;
+
+        }
 
     }
 
@@ -497,7 +562,7 @@ function displayProducts() {
     if (products.length === 0) {
 
         container.innerHTML =
-            "No products.";
+            "<p>No products available.</p>";
 
         return;
 
@@ -506,6 +571,7 @@ function displayProducts() {
 
     /*
        Sort only for display.
+
        IDs are NOT changed.
     */
 
@@ -514,7 +580,7 @@ function displayProducts() {
             function (a, b) {
 
                 return Number(a.id) -
-                       Number(b.id);
+                    Number(b.id);
 
             }
         );
@@ -522,7 +588,6 @@ function displayProducts() {
 
     sortedProducts.forEach(
         function (product) {
-
 
             const item =
                 document.createElement(
@@ -547,8 +612,8 @@ function displayProducts() {
                     "YES";
 
 
-            item.innerHTML = `
-
+            item.innerHTML =
+                `
                 <img
                     src="${escapeHTML(image)}"
                     alt="${escapeHTML(product.name)}"
@@ -614,8 +679,8 @@ function displayProducts() {
 
                         ${
                             available
-                            ? "✅ Available"
-                            : "❌ Not Available"
+                                ? "✅ Available"
+                                : "❌ Not Available"
                         }
 
                     </p>
@@ -628,11 +693,7 @@ function displayProducts() {
                         <button
                             type="button"
                             class="edit-button"
-                            onclick="
-                                editProduct(
-                                    ${Number(product.id)}
-                                )
-                            ">
+                            data-id="${escapeHTML(product.id)}">
 
                             ✏️ Edit
 
@@ -642,11 +703,7 @@ function displayProducts() {
                         <button
                             type="button"
                             class="delete-button"
-                            onclick="
-                                deleteProduct(
-                                    ${Number(product.id)}
-                                )
-                            ">
+                            data-id="${escapeHTML(product.id)}">
 
                             🗑 Delete
 
@@ -657,8 +714,49 @@ function displayProducts() {
 
 
                 </div>
+                `;
 
-            `;
+
+            /*
+               Event listeners instead of
+               putting user data directly
+               inside onclick.
+            */
+
+            const editButton =
+                item.querySelector(
+                    ".edit-button"
+                );
+
+
+            const deleteButton =
+                item.querySelector(
+                    ".delete-button"
+                );
+
+
+            editButton.addEventListener(
+                "click",
+                function () {
+
+                    editProduct(
+                        product.id
+                    );
+
+                }
+            );
+
+
+            deleteButton.addEventListener(
+                "click",
+                function () {
+
+                    deleteProduct(
+                        product.id
+                    );
+
+                }
+            );
 
 
             container.appendChild(
@@ -672,133 +770,104 @@ function displayProducts() {
 
 
 /* =========================================================
-   ADD / EDIT PRODUCT
+   PRODUCT FORM
 ========================================================= */
 
-document.getElementById(
-    "productForm"
-).addEventListener(
-    "submit",
-    async function (event) {
-
-        event.preventDefault();
+const productForm =
+    document.getElementById(
+        "productForm"
+    );
 
 
-        if (!getToken()) {
+if (productForm) {
 
-            showAlert(
-                "Please login first"
-            );
+    productForm.addEventListener(
+        "submit",
+        async function (event) {
 
-            return;
-
-        }
+            event.preventDefault();
 
 
-        const name =
-            document.getElementById(
-                "productName"
-            ).value.trim();
+            if (!checkLogin()) {
+
+                return;
+
+            }
 
 
-        const description =
-            document.getElementById(
-                "productDescription"
-            ).value.trim();
-
-
-        const price =
-            Number(
+            const name =
                 document.getElementById(
-                    "productPrice"
-                ).value
-            );
+                    "productName"
+                ).value.trim();
 
 
-        const discount =
-            Number(
+            const description =
                 document.getElementById(
-                    "productDiscount"
-                ).value
-            );
+                    "productDescription"
+                ).value.trim();
 
 
-        const imageURL =
-            document.getElementById(
-                "productImage"
-            ).value.trim();
-
-
-        const available =
-            document.getElementById(
-                "productAvailable"
-            ).checked;
-
-
-        if (!name) {
-
-            showAlert(
-                "Enter product name"
-            );
-
-            return;
-
-        }
-
-
-        if (
-            !Number.isFinite(price) ||
-            price < 0
-        ) {
-
-            showAlert(
-                "Enter valid price"
-            );
-
-            return;
-
-        }
-
-
-        if (
-            discount < 0 ||
-            discount > 100
-        ) {
-
-            showAlert(
-                "Invalid discount"
-            );
-
-            return;
-
-        }
-
-
-        /* =========================
-           EDIT
-        ========================= */
-
-        if (editingId !== null) {
-
-
-            const index =
-                products.findIndex(
-                    function (product) {
-
-                        return Number(
-                            product.id
-                        ) === Number(
-                            editingId
-                        );
-
-                    }
+            const price =
+                Number(
+                    document.getElementById(
+                        "productPrice"
+                    ).value
                 );
 
 
-            if (index === -1) {
+            const discount =
+                Number(
+                    document.getElementById(
+                        "productDiscount"
+                    ).value
+                );
+
+
+            const imageURL =
+                document.getElementById(
+                    "productImage"
+                ).value.trim();
+
+
+            const available =
+                document.getElementById(
+                    "productAvailable"
+                ).checked;
+
+
+            if (!name) {
 
                 showAlert(
-                    "Product not found"
+                    "Enter product name."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !Number.isFinite(price) ||
+                price < 0
+            ) {
+
+                showAlert(
+                    "Enter a valid price."
+                );
+
+                return;
+
+            }
+
+
+            if (
+                !Number.isFinite(discount) ||
+                discount < 0 ||
+                discount > 100
+            ) {
+
+                showAlert(
+                    "Discount must be between 0 and 100."
                 );
 
                 return;
@@ -807,95 +876,79 @@ document.getElementById(
 
 
             /*
-               KEEP OLD ID.
+               IMPORTANT:
+
+               ID is NOT generated here.
+
+               Cloudflare Worker generates
+               the ID when adding.
             */
 
-            products[index] = {
+            if (editingId !== null) {
 
-                ...products[index],
+                await updateProductOnServer({
 
-                id:
-                    products[index].id,
+                    id:
+                        editingId,
 
-                name:
-                    name,
+                    name:
+                        name,
 
-                description:
-                    description,
+                    description:
+                        description,
 
-                price:
-                    price,
+                    price:
+                        price,
 
-                discount:
-                    discount,
+                    discount:
+                        discount,
 
-                imageURL:
-                    imageURL,
+                    imageURL:
+                        imageURL,
 
-                available:
-                    available
+                    available:
+                        available
 
-            };
+                });
 
+            }
+            else {
 
-        }
+                await addProductOnServer({
 
+                    name:
+                        name,
 
-        /* =========================
-           ADD
-        ========================= */
+                    description:
+                        description,
 
-        else {
+                    price:
+                        price,
 
+                    discount:
+                        discount,
 
-            const newId =
-                getNextProductId();
+                    imageURL:
+                        imageURL,
 
+                    available:
+                        available
 
-            const newProduct = {
+                });
 
-                id:
-                    newId,
-
-                name:
-                    name,
-
-                description:
-                    description,
-
-                price:
-                    price,
-
-                discount:
-                    discount,
-
-                imageURL:
-                    imageURL,
-
-                available:
-                    available
-
-            };
-
-
-            products.push(
-                newProduct
-            );
+            }
 
         }
+    );
 
-
-        await saveProducts();
-
-    }
-);
+}
 
 
 /* =========================================================
-   SAVE PRODUCTS
+   ADD PRODUCT
 ========================================================= */
 
-async function saveProducts() {
+async function addProductOnServer(product) {
 
     const token =
         getToken();
@@ -904,7 +957,7 @@ async function saveProducts() {
     if (!token) {
 
         showAlert(
-            "Login required"
+            "Please login first."
         );
 
         return;
@@ -915,7 +968,7 @@ async function saveProducts() {
     try {
 
         showAlert(
-            "Saving products..."
+            "Adding product..."
         );
 
 
@@ -938,86 +991,87 @@ async function saveProducts() {
 
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        products:
-                            products
+                            action:
+                                "add",
 
-                    })
+                            product:
+                                product
+
+                        })
 
                 }
             );
 
 
+        const result =
+            await readJSON(response);
+
+
         if (
-            response.status ===
-            401
+            response.status === 401 ||
+            response.status === 403
         ) {
 
-            sessionStorage.removeItem(
-                "shopkeeperToken"
-            );
-
-
-            alert(
-                "Session expired. Please login again."
-            );
-
-
-            location.reload();
-
+            handleSessionExpired();
 
             return;
 
         }
 
 
-        if (!response.ok) {
+        if (
+            !response.ok ||
+            !result.success
+        ) {
 
             throw new Error(
-                "HTTP " +
-                response.status
+                result.message ||
+                "Unable to add product."
             );
 
         }
 
 
-        const result =
-            await response.json();
+        /*
+           Worker returns the newly
+           generated product ID.
+        */
 
+        if (result.product) {
 
-        if (!result.success) {
-
-            throw new Error(
-                result.message ||
-                "Save failed"
+            console.log(
+                "New Product ID:",
+                result.product.id
             );
 
         }
 
 
         showAlert(
-            "Products saved successfully"
+            "Product added successfully."
         );
 
 
         resetForm();
 
 
-        displayProducts();
+        await loadProducts();
 
     }
-
     catch (error) {
 
         console.error(
-            "SAVE ERROR:",
+            "ADD ERROR:",
             error
         );
 
 
         showAlert(
-            "Unable to save products"
+            error.message ||
+            "Unable to add product."
         );
 
     }
@@ -1031,12 +1085,19 @@ async function saveProducts() {
 
 function editProduct(id) {
 
+    if (!checkLogin()) {
+
+        return;
+
+    }
+
+
     const product =
         products.find(
             function (item) {
 
-                return Number(item.id) ===
-                       Number(id);
+                return String(item.id) ===
+                    String(id);
 
             }
         );
@@ -1044,13 +1105,17 @@ function editProduct(id) {
 
     if (!product) {
 
+        showAlert(
+            "Product not found."
+        );
+
         return;
 
     }
 
 
     editingId =
-        Number(product.id);
+        product.id;
 
 
     document.getElementById(
@@ -1060,13 +1125,22 @@ function editProduct(id) {
 
 
     /*
-       PRODUCT ID IS READ ONLY
+       Product ID is displayed
+       but cannot be changed.
     */
 
-    document.getElementById(
-        "productId"
-    ).value =
+    const idInput =
+        document.getElementById(
+            "productId"
+        );
+
+
+    idInput.value =
         product.id;
+
+
+    idInput.readOnly =
+        true;
 
 
     document.getElementById(
@@ -1102,24 +1176,35 @@ function editProduct(id) {
     document.getElementById(
         "productAvailable"
     ).checked =
-        product.available === true;
+        product.available === true ||
+        String(product.available)
+            .trim()
+            .toUpperCase() ===
+            "YES";
 
 
     updateImagePreview();
 
 
-    document.getElementById(
-        "cancelEdit"
-    ).style.display =
-        "block";
+    const cancelButton =
+        document.getElementById(
+            "cancelEdit"
+        );
+
+
+    if (cancelButton) {
+
+        cancelButton.style.display =
+            "block";
+
+    }
 
 
     window.scrollTo({
 
         top: 0,
 
-        behavior:
-            "smooth"
+        behavior: "smooth"
 
     });
 
@@ -1127,16 +1212,132 @@ function editProduct(id) {
 
 
 /* =========================================================
-   DELETE
+   UPDATE PRODUCT ON SERVER
+========================================================= */
+
+async function updateProductOnServer(product) {
+
+    const token =
+        getToken();
+
+
+    if (!token) {
+
+        showAlert(
+            "Please login first."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        showAlert(
+            "Updating product..."
+        );
+
+
+        const response =
+            await fetch(
+                WORKER_URL +
+                "/products",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            action:
+                                "edit",
+
+                            product:
+                                product
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await readJSON(response);
+
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+
+            handleSessionExpired();
+
+            return;
+
+        }
+
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            throw new Error(
+                result.message ||
+                "Unable to update product."
+            );
+
+        }
+
+
+        showAlert(
+            "Product updated successfully."
+        );
+
+
+        resetForm();
+
+
+        await loadProducts();
+
+    }
+    catch (error) {
+
+        console.error(
+            "UPDATE ERROR:",
+            error
+        );
+
+
+        showAlert(
+            error.message ||
+            "Unable to update product."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DELETE PRODUCT
 ========================================================= */
 
 async function deleteProduct(id) {
 
-    if (!getToken()) {
-
-        showAlert(
-            "Login required"
-        );
+    if (!checkLogin()) {
 
         return;
 
@@ -1147,14 +1348,18 @@ async function deleteProduct(id) {
         products.find(
             function (item) {
 
-                return Number(item.id) ===
-                       Number(id);
+                return String(item.id) ===
+                    String(id);
 
             }
         );
 
 
     if (!product) {
+
+        showAlert(
+            "Product not found."
+        );
 
         return;
 
@@ -1178,34 +1383,171 @@ async function deleteProduct(id) {
     }
 
 
-    /*
-       IMPORTANT:
+    const token =
+        getToken();
 
-       We DO NOT reduce highestKnownId.
 
-       Therefore the deleted ID
-       will never be selected again
-       in this session.
-    */
+    try {
 
-    products =
-        products.filter(
-            function (item) {
-
-                return Number(item.id) !==
-                       Number(id);
-
-            }
+        showAlert(
+            "Deleting product..."
         );
 
 
-    await saveProducts();
+        const response =
+            await fetch(
+                WORKER_URL +
+                "/products",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            action:
+                                "delete",
+
+                            productId:
+                                product.id
+
+                        })
+
+                }
+            );
+
+
+        const result =
+            await readJSON(response);
+
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+
+            handleSessionExpired();
+
+            return;
+
+        }
+
+
+        if (
+            !response.ok ||
+            !result.success
+        ) {
+
+            throw new Error(
+                result.message ||
+                "Unable to delete product."
+            );
+
+        }
+
+
+        /*
+           IMPORTANT:
+
+           Frontend does NOT generate
+           the next ID.
+
+           The Worker permanently
+           remembers used IDs.
+        */
+
+
+        showAlert(
+            "Product deleted successfully."
+        );
+
+
+        resetForm();
+
+
+        await loadProducts();
+
+    }
+    catch (error) {
+
+        console.error(
+            "DELETE ERROR:",
+            error
+        );
+
+
+        showAlert(
+            error.message ||
+            "Unable to delete product."
+        );
+
+    }
 
 }
 
 
 /* =========================================================
-   RESET
+   READ JSON SAFELY
+========================================================= */
+
+async function readJSON(response) {
+
+    try {
+
+        return await response.json();
+
+    }
+    catch (error) {
+
+        return {
+
+            success: false,
+
+            message:
+                "Invalid response from server."
+
+        };
+
+    }
+
+}
+
+
+/* =========================================================
+   SESSION EXPIRED
+========================================================= */
+
+function handleSessionExpired() {
+
+    sessionStorage.removeItem(
+        "shopkeeperToken"
+    );
+
+
+    alert(
+        "Your login session has expired. Please login again."
+    );
+
+
+    window.location.href =
+        "shopkeeper.html";
+
+}
+
+
+/* =========================================================
+   RESET FORM
 ========================================================= */
 
 function resetForm() {
@@ -1214,99 +1556,189 @@ function resetForm() {
         null;
 
 
-    document.getElementById(
-        "productForm"
-    ).reset();
-
-
-    document.getElementById(
-        "formTitle"
-    ).innerText =
-        "Add Product";
-
-
-    document.getElementById(
-        "productId"
-    ).value =
-        "";
-
-
-    document.getElementById(
-        "cancelEdit"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "productAvailable"
-    ).checked =
-        true;
-
-
-    document.getElementById(
-        "imagePreview"
-    ).innerHTML =
-        "";
-
-}
-
-
-/* =========================================================
-   CANCEL
-========================================================= */
-
-document.getElementById(
-    "cancelEdit"
-).addEventListener(
-    "click",
-    function () {
-
-        resetForm();
-
-    }
-);
-
-
-/* =========================================================
-   REFRESH
-========================================================= */
-
-document.getElementById(
-    "refreshButton"
-).addEventListener(
-    "click",
-    function () {
-
-        loadProducts();
-
-    }
-);
-
-
-/* =========================================================
-   IMAGE PREVIEW
-========================================================= */
-
-document.getElementById(
-    "productImage"
-).addEventListener(
-    "input",
-    updateImagePreview
-);
-
-
-function updateImagePreview() {
-
-    const url =
+    const form =
         document.getElementById(
-            "productImage"
-        ).value.trim();
+            "productForm"
+        );
+
+
+    if (form) {
+
+        form.reset();
+
+    }
+
+
+    const title =
+        document.getElementById(
+            "formTitle"
+        );
+
+
+    if (title) {
+
+        title.innerText =
+            "Add Product";
+
+    }
+
+
+    const idInput =
+        document.getElementById(
+            "productId"
+        );
+
+
+    if (idInput) {
+
+        idInput.value =
+            "";
+
+        idInput.readOnly =
+            true;
+
+    }
+
+
+    const cancelButton =
+        document.getElementById(
+            "cancelEdit"
+        );
+
+
+    if (cancelButton) {
+
+        cancelButton.style.display =
+            "none";
+
+    }
+
+
+    const available =
+        document.getElementById(
+            "productAvailable"
+        );
+
+
+    if (available) {
+
+        available.checked =
+            true;
+
+    }
 
 
     const preview =
         document.getElementById(
             "imagePreview"
         );
+
+
+    if (preview) {
+
+        preview.innerHTML =
+            "";
+
+    }
+
+}
+
+
+/* =========================================================
+   CANCEL EDIT
+========================================================= */
+
+const cancelEdit =
+    document.getElementById(
+        "cancelEdit"
+    );
+
+
+if (cancelEdit) {
+
+    cancelEdit.addEventListener(
+        "click",
+        function () {
+
+            resetForm();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+const refreshButton =
+    document.getElementById(
+        "refreshButton"
+    );
+
+
+if (refreshButton) {
+
+    refreshButton.addEventListener(
+        "click",
+        function () {
+
+            loadProducts();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+const productImage =
+    document.getElementById(
+        "productImage"
+    );
+
+
+if (productImage) {
+
+    productImage.addEventListener(
+        "input",
+        updateImagePreview
+    );
+
+}
+
+
+/* =========================================================
+   UPDATE IMAGE PREVIEW
+========================================================= */
+
+function updateImagePreview() {
+
+    const input =
+        document.getElementById(
+            "productImage"
+        );
+
+
+    const preview =
+        document.getElementById(
+            "imagePreview"
+        );
+
+
+    if (!input || !preview) {
+
+        return;
+
+    }
+
+
+    const url =
+        input.value.trim();
 
 
     if (!url) {
@@ -1319,8 +1751,8 @@ function updateImagePreview() {
     }
 
 
-    preview.innerHTML = `
-
+    preview.innerHTML =
+        `
         <img
             src="${escapeHTML(url)}"
             alt="Product preview"
@@ -1328,7 +1760,45 @@ function updateImagePreview() {
                 this.style.display='none'
             "
         >
-
-    `;
+        `;
 
 }
+
+
+/* =========================================================
+   DASHBOARD START
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        /*
+           Only run dashboard functions
+           when dashboard elements exist.
+        */
+
+        const adminArea =
+            document.getElementById(
+                "adminArea"
+            );
+
+
+        if (!adminArea) {
+
+            return;
+
+        }
+
+
+        if (!checkLogin()) {
+
+            return;
+
+        }
+
+
+        loadProducts();
+
+    }
+);
