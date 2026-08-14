@@ -1529,3 +1529,26 @@ document.addEventListener(
 
     }
 );
+console.log("SCRIPT JS LOADED");
+
+fetch("./products.json?v=" + Date.now())
+    .then(function(response) {
+
+        console.log("HTTP status:", response.status);
+
+        return response.json();
+
+    })
+    .then(function(data) {
+
+        console.log("PRODUCT JSON:", data);
+
+    })
+    .catch(function(error) {
+
+        console.error(
+            "PRODUCT FETCH ERROR:",
+            error
+        );
+
+    });
