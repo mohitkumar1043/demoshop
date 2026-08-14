@@ -1028,6 +1028,55 @@ function setupSendOrder() {
             mailtoURL;
 
     });
+   
+        /*
+           Open email application
+        */
+
+        window.location.href =
+            mailtoURL;
+
+
+        /* =================================================
+           CLEAR CART
+        ================================================= */
+
+        cart = [];
+
+
+        updateCart();
+
+
+        /*
+           Clear customer details
+        */
+
+        if (nameInput) {
+            nameInput.value = "";
+        }
+
+        if (mobileInput) {
+            mobileInput.value = "";
+        }
+
+        if (addressInput) {
+            addressInput.value = "";
+        }
+
+
+        /*
+           Close order modal
+        */
+
+        const orderModal =
+            document.getElementById("orderModal");
+
+
+        if (orderModal) {
+            orderModal.style.display = "none";
+        }
+
+    });
 }
 
 
