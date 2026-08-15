@@ -250,8 +250,9 @@ textarea:focus {
 }
 
 .admin-product img {
-    width: 220px;
-    height: 220px;
+    width: 100%;
+    max-width: 250px;
+    height: 250px;
 
     display: block;
     margin: 0 auto;
