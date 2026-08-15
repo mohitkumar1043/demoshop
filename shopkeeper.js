@@ -60,62 +60,36 @@ function showAlert(message) {
     const alertMessage =
         document.getElementById("customAlertMessage");
 
-
-    console.log(
-        "showAlert called:",
-        message
-    );
-
-
-    /* Check HTML */
+    console.log("SHOW ALERT:", message);
 
     if (!alertBox || !alertMessage) {
 
         console.error(
-            "CUSTOM ALERT HTML NOT FOUND"
+            "customAlert or customAlertMessage not found"
         );
-
-        alert(message);
 
         return;
     }
 
+    if (customAlertTimer !== null) {
 
-    /* Clear previous timer */
-
-    if (customAlertTimer) {
-
-        clearTimeout(
-            customAlertTimer
-        );
+        clearTimeout(customAlertTimer);
 
     }
-
-
-    /* Set message */
 
     alertMessage.textContent =
         String(message);
 
-
-    /* Show */
-
     alertBox.style.display =
         "block";
 
-
-    /* Hide after 3 seconds */
-
     customAlertTimer =
-        setTimeout(
-            function () {
+        setTimeout(function () {
 
-                alertBox.style.display =
-                    "none";
+            alertBox.style.display =
+                "none";
 
-            },
-            3000
-        );
+        }, 3000);
 }
 /* =========================================================
    SESSION EXPIRED
