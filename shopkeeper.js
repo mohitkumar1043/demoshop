@@ -52,32 +52,37 @@ function checkLogin() {
 
 function showAlert(message) {
 
-    const box =
-        document.getElementById(
-            "adminAlert"
+    const alertBox =
+        document.getElementById("customAlert");
+
+    const alertMessage =
+        document.getElementById("customAlertMessage");
+
+    if (!alertBox || !alertMessage) {
+
+        console.warn(
+            "Custom alert elements not found:",
+            message
         );
 
-    if (!box) {
-
-        alert(message);
-
         return;
-
     }
 
-    box.textContent = message;
+    alertMessage.innerText = message;
 
-    box.style.display = "block";
+    alertBox.style.display = "block";
 
+    clearTimeout(
+        window.customAlertTimer
+    );
 
-    setTimeout(() => {
+    window.customAlertTimer =
+        setTimeout(function () {
 
-        box.style.display = "none";
+            alertBox.style.display = "none";
 
-    }, 3000);
-
+        }, 2000);
 }
-
 
 /* =========================================================
    SESSION EXPIRED
