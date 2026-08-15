@@ -34,5 +34,14 @@
     "discount": 10,
     "imageURL": "https://drive.google.com/file/d/1FTXpB7fqmU3so-dM8W3hMINJvvNC1-Jm/view?usp=drivesdk",
     "available": true
+  },
+  {
+    "id": 13,
+    "name": "Blue kurtis",
+    "description": "Sizes L,XL,XXL",
+    "price": 1230,
+    "discount": 15,
+    "imageURL": "https://drive.google.com/file/d/1N-jqwV_N0Q1d8mbbnJj1qOBEI9f86G8Y/view?usp=drivesdk",
+    "available": true
   }
 ]
