@@ -34,14 +34,5 @@
     "discount": 15,
     "imageURL": "https://drive.google.com/file/d/1gDdm93qvUUEx_-hrLVohH154FThhBPrb/view?usp=drivesdk",
     "available": true
-  },
-  {
-    "id": 9,
-    "name": "Tea cup",
-    "description": "4 cup",
-    "price": 200,
-    "discount": 0,
-    "imageURL": "",
-    "available": true
   }
 ]
