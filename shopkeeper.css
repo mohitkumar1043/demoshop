@@ -362,29 +362,7 @@ textarea:focus {
    ALERT
 ========================================================= */
 
-#adminAlert {
-    display: none;
 
-    position: fixed;
-
-    top: 20px;
-    right: 20px;
-
-    z-index: 9999;
-
-    max-width: 350px;
-
-    background: #111827;
-    color: white;
-
-    padding: 13px 18px;
-
-    border-radius: 8px;
-
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-
-    word-break: break-word;
-}
 
 /* =========================================================
    ERROR BOX
@@ -579,22 +557,26 @@ textarea:focus {
    CUSTOM ALERT
 ========================================================= */
 
+/* =========================================================
+   CUSTOM ALERT
+========================================================= */
+
 #customAlert {
     display: none;
-
     position: fixed;
+
     top: 20px;
     left: 50%;
 
     transform: translateX(-50%);
 
-    width: auto;
+    width: max-content;
     max-width: 90%;
+
+    padding: 14px 22px;
 
     background: #222;
     color: #fff;
-
-    padding: 14px 22px;
 
     border-radius: 8px;
 
@@ -611,8 +593,7 @@ textarea:focus {
 }
 
 #customAlertMessage {
-    margin: 0;
-    padding: 0;
+    display: block;
 }
 
 @media (max-width: 600px) {
@@ -620,7 +601,8 @@ textarea:focus {
     #customAlert {
         top: 15px;
 
-        max-width: 92%;
+        width: calc(100% - 30px);
+        max-width: 500px;
 
         padding: 12px 18px;
 
