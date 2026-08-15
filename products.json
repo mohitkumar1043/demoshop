@@ -34,5 +34,14 @@
     "discount": 20,
     "imageURL": "",
     "available": true
+  },
+  {
+    "id": 6,
+    "name": "Soyabin oil",
+    "description": "1 kg packet",
+    "price": 180,
+    "discount": 5,
+    "imageURL": "",
+    "available": true
   }
 ]
