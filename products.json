@@ -1,14 +1,5 @@
 [
   {
-    "id": 2,
-    "name": "Aashirvaad Atta",
-    "price": 250,
-    "discount": 10,
-    "description": "5 kg wheat flour",
-    "imageURL": "https://drive.google.com/uc?export=view&id=YOUR_FILE_ID",
-    "available": true
-  },
-  {
     "id": 3,
     "name": "tea",
     "description": "taj tea 1 kg packet",
