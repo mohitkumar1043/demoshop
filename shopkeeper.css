@@ -575,3 +575,56 @@ textarea:focus {
         width: 100%;
     }
 }
+/* =========================================================
+   CUSTOM ALERT
+========================================================= */
+
+#customAlert {
+    display: none;
+
+    position: fixed;
+
+    top: 20px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background: #222;
+    color: white;
+
+    padding: 14px 22px;
+
+    border-radius: 8px;
+
+    z-index: 99999;
+
+    font-weight: bold;
+
+    max-width: 90%;
+
+    text-align: center;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+
+    font-size: 15px;
+}
+
+#customAlertMessage {
+    display: block;
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    #customAlert {
+        top: 15px;
+
+        padding: 12px 18px;
+
+        font-size: 14px;
+
+        max-width: 90%;
+    }
+
+}
