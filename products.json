@@ -16,5 +16,14 @@
     "description": "5 kg wheat flour",
     "imageURL": "https://drive.google.com/uc?export=view&id=YOUR_FILE_ID",
     "available": true
+  },
+  {
+    "id": 3,
+    "name": "tea",
+    "description": "taj",
+    "price": 119.8,
+    "discount": 0,
+    "imageURL": "",
+    "available": true
   }
 ]
