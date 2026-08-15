@@ -25,5 +25,14 @@
     "discount": 20,
     "imageURL": "https://drive.google.com/file/d/1wZ5mrS3KAfSgIlrFqSE_Won2-r7LhBPl/view?usp=drivesdk",
     "available": true
+  },
+  {
+    "id": 12,
+    "name": "Red Kurti",
+    "description": "Sizes M,L,XXL",
+    "price": 1150,
+    "discount": 10,
+    "imageURL": "https://drive.google.com/file/d/1FTXpB7fqmU3so-dM8W3hMINJvvNC1-Jm/view?usp=drivesdk",
+    "available": true
   }
 ]
