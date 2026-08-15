@@ -10,8 +10,9 @@ body {
     color: #222;
 }
 
-
-/* HEADER */
+/* =========================================================
+   HEADER
+========================================================= */
 
 .shop-header {
     background: white;
@@ -46,8 +47,9 @@ body {
     margin-top: 3px;
 }
 
-
-/* TOP */
+/* =========================================================
+   TOP
+========================================================= */
 
 .top-bar {
     max-width: 800px;
@@ -104,8 +106,9 @@ body {
     margin-left: 4px;
 }
 
-
-/* PRODUCTS */
+/* =========================================================
+   PRODUCTS
+========================================================= */
 
 main {
     max-width: 800px;
@@ -117,8 +120,9 @@ main h2 {
     margin-bottom: 10px;
 }
 
-
-/* ONLY 2 PRODUCTS VISIBLE */
+/* =========================================================
+   PRODUCT LIST
+========================================================= */
 
 .product-list {
     height: 430px;
@@ -142,8 +146,9 @@ main h2 {
     border-radius: 10px;
 }
 
-
-/* PRODUCT */
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
 
 .product-card {
     background: white;
@@ -160,12 +165,41 @@ main h2 {
     overflow: hidden;
 }
 
+/* =========================================================
+   PRODUCT IMAGE
+   FULL BOX + CENTER + NO CROPPING
+========================================================= */
+
 .product-card img {
     width: 210px;
     height: 200px;
 
-    object-fit: cover;
+    flex-shrink: 0;
+
+    display: block;
+
+    /*
+       IMPORTANT:
+       contain = complete image visible
+       center = image centered
+    */
+    object-fit: contain;
+    object-position: center center;
+
+    /*
+       Background fills the complete image box
+    */
+    background: #f5f5f5;
+
+    /*
+       Keeps image centered
+    */
+    padding: 8px;
 }
+
+/* =========================================================
+   PRODUCT INFO
+========================================================= */
 
 .product-info {
     padding: 15px;
@@ -174,6 +208,8 @@ main h2 {
 
     display: flex;
     flex-direction: column;
+
+    min-width: 0;
 }
 
 .product-info h3 {
@@ -199,8 +235,9 @@ main h2 {
     margin-top: 4px;
 }
 
-
-/* ACTIONS */
+/* =========================================================
+   ACTIONS
+========================================================= */
 
 .actions {
     display: flex;
@@ -259,8 +296,9 @@ main h2 {
     font-weight: bold;
 }
 
-
-/* LOCATION */
+/* =========================================================
+   LOCATION
+========================================================= */
 
 .location-section {
     max-width: 800px;
@@ -285,8 +323,9 @@ main h2 {
     font-weight: bold;
 }
 
-
-/* MODALS */
+/* =========================================================
+   MODALS
+========================================================= */
 
 .modal {
     display: none;
@@ -295,7 +334,7 @@ main h2 {
 
     inset: 0;
 
-    background: rgba(0,0,0,.6);
+    background: rgba(0, 0, 0, .6);
 
     z-index: 1000;
 
@@ -334,8 +373,9 @@ main h2 {
     cursor: pointer;
 }
 
-
-/* CART */
+/* =========================================================
+   CART
+========================================================= */
 
 .cart-row {
     display: flex;
@@ -351,7 +391,10 @@ main h2 {
     width: 65px;
     height: 65px;
 
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+
+    background: #f5f5f5;
 
     border-radius: 6px;
 }
@@ -381,6 +424,7 @@ main h2 {
 
 .cart-controls span {
     width: 30px;
+
     text-align: center;
 }
 
@@ -424,8 +468,9 @@ main h2 {
     font-weight: bold;
 }
 
-
-/* FORM */
+/* =========================================================
+   FORM
+========================================================= */
 
 label {
     display: block;
@@ -471,8 +516,9 @@ textarea {
     padding: 5px 0;
 }
 
-
-/* ALERT */
+/* =========================================================
+   ALERT
+========================================================= */
 
 #customAlert {
     display: none;
@@ -498,8 +544,9 @@ textarea {
     font-weight: bold;
 }
 
-
-/* MOBILE */
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 600px) {
 
@@ -519,9 +566,22 @@ textarea {
         min-height: 180px;
     }
 
+    /* =====================================================
+       MOBILE PRODUCT IMAGE
+    ===================================================== */
+
     .product-card img {
         width: 120px;
         height: 180px;
+
+        flex-shrink: 0;
+
+        object-fit: contain;
+        object-position: center center;
+
+        background: #f5f5f5;
+
+        padding: 5px;
     }
 
     .product-info {
@@ -554,5 +614,16 @@ textarea {
 
     .cart-button {
         padding: 0 10px;
+    }
+
+    /* Cart image */
+    .cart-row img {
+        width: 65px;
+        height: 65px;
+
+        object-fit: contain;
+        object-position: center;
+
+        background: #f5f5f5;
     }
 }
