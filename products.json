@@ -70,5 +70,14 @@
     "discount": 25,
     "imageURL": "https://drive.google.com/file/d/1hGU1SPK0f7vjlhRFSZRzNDfRIGtWw7fI/view?usp=drivesdk",
     "available": true
+  },
+  {
+    "id": 17,
+    "name": "Green kurtis",
+    "description": "Sizes M,L,XL",
+    "price": 1470,
+    "discount": 18,
+    "imageURL": "https://drive.google.com/file/d/1UIRCwtEeHF-B_pv6Pql7jAktxbIQaVGj/view?usp=drivesdk",
+    "available": true
   }
 ]
