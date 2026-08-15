@@ -43,5 +43,14 @@
     "discount": 15,
     "imageURL": "https://drive.google.com/file/d/1N-jqwV_N0Q1d8mbbnJj1qOBEI9f86G8Y/view?usp=drivesdk",
     "available": true
+  },
+  {
+    "id": 14,
+    "name": "Krutis",
+    "description": "Sizes L,XL",
+    "price": 1050,
+    "discount": 12,
+    "imageURL": "https://drive.google.com/file/d/1MGdTyi_xl65QWoeIbzS-NeuyCqeKaJH_/view?usp=drivesdk",
+    "available": true
   }
 ]
