@@ -48,7 +48,9 @@ function showCustomAlert(message) {
     alertBox.style.display = "block";
 
     setTimeout(function () {
+
         alertBox.style.display = "none";
+
     }, 2000);
 }
 
@@ -59,103 +61,133 @@ function showCustomAlert(message) {
 
 function escapeHTML(value) {
 
-    const div = document.createElement("div");
+    const div =
+        document.createElement("div");
 
-    div.textContent = String(value ?? "");
+    div.textContent =
+        String(value ?? "");
 
     return div.innerHTML;
 }
 
 
 /* =========================================================
-   GET IMAGE URL
-   Handles different possible JSON field names
+   IMAGE URL
 ========================================================= */
 
-function getProductImage(product) {
+function getImageURL(product) {
 
-    let imageURL = "";
-
-    if (product) {
-
-        imageURL =
-            product.imageURL ||
-            product.imageUrl ||
-            product.image ||
-            product.image_url ||
-            product.photoURL ||
-            product.photoUrl ||
-            "";
-    }
-
-    imageURL =
-        String(imageURL).trim();
+    let imageURL =
+        String(
+            product.imageURL ??
+            product.imageUrl ??
+            product.image ??
+            ""
+        ).trim();
 
 
-    /* Remove accidental spaces */
+    console.log(
+        "Original image URL:",
+        imageURL
+    );
 
-    imageURL =
-        imageURL.replace(/\s+/g, "");
-
-
-    /* If no image */
 
     if (!imageURL) {
+
+        console.warn(
+            "No image URL for product:",
+            product.name
+        );
 
         return "default-product.jpg";
     }
 
 
     /*
-       If Google Drive sharing URL is being used,
-       convert it to a direct image URL.
+       Google Drive file URL support
     */
 
     if (
-        imageURL.includes("drive.google.com") &&
-        imageURL.includes("/file/d/")
+        imageURL.includes("drive.google.com")
     ) {
 
-        const match =
+        /*
+           Format:
+           https://drive.google.com/file/d/FILE_ID/view
+        */
+
+        const fileMatch =
             imageURL.match(
                 /\/file\/d\/([^/]+)/
             );
 
-        if (match && match[1]) {
+
+        if (fileMatch) {
 
             imageURL =
                 "https://drive.google.com/uc?export=view&id=" +
-                match[1];
+                fileMatch[1];
+
         }
+
+
+        /*
+           Format:
+           https://drive.google.com/open?id=FILE_ID
+        */
+
+        else if (
+            imageURL.includes("open?id=")
+        ) {
+
+            const id =
+                imageURL.split("open?id=")[1]
+                    .split("&")[0];
+
+            if (id) {
+
+                imageURL =
+                    "https://drive.google.com/uc?export=view&id=" +
+                    id;
+
+            }
+
+        }
+
+
+        /*
+           Format:
+           https://drive.google.com/uc?id=FILE_ID
+        */
+
+        else if (
+            imageURL.includes("uc?id=")
+        ) {
+
+            const id =
+                imageURL.split("uc?id=")[1]
+                    .split("&")[0];
+
+            if (id) {
+
+                imageURL =
+                    "https://drive.google.com/uc?export=view&id=" +
+                    id;
+
+            }
+
+        }
+
     }
 
 
+    console.log(
+        "Final image URL:",
+        imageURL
+    );
+
+
     return imageURL;
-}
-
-
-/* =========================================================
-   IMAGE ERROR HANDLER
-========================================================= */
-
-function handleImageError(image) {
-
-    console.error(
-        "IMAGE FAILED:",
-        image.src
-    );
-
-
-    image.onerror = null;
-
-
-    image.src =
-        "default-product.jpg";
-
-
-    image.classList.add(
-        "image-error"
-    );
 }
 
 
@@ -199,7 +231,6 @@ function loadProducts() {
 
 
     fetch(url, {
-        method: "GET",
         cache: "no-store"
     })
 
@@ -375,25 +406,16 @@ function createProductCard(
         finalPrice =
             price -
             (price * discount / 100);
+
     }
 
 
     /*
-       IMPORTANT:
-       Get image using multiple possible
-       JSON property names.
+       GET IMAGE URL
     */
 
     const imageURL =
-        getProductImage(product);
-
-
-    console.log(
-        "Product:",
-        product.name,
-        "Image:",
-        imageURL
-    );
+        getImageURL(product);
 
 
     const name =
@@ -414,14 +436,19 @@ function createProductCard(
         String(finalPrice);
 
 
+    /*
+       IMPORTANT:
+       IMAGE BOX + IMAGE
+    */
+
     card.innerHTML = `
 
         <div class="product-image-box">
 
             <img
+                class="product-image"
                 src="${escapeHTML(imageURL)}"
                 alt="${escapeHTML(name)}"
-                class="product-image"
                 loading="lazy"
             >
 
@@ -447,9 +474,7 @@ function createProductCard(
                 ${
                     discount > 0
                     ? `
-                        <span
-                            class="old-price"
-                        >
+                        <span class="old-price">
                             ₹${price.toFixed(2)}
                         </span>
                     `
@@ -512,7 +537,7 @@ function createProductCard(
 
 
     /*
-       Add image error handler
+       IMAGE ERROR HANDLER
     */
 
     const image =
@@ -522,12 +547,43 @@ function createProductCard(
     if (image) {
 
         image.addEventListener(
+            "load",
+            function () {
+
+                console.log(
+                    "IMAGE LOADED:",
+                    name,
+                    image.src
+                );
+
+            }
+        );
+
+
+        image.addEventListener(
             "error",
             function () {
 
-                handleImageError(
-                    image
+                console.error(
+                    "IMAGE FAILED:",
+                    name,
+                    image.src
                 );
+
+
+                if (
+                    image.src.includes(
+                        "default-product.jpg"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                image.src =
+                    "default-product.jpg";
 
             }
         );
@@ -549,14 +605,18 @@ function initializeProducts() {
         .querySelectorAll(".product-card")
         .forEach(function (card) {
 
+
             const minus =
                 card.querySelector(".minus");
+
 
             const plus =
                 card.querySelector(".plus");
 
+
             const qty =
                 card.querySelector(".qty");
+
 
             const addButton =
                 card.querySelector(".add-cart");
@@ -625,26 +685,32 @@ function initializeProducts() {
                 "click",
                 function () {
 
+
                     const id =
                         card.dataset.id;
 
+
                     const name =
                         card.dataset.name;
+
 
                     const price =
                         Number(
                             card.dataset.price
                         ) || 0;
 
+
                     const imageElement =
                         card.querySelector(
                             ".product-image"
                         );
 
+
                     const image =
                         imageElement
                         ? imageElement.src
                         : "default-product.jpg";
+
 
                     const quantity =
                         Number(
@@ -755,10 +821,12 @@ function showCart() {
             "cartItems"
         );
 
+
     const empty =
         document.getElementById(
             "emptyCart"
         );
+
 
     const bottom =
         document.getElementById(
@@ -784,8 +852,10 @@ function showCart() {
         empty.style.display =
             "block";
 
+
         bottom.style.display =
             "none";
+
 
         return;
     }
@@ -793,6 +863,7 @@ function showCart() {
 
     empty.style.display =
         "none";
+
 
     bottom.style.display =
         "block";
@@ -803,6 +874,7 @@ function showCart() {
 
     cart.forEach(
         function (item, index) {
+
 
             const itemTotal =
                 Number(item.price) *
@@ -826,12 +898,10 @@ function showCart() {
             row.innerHTML = `
 
                 <img
-                    src="${escapeHTML(
-                        item.image ||
-                        "default-product.jpg"
-                    )}"
+                    src="${escapeHTML(item.image)}"
                     alt="${escapeHTML(item.name)}"
                 >
+
 
                 <div class="cart-info">
 
@@ -839,9 +909,11 @@ function showCart() {
                         ${escapeHTML(item.name)}
                     </strong>
 
+
                     <div>
                         ₹${Number(item.price).toFixed(2)}
                     </div>
+
 
                     <div class="cart-controls">
 
@@ -852,9 +924,11 @@ function showCart() {
                             −
                         </button>
 
+
                         <span>
                             ${item.quantity}
                         </span>
+
 
                         <button
                             type="button"
@@ -865,9 +939,11 @@ function showCart() {
 
                     </div>
 
+
                     <div>
                         ₹${itemTotal.toFixed(2)}
                     </div>
+
 
                     <button
                         type="button"
@@ -880,26 +956,6 @@ function showCart() {
                 </div>
 
             `;
-
-
-            const cartImage =
-                row.querySelector("img");
-
-
-            if (cartImage) {
-
-                cartImage.addEventListener(
-                    "error",
-                    function () {
-
-                        handleImageError(
-                            cartImage
-                        );
-
-                    }
-                );
-
-            }
 
 
             container.appendChild(row);
@@ -937,6 +993,7 @@ function cartPlus(index) {
 
     cart[index].quantity++;
 
+
     updateCart();
 }
 
@@ -963,6 +1020,7 @@ function cartMinus(index) {
             index,
             1
         );
+
     }
 
 
@@ -1085,6 +1143,7 @@ function setupOrderButton() {
         "click",
         function () {
 
+
             if (cart.length === 0) {
 
                 showCustomAlert(
@@ -1102,6 +1161,7 @@ function setupOrderButton() {
                 document.getElementById(
                     "cartModal"
                 );
+
 
             const orderModal =
                 document.getElementById(
@@ -1155,6 +1215,7 @@ function showOrder() {
 
     cart.forEach(function (item) {
 
+
         const itemTotal =
             Number(item.price) *
             Number(item.quantity);
@@ -1175,6 +1236,7 @@ function showOrder() {
                     × ${item.quantity}
 
                 </span>
+
 
                 <strong>
 
@@ -1219,6 +1281,11 @@ function setupSendOrder() {
 
 
     if (!sendOrder) {
+
+        console.error(
+            "sendOrder button not found"
+        );
+
         return;
     }
 
@@ -1227,15 +1294,18 @@ function setupSendOrder() {
         "click",
         function () {
 
+
             const nameInput =
                 document.getElementById(
                     "customerName"
                 );
 
+
             const mobileInput =
                 document.getElementById(
                     "customerMobile"
                 );
+
 
             const addressInput =
                 document.getElementById(
@@ -1324,7 +1394,10 @@ function setupSendOrder() {
 
 
             orderText +=
-                "PRODUCTS\n" +
+                "PRODUCTS\n";
+
+
+            orderText +=
                 "----------------------\n";
 
 
@@ -1332,6 +1405,7 @@ function setupSendOrder() {
 
 
             cart.forEach(function (item) {
+
 
                 const itemTotal =
                     Number(item.price) *
@@ -1363,7 +1437,7 @@ function setupSendOrder() {
 
 
             orderText +=
-                "Total: ₹" +
+                "\nTotal: ₹" +
                 total.toFixed(2);
 
 
@@ -1391,6 +1465,27 @@ function setupSendOrder() {
             window.location.href =
                 mailtoURL;
 
+
+            cart = [];
+
+
+            updateCart();
+
+
+            if (nameInput) {
+                nameInput.value = "";
+            }
+
+
+            if (mobileInput) {
+                mobileInput.value = "";
+            }
+
+
+            if (addressInput) {
+                addressInput.value = "";
+            }
+
         }
     );
 
@@ -1417,6 +1512,7 @@ function setupCloseOrder() {
     closeOrder.addEventListener(
         "click",
         function () {
+
 
             const orderModal =
                 document.getElementById(
@@ -1456,7 +1552,11 @@ function setupSearch() {
 
     searchInput.addEventListener(
         "input",
-        applyCurrentSearch
+        function () {
+
+            applyCurrentSearch();
+
+        }
     );
 
 }
@@ -1486,6 +1586,7 @@ function applyCurrentSearch() {
             ".product-card"
         )
         .forEach(function (card) {
+
 
             const name =
                 (
@@ -1526,6 +1627,20 @@ function setupLocation() {
         "click",
         function () {
 
+
+            if (
+                !SHOP_LATITUDE ||
+                !SHOP_LONGITUDE
+            ) {
+
+                showCustomAlert(
+                    "Shop location is missing"
+                );
+
+                return;
+            }
+
+
             const googleMapsURL =
                 "https://www.google.com/maps/dir/?api=1" +
                 "&destination=" +
@@ -1555,10 +1670,12 @@ function setupModalOutsideClick() {
         "click",
         function (event) {
 
+
             const cartModal =
                 document.getElementById(
                     "cartModal"
                 );
+
 
             const orderModal =
                 document.getElementById(
@@ -1594,7 +1711,7 @@ function setupModalOutsideClick() {
 
 
 /* =========================================================
-   START
+   START WEBSITE
 ========================================================= */
 
 document.addEventListener(
@@ -1602,8 +1719,9 @@ document.addEventListener(
     function () {
 
         console.log(
-            "CUSTOMER SCRIPT.JS LOADED"
+            "CUSTOMER SCRIPT LOADED"
         );
+
 
         loadProducts();
 
