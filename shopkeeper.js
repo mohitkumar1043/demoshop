@@ -168,6 +168,143 @@ async function readJSON(response) {
 
 
 /* =========================================================
+   GOOGLE DRIVE / IMAGE URL CONVERTER
+========================================================= */
+
+function getImageURL(url) {
+
+    if (!url) {
+
+        return "default-product.jpg";
+
+    }
+
+    url =
+        String(url).trim();
+
+
+    if (!url) {
+
+        return "default-product.jpg";
+
+    }
+
+
+    /*
+       Google Drive:
+
+       https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+    */
+
+    let match =
+        url.match(
+            /drive\.google\.com\/file\/d\/([^/?]+)/
+        );
+
+
+    if (
+        match &&
+        match[1]
+    ) {
+
+        const fileId =
+            match[1];
+
+        return (
+            "https://drive.google.com/thumbnail?id=" +
+            encodeURIComponent(fileId) +
+            "&sz=w1000"
+        );
+
+    }
+
+
+    /*
+       Google Drive:
+
+       https://drive.google.com/open?id=FILE_ID
+    */
+
+    match =
+        url.match(
+            /drive\.google\.com\/open\?id=([^&]+)/
+        );
+
+
+    if (
+        match &&
+        match[1]
+    ) {
+
+        const fileId =
+            match[1];
+
+        return (
+            "https://drive.google.com/thumbnail?id=" +
+            encodeURIComponent(fileId) +
+            "&sz=w1000"
+        );
+
+    }
+
+
+    /*
+       Google Drive:
+
+       https://drive.google.com/uc?id=FILE_ID
+    */
+
+    match =
+        url.match(
+            /drive\.google\.com\/uc\?(?:.*&)?id=([^&]+)/
+        );
+
+
+    if (
+        match &&
+        match[1]
+    ) {
+
+        const fileId =
+            match[1];
+
+        return (
+            "https://drive.google.com/thumbnail?id=" +
+            encodeURIComponent(fileId) +
+            "&sz=w1000"
+        );
+
+    }
+
+
+    /*
+       Already converted Google Drive thumbnail
+    */
+
+    if (
+        url.includes(
+            "drive.google.com/thumbnail"
+        )
+    ) {
+
+        return url;
+
+    }
+
+
+    /*
+       Normal image URL
+
+       Example:
+       https://example.com/shirt.jpg
+    */
+
+    return url;
+
+}
+
+
+/* =========================================================
    LOAD PRODUCTS
 ========================================================= */
 
@@ -386,9 +523,15 @@ function displayProducts() {
                     "admin-product";
 
 
+                /*
+                   Convert Google Drive URL
+                   to displayable image URL
+                */
+
                 const image =
-                    product.imageURL ||
-                    "default-product.jpg";
+                    getImageURL(
+                        product.imageURL
+                    );
 
 
                 const available =
@@ -402,18 +545,28 @@ function displayProducts() {
                 div.innerHTML = `
 
                     <img
-    src="${image}"
-    alt="${escapeHTML(product.name)}"
-    class="product-image"
-    loading="lazy"
-    onerror="this.onerror=null; this.src='default-product.jpg';"
->
+                        src="${escapeHTML(image)}"
+                        alt="${escapeHTML(
+                            product.name
+                        )}"
+                        class="product-image"
+                        loading="lazy"
+                        onerror="
+                            this.onerror=null;
+                            this.src='default-product.jpg';
+                        "
+                    >
+
+
                     <div class="admin-product-info">
 
                         <div class="product-id">
                             Product ID:
-                            ${escapeHTML(product.id)}
+                            ${escapeHTML(
+                                product.id
+                            )}
                         </div>
+
 
                         <h3>
                             ${escapeHTML(
@@ -421,11 +574,13 @@ function displayProducts() {
                             )}
                         </h3>
 
+
                         <p>
                             ${escapeHTML(
                                 product.description || ""
                             )}
                         </p>
+
 
                         <p>
                             Price:
@@ -434,12 +589,14 @@ function displayProducts() {
                             ).toFixed(2)}
                         </p>
 
+
                         <p>
                             Discount:
                             ${Number(
                                 product.discount || 0
                             )}%
                         </p>
+
 
                         <p class="product-status">
 
@@ -451,6 +608,7 @@ function displayProducts() {
 
                         </p>
 
+
                         <div class="admin-actions">
 
                             <button
@@ -459,6 +617,7 @@ function displayProducts() {
                             >
                                 ✏️ Edit
                             </button>
+
 
                             <button
                                 type="button"
@@ -474,11 +633,19 @@ function displayProducts() {
                 `;
 
 
-                div
-                    .querySelector(
+                /*
+                   EDIT BUTTON
+                */
+
+                const editButton =
+                    div.querySelector(
                         ".edit-button"
-                    )
-                    .addEventListener(
+                    );
+
+
+                if (editButton) {
+
+                    editButton.addEventListener(
                         "click",
                         function () {
 
@@ -489,12 +656,22 @@ function displayProducts() {
                         }
                     );
 
+                }
 
-                div
-                    .querySelector(
+
+                /*
+                   DELETE BUTTON
+                */
+
+                const deleteButton =
+                    div.querySelector(
                         ".delete-button"
-                    )
-                    .addEventListener(
+                    );
+
+
+                if (deleteButton) {
+
+                    deleteButton.addEventListener(
                         "click",
                         function () {
 
@@ -504,6 +681,8 @@ function displayProducts() {
 
                         }
                     );
+
+                }
 
 
                 container.appendChild(
@@ -1293,44 +1472,68 @@ function resetForm() {
     }
 
 
-    document
-        .getElementById(
+    const formTitle =
+        document.getElementById(
             "formTitle"
-        )
-        .textContent =
+        );
+
+    if (formTitle) {
+
+        formTitle.textContent =
             "Add Product";
 
+    }
 
-    document
-        .getElementById(
+
+    const productId =
+        document.getElementById(
             "productId"
-        )
-        .value =
-            "";
+        );
+
+    if (productId) {
+
+        productId.value = "";
+
+    }
 
 
-    document
-        .getElementById(
+    const available =
+        document.getElementById(
             "productAvailable"
-        )
-        .checked =
+        );
+
+    if (available) {
+
+        available.checked =
             true;
 
+    }
 
-    document
-        .getElementById(
+
+    const cancelEdit =
+        document.getElementById(
             "cancelEdit"
-        )
-        .style.display =
+        );
+
+    if (cancelEdit) {
+
+        cancelEdit.style.display =
             "none";
 
+    }
 
-    document
-        .getElementById(
+
+    const imagePreview =
+        document.getElementById(
             "imagePreview"
-        )
-        .innerHTML =
+        );
+
+    if (imagePreview) {
+
+        imagePreview.innerHTML =
             "";
+
+    }
 
 }
 
@@ -1390,7 +1593,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   IMAGE PREVIEW
+   IMAGE PREVIEW INPUT
 ========================================================= */
 
 document.addEventListener(
@@ -1416,6 +1619,10 @@ document.addEventListener(
 );
 
 
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
 function updateImagePreview() {
 
     const input =
@@ -1437,28 +1644,44 @@ function updateImagePreview() {
     }
 
 
-    const url =
+    const originalURL =
         input.value.trim();
 
 
-    if (!url) {
+    if (!originalURL) {
 
-        preview.innerHTML = "";
+        preview.innerHTML =
+            "";
 
         return;
 
     }
 
 
+    /*
+       Convert Google Drive sharing URL
+    */
+
+    const imageURL =
+        getImageURL(
+            originalURL
+        );
+
+
     preview.innerHTML = `
 
-        <img
-            src="${escapeHTML(url)}"
-            alt="Preview"
-            onerror="
-                this.style.display='none'
-            "
-        >
+        <div class="image-preview-box">
+
+            <img
+                src="${escapeHTML(imageURL)}"
+                alt="Product Preview"
+                onerror="
+                    this.onerror=null;
+                    this.src='default-product.jpg';
+                "
+            >
+
+        </div>
 
     `;
 
