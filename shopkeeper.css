@@ -187,7 +187,7 @@ textarea:focus {
 }
 
 /* =========================================================
-   PRODUCT
+   PRODUCT ROW
 ========================================================= */
 
 .admin-product {
@@ -199,56 +199,55 @@ textarea:focus {
 }
 
 /* =========================================================
-   PRODUCT IMAGE CONTAINER
+   PRODUCT IMAGE
 ========================================================= */
 
-.admin-product > .product-image {
-    width: 280px;
-    height: 280px;
+/*
+   Fixed image box.
 
-    min-width: 280px;
-    max-width: 280px;
+   The uploaded image will:
+   - stay centered
+   - keep its original proportions
+   - never become stretched
+   - never become distorted
+   - show the complete image
+*/
+
+.admin-product > .product-image {
+    width: 300px;
+    height: 300px;
+
+    min-width: 300px;
+    max-width: 300px;
 
     display: block;
 
-    object-fit: contain;
-    object-position: center center;
+    margin: 0;
+
+    padding: 8px;
 
     background: #f8fafc;
 
     border: 1px solid #e5e7eb;
     border-radius: 12px;
 
-    padding: 8px;
-
-    margin: 0;
-
-    /* Prevent image from stretching */
-    aspect-ratio: 1 / 1;
-}
-
-/*
-   Important:
-   contain = complete image visible
-   center = image stays in center
-   No cropping
-*/
-
-.admin-product img.product-image {
     object-fit: contain;
     object-position: center center;
+
+    /* Important */
+    overflow: hidden;
 }
 
-/* =========================================================
-   IMAGE LOADING / ERROR
-========================================================= */
+/* Make sure dynamically created image follows same rule */
 
-.admin-product img {
-    max-width: 100%;
-}
+.admin-product img.product-image {
+    width: 300px;
+    height: 300px;
 
-.admin-product img[src=""] {
-    display: none;
+    object-fit: contain;
+    object-position: center center;
+
+    display: block;
 }
 
 /* =========================================================
@@ -325,7 +324,7 @@ textarea:focus {
 .image-preview {
     width: 100%;
     max-width: 350px;
-    min-height: 150px;
+    min-height: 280px;
 
     margin-top: 12px;
 
@@ -339,6 +338,8 @@ textarea:focus {
     border-radius: 10px;
 
     padding: 10px;
+
+    overflow: hidden;
 }
 
 .image-preview:empty {
@@ -349,9 +350,7 @@ textarea:focus {
     display: block;
 
     width: 100%;
-    max-width: 330px;
-
-    height: 250px;
+    height: 260px;
 
     object-fit: contain;
     object-position: center center;
@@ -407,21 +406,22 @@ textarea:focus {
 }
 
 /* =========================================================
-   DESKTOP LARGE SCREEN
+   LARGE DESKTOP
 ========================================================= */
 
 @media (min-width: 1000px) {
 
     .admin-product {
-        min-height: 320px;
+        min-height: 340px;
     }
 
-    .admin-product > .product-image {
-        width: 300px;
-        height: 300px;
+    .admin-product > .product-image,
+    .admin-product img.product-image {
+        width: 320px;
+        height: 320px;
 
-        min-width: 300px;
-        max-width: 300px;
+        min-width: 320px;
+        max-width: 320px;
     }
 }
 
@@ -439,14 +439,14 @@ textarea:focus {
         gap: 18px;
     }
 
-    .admin-product > .product-image {
-        width: 220px;
-        height: 220px;
+    .admin-product > .product-image,
+    .admin-product img.product-image {
+        width: 230px;
+        height: 230px;
 
-        min-width: 220px;
-        max-width: 220px;
+        min-width: 230px;
+        max-width: 230px;
     }
-
 }
 
 /* =========================================================
@@ -486,29 +486,31 @@ textarea:focus {
         align-items: center;
     }
 
+    /* Product becomes vertical */
+
     .admin-product {
         flex-direction: column;
         align-items: center;
         gap: 15px;
     }
 
-    /*
-       Mobile:
-       Image is centered and complete image is visible.
-    */
+    /* Image box */
 
-    .admin-product > .product-image {
+    .admin-product > .product-image,
+    .admin-product img.product-image {
         width: 100%;
-        max-width: 320px;
+        max-width: 340px;
 
         min-width: 0;
 
-        height: 280px;
+        height: 300px;
 
         margin: 0 auto;
 
         object-fit: contain;
         object-position: center center;
+
+        padding: 8px;
     }
 
     .admin-product-info {
@@ -530,11 +532,12 @@ textarea:focus {
 
     .image-preview {
         max-width: 100%;
+        min-height: 250px;
     }
 
     .image-preview img {
         width: 100%;
-        height: 220px;
+        height: 230px;
     }
 
     #adminAlert {
@@ -555,8 +558,12 @@ textarea:focus {
         padding: 14px;
     }
 
-    .admin-product > .product-image {
-        height: 240px;
+    .admin-product > .product-image,
+    .admin-product img.product-image {
+        width: 100%;
+        height: 260px;
+
+        max-width: 300px;
     }
 
     .admin-actions {
@@ -567,5 +574,4 @@ textarea:focus {
     .delete-button {
         width: 100%;
     }
-
 }
