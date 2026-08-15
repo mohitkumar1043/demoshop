@@ -16,5 +16,14 @@
     "discount": 25,
     "imageURL": "https://drive.google.com/file/d/1zcOhFJUa64dhtBuPc44LOcCFcra9lqD1/view?usp=drivesdk",
     "available": true
+  },
+  {
+    "id": 11,
+    "name": "Orenge kurti",
+    "description": "Sizes M,L,XL,XXL",
+    "price": 1450,
+    "discount": 20,
+    "imageURL": "https://drive.google.com/file/d/1wZ5mrS3KAfSgIlrFqSE_Won2-r7LhBPl/view?usp=drivesdk",
+    "available": true
   }
 ]
