@@ -47,8 +47,10 @@ function checkLogin() {
 
 
 /* =========================================================
-   ALERT
+   CUSTOM ALERT
 ========================================================= */
+
+let customAlertTimer = null;
 
 function showAlert(message) {
 
@@ -58,32 +60,63 @@ function showAlert(message) {
     const alertMessage =
         document.getElementById("customAlertMessage");
 
+
+    console.log(
+        "showAlert called:",
+        message
+    );
+
+
+    /* Check HTML */
+
     if (!alertBox || !alertMessage) {
 
-        console.warn(
-            "Custom alert elements not found:",
-            message
+        console.error(
+            "CUSTOM ALERT HTML NOT FOUND"
         );
+
+        alert(message);
 
         return;
     }
 
-    alertMessage.innerText = message;
 
-    alertBox.style.display = "block";
+    /* Clear previous timer */
 
-    clearTimeout(
-        window.customAlertTimer
-    );
+    if (customAlertTimer) {
 
-    window.customAlertTimer =
-        setTimeout(function () {
+        clearTimeout(
+            customAlertTimer
+        );
 
-            alertBox.style.display = "none";
+    }
 
-        }, 2000);
+
+    /* Set message */
+
+    alertMessage.textContent =
+        String(message);
+
+
+    /* Show */
+
+    alertBox.style.display =
+        "block";
+
+
+    /* Hide after 3 seconds */
+
+    customAlertTimer =
+        setTimeout(
+            function () {
+
+                alertBox.style.display =
+                    "none";
+
+            },
+            3000
+        );
 }
-
 /* =========================================================
    SESSION EXPIRED
 ========================================================= */
