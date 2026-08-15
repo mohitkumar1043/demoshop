@@ -15,7 +15,7 @@
     "price": 1370,
     "discount": 25,
     "imageURL": "https://drive.google.com/file/d/1zcOhFJUa64dhtBuPc44LOcCFcra9lqD1/view?usp=drivesdk",
-    "available": false
+    "available": true
   },
   {
     "id": 11,
