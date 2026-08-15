@@ -518,12 +518,7 @@ textarea:focus {
         height: 230px;
     }
 
-    #adminAlert {
-        left: 15px;
-        right: 15px;
-        top: 15px;
-        max-width: none;
-    }
+  
 }
 
 /* =========================================================
