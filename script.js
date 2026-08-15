@@ -44,7 +44,6 @@ function showCustomAlert(message) {
     }
 
     alertMessage.innerText = message;
-
     alertBox.style.display = "block";
 
     setTimeout(function () {
@@ -73,121 +72,199 @@ function escapeHTML(value) {
 
 /* =========================================================
    IMAGE URL
+   SAME LOGIC AS SHOPKEEPER PAGE
 ========================================================= */
 
 function getImageURL(product) {
 
-    let imageURL =
-        String(
-            product.imageURL ??
-            product.imageUrl ??
-            product.image ??
+    let url = "";
+
+    /* Accept different possible field names */
+
+    if (typeof product === "string") {
+
+        url = product.trim();
+
+    }
+    else {
+
+        url = String(
+            product?.imageURL ??
+            product?.imageUrl ??
+            product?.image ??
             ""
         ).trim();
 
-
-    console.log(
-        "Original image URL:",
-        imageURL
-    );
+    }
 
 
-    if (!imageURL) {
+    console.log("Original image URL:", url);
+
+
+    /* No image */
+
+    if (!url) {
 
         console.warn(
-            "No image URL for product:",
-            product.name
+            "No image URL:",
+            product?.name
         );
 
-        return "default-product.jpg";
+        return "./default-product.jpg";
     }
 
 
-    /*
-       Google Drive file URL support
-    */
+    /* =====================================================
+       GOOGLE DRIVE FILE URL
+
+       https://drive.google.com/file/d/FILE_ID/view
+    ===================================================== */
+
+    let match =
+        url.match(
+            /drive\.google\.com\/file\/d\/([^/?]+)/
+        );
+
+
+    if (match && match[1]) {
+
+        const fileId = match[1];
+
+        const convertedURL =
+            "https://drive.google.com/thumbnail?id=" +
+            encodeURIComponent(fileId) +
+            "&sz=w1000";
+
+        console.log(
+            "Converted Google Drive URL:",
+            convertedURL
+        );
+
+        return convertedURL;
+    }
+
+
+    /* =====================================================
+       GOOGLE DRIVE OPEN URL
+
+       https://drive.google.com/open?id=FILE_ID
+    ===================================================== */
+
+    match =
+        url.match(
+            /drive\.google\.com\/open\?id=([^&]+)/
+        );
+
+
+    if (match && match[1]) {
+
+        const fileId = match[1];
+
+        const convertedURL =
+            "https://drive.google.com/thumbnail?id=" +
+            encodeURIComponent(fileId) +
+            "&sz=w1000";
+
+        console.log(
+            "Converted Google Drive URL:",
+            convertedURL
+        );
+
+        return convertedURL;
+    }
+
+
+    /* =====================================================
+       GOOGLE DRIVE UC URL
+
+       https://drive.google.com/uc?id=FILE_ID
+       https://drive.google.com/uc?export=view&id=FILE_ID
+    ===================================================== */
+
+    match =
+        url.match(
+            /drive\.google\.com\/uc\?(?:[^#]*&)?id=([^&#]+)/
+        );
+
+
+    if (match && match[1]) {
+
+        const fileId = match[1];
+
+        const convertedURL =
+            "https://drive.google.com/thumbnail?id=" +
+            encodeURIComponent(fileId) +
+            "&sz=w1000";
+
+        console.log(
+            "Converted Google Drive URL:",
+            convertedURL
+        );
+
+        return convertedURL;
+    }
+
+
+    /* =====================================================
+       GOOGLE DRIVE THUMBNAIL
+
+       Already converted
+    ===================================================== */
 
     if (
-        imageURL.includes("drive.google.com")
+        url.includes(
+            "drive.google.com/thumbnail"
+        )
     ) {
 
-        /*
-           Format:
-           https://drive.google.com/file/d/FILE_ID/view
-        */
-
-        const fileMatch =
-            imageURL.match(
-                /\/file\/d\/([^/]+)/
-            );
-
-
-        if (fileMatch) {
-
-            imageURL =
-                "https://drive.google.com/uc?export=view&id=" +
-                fileMatch[1];
-
-        }
-
-
-        /*
-           Format:
-           https://drive.google.com/open?id=FILE_ID
-        */
-
-        else if (
-            imageURL.includes("open?id=")
-        ) {
-
-            const id =
-                imageURL.split("open?id=")[1]
-                    .split("&")[0];
-
-            if (id) {
-
-                imageURL =
-                    "https://drive.google.com/uc?export=view&id=" +
-                    id;
-
-            }
-
-        }
-
-
-        /*
-           Format:
-           https://drive.google.com/uc?id=FILE_ID
-        */
-
-        else if (
-            imageURL.includes("uc?id=")
-        ) {
-
-            const id =
-                imageURL.split("uc?id=")[1]
-                    .split("&")[0];
-
-            if (id) {
-
-                imageURL =
-                    "https://drive.google.com/uc?export=view&id=" +
-                    id;
-
-            }
-
-        }
-
+        return url;
     }
 
 
-    console.log(
-        "Final image URL:",
-        imageURL
-    );
+    /* =====================================================
+       GOOGLE DRIVE PREVIEW URL
+
+       https://drive.google.com/file/d/FILE_ID/preview
+    ===================================================== */
+
+    if (
+        url.includes(
+            "drive.google.com"
+        )
+    ) {
+
+        match =
+            url.match(
+                /\/d\/([^/?]+)/
+            );
+
+        if (match && match[1]) {
+
+            const fileId = match[1];
+
+            const convertedURL =
+                "https://drive.google.com/thumbnail?id=" +
+                encodeURIComponent(fileId) +
+                "&sz=w1000";
+
+            console.log(
+                "Converted Google Drive URL:",
+                convertedURL
+            );
+
+            return convertedURL;
+        }
+    }
 
 
-    return imageURL;
+    /* =====================================================
+       NORMAL IMAGE URL
+
+       Example:
+       https://example.com/image.jpg
+    ===================================================== */
+
+    return url;
 }
 
 
@@ -198,7 +275,9 @@ function getImageURL(product) {
 function loadProducts() {
 
     const container =
-        document.getElementById("productList");
+        document.getElementById(
+            "productList"
+        );
 
 
     if (!container) {
@@ -231,6 +310,7 @@ function loadProducts() {
 
 
     fetch(url, {
+        method: "GET",
         cache: "no-store"
     })
 
@@ -251,11 +331,46 @@ function loadProducts() {
         }
 
 
-        return response.json();
+        return response.text();
 
     })
 
-    .then(function (products) {
+    .then(function (text) {
+
+        console.log(
+            "Raw products.json:",
+            text
+        );
+
+
+        if (!text.trim()) {
+
+            throw new Error(
+                "products.json is empty."
+            );
+        }
+
+
+        let products;
+
+        try {
+
+            products =
+                JSON.parse(text);
+
+        }
+        catch (error) {
+
+            console.error(
+                "JSON PARSE ERROR:",
+                error
+            );
+
+            throw new Error(
+                "Invalid products.json format."
+            );
+        }
+
 
         console.log(
             "Products received:",
@@ -263,11 +378,38 @@ function loadProducts() {
         );
 
 
+        /*
+           Products JSON MUST be an array
+        */
+
         if (!Array.isArray(products)) {
 
-            throw new Error(
-                "products.json must contain an array"
-            );
+            /*
+               Also support:
+               {
+                   "products": [...]
+               }
+            */
+
+            if (
+                products &&
+                Array.isArray(
+                    products.products
+                )
+            ) {
+
+                products =
+                    products.products;
+
+            }
+            else {
+
+                throw new Error(
+                    "products.json must contain a product array."
+                );
+
+            }
+
         }
 
 
@@ -286,11 +428,13 @@ function loadProducts() {
         container.innerHTML = `
             <div class="no-products">
 
-                Unable to load products.
+                <h3>Unable to load products</h3>
 
-                <br><br>
-
-                ${escapeHTML(error.message)}
+                <p>
+                    ${escapeHTML(
+                        error.message
+                    )}
+                </p>
 
             </div>
         `;
@@ -306,10 +450,13 @@ function loadProducts() {
 function displayProducts(products) {
 
     const container =
-        document.getElementById("productList");
+        document.getElementById(
+            "productList"
+        );
 
 
     if (!container) {
+
         return;
     }
 
@@ -317,17 +464,41 @@ function displayProducts(products) {
     container.innerHTML = "";
 
 
+    /*
+       AVAILABLE PRODUCTS
+    */
+
     const availableProducts =
-        products.filter(function (product) {
+        products.filter(
+            function (product) {
 
-            return (
-                product.available === true ||
-                String(product.available)
+                if (!product) {
+                    return false;
+                }
+
+
+                return (
+                    product.available === true ||
+                    String(
+                        product.available ?? ""
+                    )
                     .trim()
-                    .toUpperCase() === "YES"
-            );
+                    .toUpperCase() === "YES" ||
+                    String(
+                        product.available ?? ""
+                    )
+                    .trim()
+                    .toLowerCase() === "true"
+                );
 
-        });
+            }
+        );
+
+
+    console.log(
+        "Total products:",
+        products.length
+    );
 
 
     console.log(
@@ -336,7 +507,9 @@ function displayProducts(products) {
     );
 
 
-    if (availableProducts.length === 0) {
+    if (
+        availableProducts.length === 0
+    ) {
 
         container.innerHTML = `
             <div class="no-products">
@@ -348,14 +521,16 @@ function displayProducts(products) {
     }
 
 
-    availableProducts.forEach(function (product) {
+    availableProducts.forEach(
+        function (product) {
 
-        createProductCard(
-            product,
-            container
-        );
+            createProductCard(
+                product,
+                container
+            );
 
-    });
+        }
+    );
 
 
     initializeProducts();
@@ -374,48 +549,98 @@ function createProductCard(
 ) {
 
     const card =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     card.className =
         "product-card";
 
 
-    card.dataset.id =
-        String(product.id ?? "");
+    /*
+       PRODUCT ID
+    */
 
+    card.dataset.id =
+        String(
+            product.id ??
+            ""
+        );
+
+
+    /*
+       PRODUCT NAME
+    */
 
     card.dataset.name =
-        String(product.name ?? "");
+        String(
+            product.name ??
+            ""
+        );
 
+
+    /*
+       PRICE
+    */
 
     const price =
-        Number(product.price) || 0;
+        Number(
+            product.price
+        ) || 0;
 
+
+    /*
+       DISCOUNT
+    */
 
     const discount =
-        Number(product.discount) || 0;
+        Number(
+            product.discount
+        ) || 0;
 
+
+    /*
+       FINAL PRICE
+    */
 
     let finalPrice =
         price;
 
 
-    if (discount > 0) {
+    if (
+        discount > 0 &&
+        discount <= 100
+    ) {
 
         finalPrice =
             price -
-            (price * discount / 100);
+            (
+                price *
+                discount /
+                100
+            );
 
     }
 
 
     /*
-       GET IMAGE URL
+       IMAGE URL
+
+       IMPORTANT:
+       Use same converter as shopkeeper
     */
 
     const imageURL =
         getImageURL(product);
+
+
+    console.log(
+        "Product:",
+        product.name,
+        "Image:",
+        imageURL
+    );
 
 
     const name =
@@ -433,12 +658,13 @@ function createProductCard(
 
 
     card.dataset.price =
-        String(finalPrice);
+        String(
+            finalPrice
+        );
 
 
     /*
-       IMPORTANT:
-       IMAGE BOX + IMAGE
+       PRODUCT HTML
     */
 
     card.innerHTML = `
@@ -541,7 +767,9 @@ function createProductCard(
     */
 
     const image =
-        card.querySelector(".product-image");
+        card.querySelector(
+            ".product-image"
+        );
 
 
     if (image) {
@@ -571,19 +799,25 @@ function createProductCard(
                 );
 
 
+                /*
+                   Prevent infinite loop
+                */
+
                 if (
-                    image.src.includes(
-                        "default-product.jpg"
-                    )
+                    image.dataset.fallback ===
+                    "true"
                 ) {
 
                     return;
-
                 }
 
 
+                image.dataset.fallback =
+                    "true";
+
+
                 image.src =
-                    "default-product.jpg";
+                    "./default-product.jpg";
 
             }
         );
@@ -591,7 +825,9 @@ function createProductCard(
     }
 
 
-    container.appendChild(card);
+    container.appendChild(
+        card
+    );
 }
 
 
@@ -602,175 +838,203 @@ function createProductCard(
 function initializeProducts() {
 
     document
-        .querySelectorAll(".product-card")
-        .forEach(function (card) {
-
-
-            const minus =
-                card.querySelector(".minus");
-
-
-            const plus =
-                card.querySelector(".plus");
-
-
-            const qty =
-                card.querySelector(".qty");
-
-
-            const addButton =
-                card.querySelector(".add-cart");
-
-
-            if (
-                !minus ||
-                !plus ||
-                !qty ||
-                !addButton
-            ) {
-
-                return;
-            }
-
-
-            /* MINUS */
-
-            minus.addEventListener(
-                "click",
-                function () {
-
-                    let value =
-                        Number(
-                            qty.innerText
-                        ) || 1;
-
-
-                    if (value > 1) {
-                        value--;
-                    }
-
-
-                    qty.innerText =
-                        value;
-
-                }
-            );
-
-
-            /* PLUS */
-
-            plus.addEventListener(
-                "click",
-                function () {
-
-                    let value =
-                        Number(
-                            qty.innerText
-                        ) || 1;
-
-
-                    value++;
-
-
-                    qty.innerText =
-                        value;
-
-                }
-            );
-
-
-            /* ADD TO CART */
-
-            addButton.addEventListener(
-                "click",
-                function () {
-
-
-                    const id =
-                        card.dataset.id;
-
-
-                    const name =
-                        card.dataset.name;
-
-
-                    const price =
-                        Number(
-                            card.dataset.price
-                        ) || 0;
-
-
-                    const imageElement =
-                        card.querySelector(
-                            ".product-image"
-                        );
-
-
-                    const image =
-                        imageElement
-                        ? imageElement.src
-                        : "default-product.jpg";
-
-
-                    const quantity =
-                        Number(
-                            qty.innerText
-                        ) || 1;
-
-
-                    const existing =
-                        cart.find(
-                            function (item) {
-
-                                return (
-                                    item.id === id
-                                );
-
-                            }
-                        );
-
-
-                    if (existing) {
-
-                        existing.quantity +=
-                            quantity;
-
-                    }
-                    else {
-
-                        cart.push({
-
-                            id: id,
-
-                            name: name,
-
-                            price: price,
-
-                            image: image,
-
-                            quantity: quantity
-
-                        });
-
-                    }
-
-
-                    qty.innerText =
-                        "1";
-
-
-                    updateCart();
-
-
-                    showCustomAlert(
-                        name +
-                        " added to cart"
+        .querySelectorAll(
+            ".product-card"
+        )
+        .forEach(
+            function (card) {
+
+                const minus =
+                    card.querySelector(
+                        ".minus"
                     );
 
-                }
-            );
 
-        });
+                const plus =
+                    card.querySelector(
+                        ".plus"
+                    );
+
+
+                const qty =
+                    card.querySelector(
+                        ".qty"
+                    );
+
+
+                const addButton =
+                    card.querySelector(
+                        ".add-cart"
+                    );
+
+
+                if (
+                    !minus ||
+                    !plus ||
+                    !qty ||
+                    !addButton
+                ) {
+
+                    return;
+                }
+
+
+                /*
+                   MINUS
+                */
+
+                minus.addEventListener(
+                    "click",
+                    function () {
+
+                        let value =
+                            Number(
+                                qty.innerText
+                            ) || 1;
+
+
+                        if (
+                            value > 1
+                        ) {
+
+                            value--;
+
+                        }
+
+
+                        qty.innerText =
+                            value;
+
+                    }
+                );
+
+
+                /*
+                   PLUS
+                */
+
+                plus.addEventListener(
+                    "click",
+                    function () {
+
+                        let value =
+                            Number(
+                                qty.innerText
+                            ) || 1;
+
+
+                        value++;
+
+
+                        qty.innerText =
+                            value;
+
+                    }
+                );
+
+
+                /*
+                   ADD TO CART
+                */
+
+                addButton.addEventListener(
+                    "click",
+                    function () {
+
+                        const id =
+                            card.dataset.id;
+
+
+                        const name =
+                            card.dataset.name;
+
+
+                        const price =
+                            Number(
+                                card.dataset.price
+                            ) || 0;
+
+
+                        const imageElement =
+                            card.querySelector(
+                                ".product-image"
+                            );
+
+
+                        const image =
+                            imageElement
+                            ? imageElement.src
+                            : "./default-product.jpg";
+
+
+                        const quantity =
+                            Number(
+                                qty.innerText
+                            ) || 1;
+
+
+                        const existing =
+                            cart.find(
+                                function (item) {
+
+                                    return (
+                                        String(
+                                            item.id
+                                        ) ===
+                                        String(id)
+                                    );
+
+                                }
+                            );
+
+
+                        if (existing) {
+
+                            existing.quantity +=
+                                quantity;
+
+                        }
+                        else {
+
+                            cart.push({
+
+                                id:
+                                    id,
+
+                                name:
+                                    name,
+
+                                price:
+                                    price,
+
+                                image:
+                                    image,
+
+                                quantity:
+                                    quantity
+
+                            });
+
+                        }
+
+
+                        qty.innerText =
+                            "1";
+
+
+                        updateCart();
+
+
+                        showCustomAlert(
+                            name +
+                            " added to cart"
+                        );
+
+                    }
+                );
+
+            }
+        );
 
 }
 
@@ -784,12 +1048,16 @@ function updateCart() {
     let count = 0;
 
 
-    cart.forEach(function (item) {
+    cart.forEach(
+        function (item) {
 
-        count +=
-            item.quantity;
+            count +=
+                Number(
+                    item.quantity
+                ) || 0;
 
-    });
+        }
+    );
 
 
     const cartCount =
@@ -844,10 +1112,13 @@ function showCart() {
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
-    if (cart.length === 0) {
+    if (
+        cart.length === 0
+    ) {
 
         empty.style.display =
             "block";
@@ -858,6 +1129,7 @@ function showCart() {
 
 
         return;
+
     }
 
 
@@ -875,10 +1147,13 @@ function showCart() {
     cart.forEach(
         function (item, index) {
 
-
             const itemTotal =
-                Number(item.price) *
-                Number(item.quantity);
+                Number(
+                    item.price
+                ) *
+                Number(
+                    item.quantity
+                );
 
 
             total +=
@@ -898,20 +1173,32 @@ function showCart() {
             row.innerHTML = `
 
                 <img
-                    src="${escapeHTML(item.image)}"
-                    alt="${escapeHTML(item.name)}"
+                    src="${escapeHTML(
+                        item.image
+                    )}"
+                    alt="${escapeHTML(
+                        item.name
+                    )}"
+                    onerror="
+                        this.onerror=null;
+                        this.src='./default-product.jpg';
+                    "
                 >
 
 
                 <div class="cart-info">
 
                     <strong>
-                        ${escapeHTML(item.name)}
+                        ${escapeHTML(
+                            item.name
+                        )}
                     </strong>
 
 
                     <div>
-                        ₹${Number(item.price).toFixed(2)}
+                        ₹${Number(
+                            item.price
+                        ).toFixed(2)}
                     </div>
 
 
@@ -958,7 +1245,9 @@ function showCart() {
             `;
 
 
-            container.appendChild(row);
+            container.appendChild(
+                row
+            );
 
         }
     );
@@ -1143,14 +1432,16 @@ function setupOrderButton() {
         "click",
         function () {
 
-
-            if (cart.length === 0) {
+            if (
+                cart.length === 0
+            ) {
 
                 showCustomAlert(
                     "Cart is empty"
                 );
 
                 return;
+
             }
 
 
@@ -1207,48 +1498,56 @@ function showOrder() {
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     let total = 0;
 
 
-    cart.forEach(function (item) {
+    cart.forEach(
+        function (item) {
+
+            const itemTotal =
+                Number(
+                    item.price
+                ) *
+                Number(
+                    item.quantity
+                );
 
 
-        const itemTotal =
-            Number(item.price) *
-            Number(item.quantity);
+            total +=
+                itemTotal;
 
 
-        total +=
-            itemTotal;
+            container.innerHTML += `
+
+                <div class="order-line">
+
+                    <span>
+
+                        ${escapeHTML(
+                            item.name
+                        )}
+
+                        × ${item.quantity}
+
+                    </span>
 
 
-        container.innerHTML += `
+                    <strong>
 
-            <div class="order-line">
+                        ₹${itemTotal.toFixed(2)}
 
-                <span>
+                    </strong>
 
-                    ${escapeHTML(item.name)}
+                </div>
 
-                    × ${item.quantity}
+            `;
 
-                </span>
-
-
-                <strong>
-
-                    ₹${itemTotal.toFixed(2)}
-
-                </strong>
-
-            </div>
-
-        `;
-
-    });
+        }
+    );
 
 
     const orderTotal =
@@ -1264,7 +1563,6 @@ function showOrder() {
             total.toFixed(2);
 
     }
-
 }
 
 
@@ -1293,7 +1591,6 @@ function setupSendOrder() {
     sendOrder.addEventListener(
         "click",
         function () {
-
 
             const nameInput =
                 document.getElementById(
@@ -1331,43 +1628,53 @@ function setupSendOrder() {
                 : "";
 
 
-            if (name === "") {
+            if (!name) {
 
                 showCustomAlert(
                     "Enter your name"
                 );
 
                 return;
+
             }
 
 
-            if (!/^\d{10}$/.test(mobile)) {
+            if (
+                !/^\d{10}$/.test(
+                    mobile
+                )
+            ) {
 
                 showCustomAlert(
                     "Enter valid 10 digit mobile number"
                 );
 
                 return;
+
             }
 
 
-            if (address === "") {
+            if (!address) {
 
                 showCustomAlert(
                     "Enter your address"
                 );
 
                 return;
+
             }
 
 
-            if (cart.length === 0) {
+            if (
+                cart.length === 0
+            ) {
 
                 showCustomAlert(
                     "Cart is empty"
                 );
 
                 return;
+
             }
 
 
@@ -1404,40 +1711,51 @@ function setupSendOrder() {
             let total = 0;
 
 
-            cart.forEach(function (item) {
+            cart.forEach(
+                function (item) {
+
+                    const itemTotal =
+                        Number(
+                            item.price
+                        ) *
+                        Number(
+                            item.quantity
+                        );
 
 
-                const itemTotal =
-                    Number(item.price) *
-                    Number(item.quantity);
+                    total +=
+                        itemTotal;
 
 
-                total +=
-                    itemTotal;
+                    orderText +=
+                        "Product ID: " +
+                        item.id +
+                        "\n" +
 
+                        "Product: " +
+                        item.name +
+                        "\n" +
 
-                orderText +=
-                    "Product ID: " +
-                    item.id +
-                    "\n" +
-                    "Product: " +
-                    item.name +
-                    "\n" +
-                    "Quantity: " +
-                    item.quantity +
-                    "\n" +
-                    "Price: ₹" +
-                    Number(item.price).toFixed(2) +
-                    "\n" +
-                    "Item Total: ₹" +
-                    itemTotal.toFixed(2) +
-                    "\n\n";
+                        "Quantity: " +
+                        item.quantity +
+                        "\n" +
 
-            });
+                        "Price: ₹" +
+                        Number(
+                            item.price
+                        ).toFixed(2) +
+                        "\n" +
+
+                        "Item Total: ₹" +
+                        itemTotal.toFixed(2) +
+                        "\n\n";
+
+                }
+            );
 
 
             orderText +=
-                "\nTotal: ₹" +
+                "Total: ₹" +
                 total.toFixed(2);
 
 
@@ -1462,12 +1780,20 @@ function setupSendOrder() {
                 body;
 
 
+            /*
+               Open customer's default
+               email application
+            */
+
             window.location.href =
                 mailtoURL;
 
 
-            cart = [];
+            /*
+               Clear cart
+            */
 
+            cart = [];
 
             updateCart();
 
@@ -1512,7 +1838,6 @@ function setupCloseOrder() {
     closeOrder.addEventListener(
         "click",
         function () {
-
 
             const orderModal =
                 document.getElementById(
@@ -1585,23 +1910,24 @@ function applyCurrentSearch() {
         .querySelectorAll(
             ".product-card"
         )
-        .forEach(function (card) {
+        .forEach(
+            function (card) {
+
+                const name =
+                    (
+                        card.dataset.name ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-            const name =
-                (
-                    card.dataset.name ||
-                    ""
-                )
-                .toLowerCase();
+                card.style.display =
+                    name.includes(text)
+                    ? "flex"
+                    : "none";
 
-
-            card.style.display =
-                name.includes(text)
-                ? "flex"
-                : "none";
-
-        });
+            }
+        );
 
 }
 
@@ -1626,7 +1952,6 @@ function setupLocation() {
     button.addEventListener(
         "click",
         function () {
-
 
             if (
                 !SHOP_LATITUDE ||
@@ -1669,7 +1994,6 @@ function setupModalOutsideClick() {
     window.addEventListener(
         "click",
         function (event) {
-
 
             const cartModal =
                 document.getElementById(
