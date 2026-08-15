@@ -4,7 +4,7 @@
    Products: products.json
    Order: Email App
    Location: Google Maps
-   ========================================================= */
+========================================================= */
 
 
 /* =========================================================
@@ -39,9 +39,7 @@ function showCustomAlert(message) {
         document.getElementById("customAlertMessage");
 
     if (!alertBox || !alertMessage) {
-
         alert(message);
-
         return;
     }
 
@@ -50,9 +48,7 @@ function showCustomAlert(message) {
     alertBox.style.display = "block";
 
     setTimeout(function () {
-
         alertBox.style.display = "none";
-
     }, 2000);
 }
 
@@ -63,29 +59,46 @@ function showCustomAlert(message) {
 
 function escapeHTML(value) {
 
-    const div =
-        document.createElement("div");
+    const div = document.createElement("div");
 
-    div.textContent =
-        String(value ?? "");
+    div.textContent = String(value ?? "");
 
     return div.innerHTML;
 }
 
 
 /* =========================================================
-   GOOGLE DRIVE IMAGE URL CONVERTER
+   GET IMAGE URL
+   Handles different possible JSON field names
 ========================================================= */
 
-function getDisplayImageURL(url) {
+function getProductImage(product) {
 
-    if (!url) {
+    let imageURL = "";
 
-        return "default-product.jpg";
+    if (product) {
+
+        imageURL =
+            product.imageURL ||
+            product.imageUrl ||
+            product.image ||
+            product.image_url ||
+            product.photoURL ||
+            product.photoUrl ||
+            "";
     }
 
-    let imageURL =
-        String(url).trim();
+    imageURL =
+        String(imageURL).trim();
+
+
+    /* Remove accidental spaces */
+
+    imageURL =
+        imageURL.replace(/\s+/g, "");
+
+
+    /* If no image */
 
     if (!imageURL) {
 
@@ -93,110 +106,29 @@ function getDisplayImageURL(url) {
     }
 
 
-    /* -----------------------------------------------------
-       GOOGLE DRIVE FILE LINK
+    /*
+       If Google Drive sharing URL is being used,
+       convert it to a direct image URL.
+    */
 
-       Example:
+    if (
+        imageURL.includes("drive.google.com") &&
+        imageURL.includes("/file/d/")
+    ) {
 
-       https://drive.google.com/file/d/FILE_ID/view
-    ----------------------------------------------------- */
+        const match =
+            imageURL.match(
+                /\/file\/d\/([^/]+)/
+            );
 
-    const driveFileMatch =
-        imageURL.match(
-            /drive\.google\.com\/file\/d\/([^/]+)/
-        );
+        if (match && match[1]) {
 
-
-    if (driveFileMatch) {
-
-        const fileId =
-            driveFileMatch[1];
-
-        return (
-            "https://drive.google.com/uc?export=view&id=" +
-            encodeURIComponent(fileId)
-        );
+            imageURL =
+                "https://drive.google.com/uc?export=view&id=" +
+                match[1];
+        }
     }
 
-
-    /* -----------------------------------------------------
-       GOOGLE DRIVE OPEN LINK
-
-       Example:
-
-       https://drive.google.com/open?id=FILE_ID
-    ----------------------------------------------------- */
-
-    const driveOpenMatch =
-        imageURL.match(
-            /drive\.google\.com\/open\?id=([^&]+)/
-        );
-
-
-    if (driveOpenMatch) {
-
-        const fileId =
-            driveOpenMatch[1];
-
-        return (
-            "https://drive.google.com/uc?export=view&id=" +
-            encodeURIComponent(fileId)
-        );
-    }
-
-
-    /* -----------------------------------------------------
-       GOOGLE DRIVE UC LINK
-
-       Example:
-
-       https://drive.google.com/uc?id=FILE_ID
-    ----------------------------------------------------- */
-
-    const driveUCMatch =
-        imageURL.match(
-            /drive\.google\.com\/uc\?(?:export=view&)?id=([^&]+)/
-        );
-
-
-    if (driveUCMatch) {
-
-        const fileId =
-            driveUCMatch[1];
-
-        return (
-            "https://drive.google.com/uc?export=view&id=" +
-            encodeURIComponent(fileId)
-        );
-    }
-
-
-    /* -----------------------------------------------------
-       GOOGLE DRIVE thumbnail LINK
-    ----------------------------------------------------- */
-
-    const driveThumbnailMatch =
-        imageURL.match(
-            /drive\.google\.com\/thumbnail\?id=([^&]+)/
-        );
-
-
-    if (driveThumbnailMatch) {
-
-        const fileId =
-            driveThumbnailMatch[1];
-
-        return (
-            "https://drive.google.com/thumbnail?id=" +
-            encodeURIComponent(fileId) +
-            "&sz=w1000"
-        );
-    }
-
-
-    /* -----------------------------------------------------
-       NORMAL IMAGE URL
-    ----------------------------------------------------- */
 
     return imageURL;
 }
@@ -206,24 +138,24 @@ function getDisplayImageURL(url) {
    IMAGE ERROR HANDLER
 ========================================================= */
 
-function handleProductImageError(image) {
-
-    if (!image) {
-
-        return;
-    }
-
+function handleImageError(image) {
 
     console.error(
-        "Product image failed:",
+        "IMAGE FAILED:",
         image.src
     );
 
 
     image.onerror = null;
 
+
     image.src =
         "default-product.jpg";
+
+
+    image.classList.add(
+        "image-error"
+    );
 }
 
 
@@ -266,13 +198,10 @@ function loadProducts() {
     );
 
 
-    fetch(
-        url,
-        {
-            method: "GET",
-            cache: "no-store"
-        }
-    )
+    fetch(url, {
+        method: "GET",
+        cache: "no-store"
+    })
 
     .then(function (response) {
 
@@ -350,7 +279,6 @@ function displayProducts(products) {
 
 
     if (!container) {
-
         return;
     }
 
@@ -430,10 +358,6 @@ function createProductCard(
         String(product.name ?? "");
 
 
-    /* -----------------------------------------------------
-       PRICE
-    ----------------------------------------------------- */
-
     const price =
         Number(product.price) || 0;
 
@@ -454,35 +378,23 @@ function createProductCard(
     }
 
 
-    /* -----------------------------------------------------
-       IMAGE URL
-    ----------------------------------------------------- */
-
-    const originalImageURL =
-        String(
-            product.imageURL ?? ""
-        ).trim();
-
+    /*
+       IMPORTANT:
+       Get image using multiple possible
+       JSON property names.
+    */
 
     const imageURL =
-        getDisplayImageURL(
-            originalImageURL
-        );
+        getProductImage(product);
 
 
     console.log(
         "Product:",
         product.name,
-        "Original image:",
-        originalImageURL,
-        "Display image:",
+        "Image:",
         imageURL
     );
 
-
-    /* -----------------------------------------------------
-       PRODUCT DATA
-    ----------------------------------------------------- */
 
     const name =
         String(
@@ -501,14 +413,6 @@ function createProductCard(
     card.dataset.price =
         String(finalPrice);
 
-
-    card.dataset.image =
-        imageURL;
-
-
-    /* -----------------------------------------------------
-       PRODUCT HTML
-    ----------------------------------------------------- */
 
     card.innerHTML = `
 
@@ -531,7 +435,7 @@ function createProductCard(
             </h3>
 
 
-            <p>
+            <p class="description">
                 ${escapeHTML(description)}
             </p>
 
@@ -544,12 +448,7 @@ function createProductCard(
                     discount > 0
                     ? `
                         <span
-                            style="
-                                text-decoration: line-through;
-                                color: #888;
-                                font-size: 13px;
-                                margin-left: 5px;
-                            "
+                            class="old-price"
                         >
                             ₹${price.toFixed(2)}
                         </span>
@@ -612,24 +511,22 @@ function createProductCard(
     `;
 
 
-    /* -----------------------------------------------------
-       IMAGE ERROR HANDLING
-    ----------------------------------------------------- */
+    /*
+       Add image error handler
+    */
 
-    const imageElement =
-        card.querySelector(
-            ".product-image"
-        );
+    const image =
+        card.querySelector(".product-image");
 
 
-    if (imageElement) {
+    if (image) {
 
-        imageElement.addEventListener(
+        image.addEventListener(
             "error",
             function () {
 
-                handleProductImageError(
-                    imageElement
+                handleImageError(
+                    image
                 );
 
             }
@@ -652,18 +549,14 @@ function initializeProducts() {
         .querySelectorAll(".product-card")
         .forEach(function (card) {
 
-
             const minus =
                 card.querySelector(".minus");
-
 
             const plus =
                 card.querySelector(".plus");
 
-
             const qty =
                 card.querySelector(".qty");
-
 
             const addButton =
                 card.querySelector(".add-cart");
@@ -693,7 +586,6 @@ function initializeProducts() {
 
 
                     if (value > 1) {
-
                         value--;
                     }
 
@@ -733,25 +625,26 @@ function initializeProducts() {
                 "click",
                 function () {
 
-
                     const id =
                         card.dataset.id;
 
-
                     const name =
                         card.dataset.name;
-
 
                     const price =
                         Number(
                             card.dataset.price
                         ) || 0;
 
+                    const imageElement =
+                        card.querySelector(
+                            ".product-image"
+                        );
 
                     const image =
-                        card.dataset.image ||
-                        "default-product.jpg";
-
+                        imageElement
+                        ? imageElement.src
+                        : "default-product.jpg";
 
                     const quantity =
                         Number(
@@ -862,12 +755,10 @@ function showCart() {
             "cartItems"
         );
 
-
     const empty =
         document.getElementById(
             "emptyCart"
         );
-
 
     const bottom =
         document.getElementById(
@@ -893,10 +784,8 @@ function showCart() {
         empty.style.display =
             "block";
 
-
         bottom.style.display =
             "none";
-
 
         return;
     }
@@ -904,7 +793,6 @@ function showCart() {
 
     empty.style.display =
         "none";
-
 
     bottom.style.display =
         "block";
@@ -915,7 +803,6 @@ function showCart() {
 
     cart.forEach(
         function (item, index) {
-
 
             const itemTotal =
                 Number(item.price) *
@@ -939,11 +826,12 @@ function showCart() {
             row.innerHTML = `
 
                 <img
-                    src="${escapeHTML(item.image)}"
+                    src="${escapeHTML(
+                        item.image ||
+                        "default-product.jpg"
+                    )}"
                     alt="${escapeHTML(item.name)}"
-                    onerror="this.onerror=null; this.src='default-product.jpg';"
                 >
-
 
                 <div class="cart-info">
 
@@ -951,11 +839,9 @@ function showCart() {
                         ${escapeHTML(item.name)}
                     </strong>
 
-
                     <div>
                         ₹${Number(item.price).toFixed(2)}
                     </div>
-
 
                     <div class="cart-controls">
 
@@ -966,11 +852,9 @@ function showCart() {
                             −
                         </button>
 
-
                         <span>
                             ${item.quantity}
                         </span>
-
 
                         <button
                             type="button"
@@ -981,11 +865,9 @@ function showCart() {
 
                     </div>
 
-
                     <div>
                         ₹${itemTotal.toFixed(2)}
                     </div>
-
 
                     <button
                         type="button"
@@ -998,6 +880,26 @@ function showCart() {
                 </div>
 
             `;
+
+
+            const cartImage =
+                row.querySelector("img");
+
+
+            if (cartImage) {
+
+                cartImage.addEventListener(
+                    "error",
+                    function () {
+
+                        handleImageError(
+                            cartImage
+                        );
+
+                    }
+                );
+
+            }
 
 
             container.appendChild(row);
@@ -1029,13 +931,11 @@ function showCart() {
 function cartPlus(index) {
 
     if (!cart[index]) {
-
         return;
     }
 
 
     cart[index].quantity++;
-
 
     updateCart();
 }
@@ -1048,7 +948,6 @@ function cartPlus(index) {
 function cartMinus(index) {
 
     if (!cart[index]) {
-
         return;
     }
 
@@ -1078,7 +977,6 @@ function cartMinus(index) {
 function removeCart(index) {
 
     if (!cart[index]) {
-
         return;
     }
 
@@ -1124,6 +1022,7 @@ function setupCart() {
 
                     cartModal.style.display =
                         "block";
+
                 }
 
             }
@@ -1154,6 +1053,7 @@ function setupCart() {
 
                     cartModal.style.display =
                         "none";
+
                 }
 
             }
@@ -1177,7 +1077,6 @@ function setupOrderButton() {
 
 
     if (!orderButton) {
-
         return;
     }
 
@@ -1185,7 +1084,6 @@ function setupOrderButton() {
     orderButton.addEventListener(
         "click",
         function () {
-
 
             if (cart.length === 0) {
 
@@ -1205,7 +1103,6 @@ function setupOrderButton() {
                     "cartModal"
                 );
 
-
             const orderModal =
                 document.getElementById(
                     "orderModal"
@@ -1216,6 +1113,7 @@ function setupOrderButton() {
 
                 cartModal.style.display =
                     "none";
+
             }
 
 
@@ -1223,6 +1121,7 @@ function setupOrderButton() {
 
                 orderModal.style.display =
                     "block";
+
             }
 
         }
@@ -1244,7 +1143,6 @@ function showOrder() {
 
 
     if (!container) {
-
         return;
     }
 
@@ -1256,7 +1154,6 @@ function showOrder() {
 
 
     cart.forEach(function (item) {
-
 
         const itemTotal =
             Number(item.price) *
@@ -1278,7 +1175,6 @@ function showOrder() {
                     × ${item.quantity}
 
                 </span>
-
 
                 <strong>
 
@@ -1311,7 +1207,7 @@ function showOrder() {
 
 
 /* =========================================================
-   SEND ORDER → EMAIL APP
+   SEND ORDER
 ========================================================= */
 
 function setupSendOrder() {
@@ -1323,11 +1219,6 @@ function setupSendOrder() {
 
 
     if (!sendOrder) {
-
-        console.error(
-            "sendOrder button not found"
-        );
-
         return;
     }
 
@@ -1336,18 +1227,15 @@ function setupSendOrder() {
         "click",
         function () {
 
-
             const nameInput =
                 document.getElementById(
                     "customerName"
                 );
 
-
             const mobileInput =
                 document.getElementById(
                     "customerMobile"
                 );
-
 
             const addressInput =
                 document.getElementById(
@@ -1436,10 +1324,7 @@ function setupSendOrder() {
 
 
             orderText +=
-                "PRODUCTS\n";
-
-
-            orderText +=
+                "PRODUCTS\n" +
                 "----------------------\n";
 
 
@@ -1478,7 +1363,7 @@ function setupSendOrder() {
 
 
             orderText +=
-                "\nTotal: ₹" +
+                "Total: ₹" +
                 total.toFixed(2);
 
 
@@ -1503,40 +1388,8 @@ function setupSendOrder() {
                 body;
 
 
-            console.log(
-                "Opening email app"
-            );
-
-
             window.location.href =
                 mailtoURL;
-
-
-            cart = [];
-
-
-            updateCart();
-
-
-            if (nameInput) {
-
-                nameInput.value = "";
-
-            }
-
-
-            if (mobileInput) {
-
-                mobileInput.value = "";
-
-            }
-
-
-            if (addressInput) {
-
-                addressInput.value = "";
-
-            }
 
         }
     );
@@ -1557,11 +1410,6 @@ function setupCloseOrder() {
 
 
     if (!closeOrder) {
-
-        console.error(
-            "closeOrder button not found"
-        );
-
         return;
     }
 
@@ -1580,6 +1428,7 @@ function setupCloseOrder() {
 
                 orderModal.style.display =
                     "none";
+
             }
 
         }
@@ -1601,18 +1450,13 @@ function setupSearch() {
 
 
     if (!searchInput) {
-
         return;
     }
 
 
     searchInput.addEventListener(
         "input",
-        function () {
-
-            applyCurrentSearch();
-
-        }
+        applyCurrentSearch
     );
 
 }
@@ -1627,7 +1471,6 @@ function applyCurrentSearch() {
 
 
     if (!searchInput) {
-
         return;
     }
 
@@ -1643,7 +1486,6 @@ function applyCurrentSearch() {
             ".product-card"
         )
         .forEach(function (card) {
-
 
             const name =
                 (
@@ -1664,7 +1506,7 @@ function applyCurrentSearch() {
 
 
 /* =========================================================
-   GOOGLE MAPS - SHOP LOCATION
+   GOOGLE MAPS
 ========================================================= */
 
 function setupLocation() {
@@ -1676,11 +1518,6 @@ function setupLocation() {
 
 
     if (!button) {
-
-        console.error(
-            "locationButton not found"
-        );
-
         return;
     }
 
@@ -1688,20 +1525,6 @@ function setupLocation() {
     button.addEventListener(
         "click",
         function () {
-
-
-            if (
-                !SHOP_LATITUDE ||
-                !SHOP_LONGITUDE
-            ) {
-
-                showCustomAlert(
-                    "Shop location is missing"
-                );
-
-                return;
-            }
-
 
             const googleMapsURL =
                 "https://www.google.com/maps/dir/?api=1" +
@@ -1711,12 +1534,6 @@ function setupLocation() {
                     "," +
                     SHOP_LONGITUDE
                 );
-
-
-            console.log(
-                "Google Maps URL:",
-                googleMapsURL
-            );
 
 
             window.location.href =
@@ -1729,7 +1546,7 @@ function setupLocation() {
 
 
 /* =========================================================
-   CLOSE MODALS WHEN CLICKING OUTSIDE
+   MODAL OUTSIDE CLICK
 ========================================================= */
 
 function setupModalOutsideClick() {
@@ -1738,12 +1555,10 @@ function setupModalOutsideClick() {
         "click",
         function (event) {
 
-
             const cartModal =
                 document.getElementById(
                     "cartModal"
                 );
-
 
             const orderModal =
                 document.getElementById(
@@ -1758,6 +1573,7 @@ function setupModalOutsideClick() {
 
                 cartModal.style.display =
                     "none";
+
             }
 
 
@@ -1768,6 +1584,7 @@ function setupModalOutsideClick() {
 
                 orderModal.style.display =
                     "none";
+
             }
 
         }
@@ -1777,7 +1594,7 @@ function setupModalOutsideClick() {
 
 
 /* =========================================================
-   START WEBSITE
+   START
 ========================================================= */
 
 document.addEventListener(
@@ -1785,9 +1602,8 @@ document.addEventListener(
     function () {
 
         console.log(
-            "SCRIPT JS LOADED"
+            "CUSTOMER SCRIPT.JS LOADED"
         );
-
 
         loadProducts();
 
@@ -1810,7 +1626,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   AUTO REFRESH PRODUCTS
+   AUTO REFRESH
 ========================================================= */
 
 setInterval(
