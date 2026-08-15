@@ -1,9 +1,10 @@
+
 /* =========================================================
    SHOP CUSTOMER WEBSITE
    Products: products.json
    Order: Email App
    Location: Google Maps
-========================================================= */
+   ========================================================= */
 
 
 /* =========================================================
@@ -38,7 +39,9 @@ function showCustomAlert(message) {
         document.getElementById("customAlertMessage");
 
     if (!alertBox || !alertMessage) {
+
         alert(message);
+
         return;
     }
 
@@ -71,6 +74,160 @@ function escapeHTML(value) {
 
 
 /* =========================================================
+   GOOGLE DRIVE IMAGE URL CONVERTER
+========================================================= */
+
+function getDisplayImageURL(url) {
+
+    if (!url) {
+
+        return "default-product.jpg";
+    }
+
+    let imageURL =
+        String(url).trim();
+
+    if (!imageURL) {
+
+        return "default-product.jpg";
+    }
+
+
+    /* -----------------------------------------------------
+       GOOGLE DRIVE FILE LINK
+
+       Example:
+
+       https://drive.google.com/file/d/FILE_ID/view
+    ----------------------------------------------------- */
+
+    const driveFileMatch =
+        imageURL.match(
+            /drive\.google\.com\/file\/d\/([^/]+)/
+        );
+
+
+    if (driveFileMatch) {
+
+        const fileId =
+            driveFileMatch[1];
+
+        return (
+            "https://drive.google.com/uc?export=view&id=" +
+            encodeURIComponent(fileId)
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       GOOGLE DRIVE OPEN LINK
+
+       Example:
+
+       https://drive.google.com/open?id=FILE_ID
+    ----------------------------------------------------- */
+
+    const driveOpenMatch =
+        imageURL.match(
+            /drive\.google\.com\/open\?id=([^&]+)/
+        );
+
+
+    if (driveOpenMatch) {
+
+        const fileId =
+            driveOpenMatch[1];
+
+        return (
+            "https://drive.google.com/uc?export=view&id=" +
+            encodeURIComponent(fileId)
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       GOOGLE DRIVE UC LINK
+
+       Example:
+
+       https://drive.google.com/uc?id=FILE_ID
+    ----------------------------------------------------- */
+
+    const driveUCMatch =
+        imageURL.match(
+            /drive\.google\.com\/uc\?(?:export=view&)?id=([^&]+)/
+        );
+
+
+    if (driveUCMatch) {
+
+        const fileId =
+            driveUCMatch[1];
+
+        return (
+            "https://drive.google.com/uc?export=view&id=" +
+            encodeURIComponent(fileId)
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       GOOGLE DRIVE thumbnail LINK
+    ----------------------------------------------------- */
+
+    const driveThumbnailMatch =
+        imageURL.match(
+            /drive\.google\.com\/thumbnail\?id=([^&]+)/
+        );
+
+
+    if (driveThumbnailMatch) {
+
+        const fileId =
+            driveThumbnailMatch[1];
+
+        return (
+            "https://drive.google.com/thumbnail?id=" +
+            encodeURIComponent(fileId) +
+            "&sz=w1000"
+        );
+    }
+
+
+    /* -----------------------------------------------------
+       NORMAL IMAGE URL
+    ----------------------------------------------------- */
+
+    return imageURL;
+}
+
+
+/* =========================================================
+   IMAGE ERROR HANDLER
+========================================================= */
+
+function handleProductImageError(image) {
+
+    if (!image) {
+
+        return;
+    }
+
+
+    console.error(
+        "Product image failed:",
+        image.src
+    );
+
+
+    image.onerror = null;
+
+    image.src =
+        "default-product.jpg";
+}
+
+
+/* =========================================================
    LOAD PRODUCTS
 ========================================================= */
 
@@ -78,6 +235,7 @@ function loadProducts() {
 
     const container =
         document.getElementById("productList");
+
 
     if (!container) {
 
@@ -108,9 +266,13 @@ function loadProducts() {
     );
 
 
-    fetch(url, {
-        cache: "no-store"
-    })
+    fetch(
+        url,
+        {
+            method: "GET",
+            cache: "no-store"
+        }
+    )
 
     .then(function (response) {
 
@@ -188,6 +350,7 @@ function displayProducts(products) {
 
 
     if (!container) {
+
         return;
     }
 
@@ -267,6 +430,10 @@ function createProductCard(
         String(product.name ?? "");
 
 
+    /* -----------------------------------------------------
+       PRICE
+    ----------------------------------------------------- */
+
     const price =
         Number(product.price) || 0;
 
@@ -287,18 +454,35 @@ function createProductCard(
     }
 
 
-    let imageURL =
+    /* -----------------------------------------------------
+       IMAGE URL
+    ----------------------------------------------------- */
+
+    const originalImageURL =
         String(
             product.imageURL ?? ""
         ).trim();
 
 
-    if (imageURL === "") {
+    const imageURL =
+        getDisplayImageURL(
+            originalImageURL
+        );
 
-        imageURL =
-            "default-product.jpg";
-    }
 
+    console.log(
+        "Product:",
+        product.name,
+        "Original image:",
+        originalImageURL,
+        "Display image:",
+        imageURL
+    );
+
+
+    /* -----------------------------------------------------
+       PRODUCT DATA
+    ----------------------------------------------------- */
 
     const name =
         String(
@@ -318,13 +502,26 @@ function createProductCard(
         String(finalPrice);
 
 
+    card.dataset.image =
+        imageURL;
+
+
+    /* -----------------------------------------------------
+       PRODUCT HTML
+    ----------------------------------------------------- */
+
     card.innerHTML = `
 
-        <img
-            src="${escapeHTML(imageURL)}"
-            alt="${escapeHTML(name)}"
-            onerror="this.src='default-product.jpg'"
-        >
+        <div class="product-image-box">
+
+            <img
+                src="${escapeHTML(imageURL)}"
+                alt="${escapeHTML(name)}"
+                class="product-image"
+                loading="lazy"
+            >
+
+        </div>
 
 
         <div class="product-info">
@@ -415,6 +612,32 @@ function createProductCard(
     `;
 
 
+    /* -----------------------------------------------------
+       IMAGE ERROR HANDLING
+    ----------------------------------------------------- */
+
+    const imageElement =
+        card.querySelector(
+            ".product-image"
+        );
+
+
+    if (imageElement) {
+
+        imageElement.addEventListener(
+            "error",
+            function () {
+
+                handleProductImageError(
+                    imageElement
+                );
+
+            }
+        );
+
+    }
+
+
     container.appendChild(card);
 }
 
@@ -470,6 +693,7 @@ function initializeProducts() {
 
 
                     if (value > 1) {
+
                         value--;
                     }
 
@@ -524,14 +748,9 @@ function initializeProducts() {
                         ) || 0;
 
 
-                    const imageElement =
-                        card.querySelector("img");
-
-
                     const image =
-                        imageElement
-                        ? imageElement.src
-                        : "";
+                        card.dataset.image ||
+                        "default-product.jpg";
 
 
                     const quantity =
@@ -557,7 +776,8 @@ function initializeProducts() {
                         existing.quantity +=
                             quantity;
 
-                    } else {
+                    }
+                    else {
 
                         cart.push({
 
@@ -721,6 +941,7 @@ function showCart() {
                 <img
                     src="${escapeHTML(item.image)}"
                     alt="${escapeHTML(item.name)}"
+                    onerror="this.onerror=null; this.src='default-product.jpg';"
                 >
 
 
@@ -808,6 +1029,7 @@ function showCart() {
 function cartPlus(index) {
 
     if (!cart[index]) {
+
         return;
     }
 
@@ -826,6 +1048,7 @@ function cartPlus(index) {
 function cartMinus(index) {
 
     if (!cart[index]) {
+
         return;
     }
 
@@ -855,6 +1078,7 @@ function cartMinus(index) {
 function removeCart(index) {
 
     if (!cart[index]) {
+
         return;
     }
 
@@ -953,6 +1177,7 @@ function setupOrderButton() {
 
 
     if (!orderButton) {
+
         return;
     }
 
@@ -1019,6 +1244,7 @@ function showOrder() {
 
 
     if (!container) {
+
         return;
     }
 
@@ -1147,8 +1373,6 @@ function setupSendOrder() {
                 : "";
 
 
-            /* VALIDATION */
-
             if (name === "") {
 
                 showCustomAlert(
@@ -1189,8 +1413,6 @@ function setupSendOrder() {
             }
 
 
-            /* CREATE ORDER */
-
             let orderText =
                 "NEW SHOP ORDER\n\n";
 
@@ -1226,7 +1448,6 @@ function setupSendOrder() {
 
             cart.forEach(function (item) {
 
-
                 const itemTotal =
                     Number(item.price) *
                     Number(item.quantity);
@@ -1236,22 +1457,22 @@ function setupSendOrder() {
                     itemTotal;
 
 
-              orderText +=
-    "Product ID: " +
-    item.id +
-    "\n" +
-    "Product: " +
-    item.name +
-    "\n" +
-    "Quantity: " +
-    item.quantity +
-    "\n" +
-    "Price: ₹" +
-    Number(item.price).toFixed(2) +
-    "\n" +
-    "Item Total: ₹" +
-    itemTotal.toFixed(2) +
-    "\n\n";
+                orderText +=
+                    "Product ID: " +
+                    item.id +
+                    "\n" +
+                    "Product: " +
+                    item.name +
+                    "\n" +
+                    "Quantity: " +
+                    item.quantity +
+                    "\n" +
+                    "Price: ₹" +
+                    Number(item.price).toFixed(2) +
+                    "\n" +
+                    "Item Total: ₹" +
+                    itemTotal.toFixed(2) +
+                    "\n\n";
 
             });
 
@@ -1260,8 +1481,6 @@ function setupSendOrder() {
                 "\nTotal: ₹" +
                 total.toFixed(2);
 
-
-            /* EMAIL */
 
             const subject =
                 encodeURIComponent(
@@ -1289,17 +1508,9 @@ function setupSendOrder() {
             );
 
 
-            /*
-             * Open Android's default email handler.
-             */
-
             window.location.href =
                 mailtoURL;
 
-
-            /*
-             * Clear cart after opening
-             */
 
             cart = [];
 
@@ -1307,22 +1518,24 @@ function setupSendOrder() {
             updateCart();
 
 
-            /*
-             * Clear customer information
-             */
-
             if (nameInput) {
+
                 nameInput.value = "";
+
             }
 
 
             if (mobileInput) {
+
                 mobileInput.value = "";
+
             }
 
 
             if (addressInput) {
+
                 addressInput.value = "";
+
             }
 
         }
@@ -1357,7 +1570,6 @@ function setupCloseOrder() {
         "click",
         function () {
 
-
             const orderModal =
                 document.getElementById(
                     "orderModal"
@@ -1389,6 +1601,7 @@ function setupSearch() {
 
 
     if (!searchInput) {
+
         return;
     }
 
@@ -1414,6 +1627,7 @@ function applyCurrentSearch() {
 
 
     if (!searchInput) {
+
         return;
     }
 
@@ -1476,17 +1690,9 @@ function setupLocation() {
         function () {
 
 
-            const latitude =
-                SHOP_LATITUDE;
-
-
-            const longitude =
-                SHOP_LONGITUDE;
-
-
             if (
-                !latitude ||
-                !longitude
+                !SHOP_LATITUDE ||
+                !SHOP_LONGITUDE
             ) {
 
                 showCustomAlert(
@@ -1497,24 +1703,13 @@ function setupLocation() {
             }
 
 
-            /*
-             * Google Maps Directions URL.
-             *
-             * On Android, if Google Maps is installed,
-             * Android can hand this URL to the
-             * Google Maps application.
-             *
-             * The customer's current location
-             * becomes the starting location.
-             */
-
             const googleMapsURL =
                 "https://www.google.com/maps/dir/?api=1" +
                 "&destination=" +
                 encodeURIComponent(
-                    latitude +
+                    SHOP_LATITUDE +
                     "," +
-                    longitude
+                    SHOP_LONGITUDE
                 );
 
 
@@ -1523,13 +1718,6 @@ function setupLocation() {
                 googleMapsURL
             );
 
-
-            /*
-             * IMPORTANT:
-             *
-             * Use location.href instead of putting
-             * Markdown inside the URL.
-             */
 
             window.location.href =
                 googleMapsURL;
@@ -1596,7 +1784,6 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-
         console.log(
             "SCRIPT JS LOADED"
         );
@@ -1604,24 +1791,17 @@ document.addEventListener(
 
         loadProducts();
 
-
         setupCart();
-
 
         setupOrderButton();
 
-
         setupSendOrder();
-
 
         setupCloseOrder();
 
-
         setupSearch();
 
-
         setupLocation();
-
 
         setupModalOutsideClick();
 
