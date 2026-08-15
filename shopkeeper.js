@@ -50,46 +50,39 @@ function checkLogin() {
    CUSTOM ALERT
 ========================================================= */
 
+/* =========================================================
+   CUSTOM ALERT
+========================================================= */
+
 let customAlertTimer = null;
 
 function showAlert(message) {
 
-    const alertBox =
-        document.getElementById("customAlert");
+    const alertBox = document.getElementById("customAlert");
+    const alertMessage = document.getElementById("customAlertMessage");
 
-    const alertMessage =
-        document.getElementById("customAlertMessage");
-
-    console.log("SHOW ALERT:", message);
+    console.log("CUSTOM ALERT:", message);
 
     if (!alertBox || !alertMessage) {
-
-        console.error(
-            "customAlert or customAlertMessage not found"
-        );
-
+        console.error("customAlert element not found in HTML");
         return;
     }
 
-    if (customAlertTimer !== null) {
-
+    // Clear previous timer
+    if (customAlertTimer) {
         clearTimeout(customAlertTimer);
-
     }
 
-    alertMessage.textContent =
-        String(message);
+    // Set message
+    alertMessage.textContent = String(message);
 
-    alertBox.style.display =
-        "block";
+    // Show alert
+    alertBox.style.display = "block";
 
-    customAlertTimer =
-        setTimeout(function () {
-
-            alertBox.style.display =
-                "none";
-
-        }, 3000);
+    // Hide after 3 seconds
+    customAlertTimer = setTimeout(function () {
+        alertBox.style.display = "none";
+    }, 3000);
 }
 /* =========================================================
    SESSION EXPIRED
