@@ -61,5 +61,14 @@
     "discount": 28,
     "imageURL": "https://drive.google.com/file/d/1uXQSmskzntD3H61P4AQpPYnbGvWde06r/view?usp=drivesdk",
     "available": true
+  },
+  {
+    "id": 16,
+    "name": "Pink kurtis",
+    "description": "Sizes L,XL,XXL",
+    "price": 1475,
+    "discount": 25,
+    "imageURL": "https://drive.google.com/file/d/1hGU1SPK0f7vjlhRFSZRzNDfRIGtWw7fI/view?usp=drivesdk",
+    "available": true
   }
 ]
