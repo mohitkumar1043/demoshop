@@ -43,5 +43,14 @@
     "discount": 5,
     "imageURL": "",
     "available": true
+  },
+  {
+    "id": 7,
+    "name": "kurtis",
+    "description": "size M,L,XL,XLL",
+    "price": 1250,
+    "discount": 30,
+    "imageURL": "https://drive.google.com/file/d/12pt_mboLduwaTBh_OCAXCj7VYsJ9gpAh/view?usp=sharing",
+    "available": true
   }
 ]
