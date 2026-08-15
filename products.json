@@ -1,14 +1,5 @@
 [
   {
-    "id": 4,
-    "name": "kissan magi",
-    "description": "200 gm paket",
-    "price": 70,
-    "discount": 20,
-    "imageURL": "",
-    "available": true
-  },
-  {
     "id": 6,
     "name": "Soyabin oil",
     "description": "1 kg packet",
