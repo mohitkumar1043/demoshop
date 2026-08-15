@@ -20,9 +20,9 @@
   {
     "id": 3,
     "name": "tea",
-    "description": "taj",
-    "price": 119.8,
-    "discount": 0,
+    "description": "taj tea",
+    "price": 140,
+    "discount": 30,
     "imageURL": "",
     "available": true
   },
