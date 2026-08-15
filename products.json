@@ -9,15 +9,6 @@
     "available": true
   },
   {
-    "id": 8,
-    "name": "Shoes",
-    "description": "Sports shoes",
-    "price": 2700,
-    "discount": 15,
-    "imageURL": "https://drive.google.com/file/d/1gDdm93qvUUEx_-hrLVohH154FThhBPrb/view?usp=drivesdk",
-    "available": true
-  },
-  {
     "id": 10,
     "name": "Frock Kurti",
     "description": "Sizes  M,L,XL,XXL",
