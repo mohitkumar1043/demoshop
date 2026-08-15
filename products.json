@@ -1,14 +1,5 @@
 [
   {
-    "id": 1,
-    "name": "Tata Salt",
-    "price": 25,
-    "discount": 0,
-    "description": "1 kg packet",
-    "imageURL": "https://drive.google.com/uc?export=view&id=YOUR_FILE_ID",
-    "available": true
-  },
-  {
     "id": 2,
     "name": "Aashirvaad Atta",
     "price": 250,
