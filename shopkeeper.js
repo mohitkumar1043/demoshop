@@ -402,15 +402,12 @@ function displayProducts() {
                 div.innerHTML = `
 
                     <img
-                        src="${escapeHTML(image)}"
-                        alt="${escapeHTML(
-                            product.name
-                        )}"
-                        onerror="
-                            this.src='default-product.jpg'
-                        "
-                    >
-
+    src="${image}"
+    alt="${escapeHTML(product.name)}"
+    class="product-image"
+    loading="lazy"
+    onerror="this.onerror=null; this.src='default-product.jpg';"
+>
                     <div class="admin-product-info">
 
                         <div class="product-id">
