@@ -250,16 +250,17 @@ textarea:focus {
 }
 
 .admin-product img {
+    width: 220px;
+    height: 220px;
 
-    width: 130px;
+    display: block;
+    margin: 0 auto;
 
-    height: 130px;
+    object-fit: contain;
+    object-position: center;
 
-    object-fit: cover;
-
-    border-radius: 8px;
-
-    background: #eee;
+    background: #f5f5f5;
+    border-radius: 10px;
 }
 
 .admin-product-info {
