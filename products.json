@@ -1,14 +1,5 @@
 [
   {
-    "id": 6,
-    "name": "Soyabin oil",
-    "description": "1 kg packet",
-    "price": 180,
-    "discount": 5,
-    "imageURL": "",
-    "available": true
-  },
-  {
     "id": 7,
     "name": "kurtis",
     "description": "size M,L,XL,XLL",
