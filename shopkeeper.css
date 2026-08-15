@@ -4,37 +4,28 @@
 
 body {
     margin: 0;
-
     font-family: Arial, sans-serif;
-
     background: #f3f4f6;
-
     color: #222;
 }
-
 
 /* =========================================================
    HEADER
 ========================================================= */
 
 .header {
-
     background: #1d4ed8;
-
     color: white;
-
     padding: 18px 30px;
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
+    gap: 15px;
 }
 
 .header h1 {
     margin: 0 0 5px;
+    font-size: 25px;
 }
 
 .header p {
@@ -43,131 +34,96 @@ body {
 }
 
 .logout-button {
-
     width: auto;
-
     margin: 0;
-
     padding: 10px 18px;
-
     background: white;
-
     color: #1d4ed8;
-
     border: none;
-
     border-radius: 7px;
-
     font-weight: bold;
-
     cursor: pointer;
 }
 
+.logout-button:hover {
+    background: #eff6ff;
+}
 
 /* =========================================================
    CONTAINER
 ========================================================= */
 
 .container {
-
     width: 100%;
-
-    max-width: 1000px;
-
+    max-width: 1100px;
     margin: auto;
-
     padding: 25px;
 }
-
 
 /* =========================================================
    CARD
 ========================================================= */
 
 .card {
-
     background: white;
-
     margin-bottom: 25px;
-
     padding: 25px;
-
     border-radius: 12px;
-
-    box-shadow:
-        0 4px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 .card h2 {
     margin-top: 0;
 }
 
-
 /* =========================================================
    FORM
 ========================================================= */
 
 label {
-
     display: block;
-
     margin-top: 15px;
-
     margin-bottom: 6px;
-
     font-weight: bold;
 }
 
 input,
 textarea {
-
     width: 100%;
-
     padding: 12px;
-
     border: 1px solid #ccc;
-
     border-radius: 7px;
-
     font-size: 15px;
+    font-family: inherit;
 }
 
 textarea {
-
     min-height: 90px;
-
     resize: vertical;
 }
 
 input:focus,
 textarea:focus {
-
     outline: none;
-
     border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
-
 
 /* =========================================================
    AVAILABLE
 ========================================================= */
 
 .available {
-
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     margin-top: 18px;
 }
 
 .available input {
-
     width: auto;
+    cursor: pointer;
 }
-
 
 /* =========================================================
    BUTTONS
@@ -176,201 +132,322 @@ textarea:focus {
 .save-button,
 .cancel-button,
 .refresh-button {
-
     border: none;
-
     border-radius: 7px;
-
     padding: 12px 18px;
-
     font-weight: bold;
-
     cursor: pointer;
 }
 
 .save-button {
-
     width: 100%;
-
     margin-top: 20px;
-
     background: #2563eb;
-
     color: white;
+}
+
+.save-button:hover {
+    background: #1d4ed8;
 }
 
 .cancel-button {
-
     width: 100%;
-
     margin-top: 10px;
-
     background: #6b7280;
-
     color: white;
+}
+
+.cancel-button:hover {
+    background: #4b5563;
 }
 
 .refresh-button {
-
     background: #2563eb;
-
     color: white;
 }
 
+.refresh-button:hover {
+    background: #1d4ed8;
+}
 
 /* =========================================================
    PRODUCT HEADER
 ========================================================= */
 
 .list-header {
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     margin-bottom: 20px;
+    gap: 15px;
 }
 
+.list-header h2 {
+    margin: 0;
+}
 
 /* =========================================================
    PRODUCT
 ========================================================= */
 
 .admin-product {
-
     display: flex;
-
-    gap: 20px;
-
-    padding: 18px 0;
-
+    align-items: flex-start;
+    gap: 25px;
+    padding: 20px 0;
     border-bottom: 1px solid #ddd;
 }
 
-.admin-product img {
-    width: 100%;
-    max-width: 250px;
-    height: 250px;
+/* =========================================================
+   PRODUCT IMAGE CONTAINER
+========================================================= */
+
+.admin-product > .product-image {
+    width: 280px;
+    height: 280px;
+
+    min-width: 280px;
+    max-width: 280px;
 
     display: block;
-    margin: 0 auto;
 
     object-fit: contain;
-    object-position: center;
+    object-position: center center;
 
-    background: #f5f5f5;
-    border-radius: 10px;
+    background: #f8fafc;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    padding: 8px;
+
+    margin: 0;
+
+    /* Prevent image from stretching */
+    aspect-ratio: 1 / 1;
 }
 
-.admin-product-info {
+/*
+   Important:
+   contain = complete image visible
+   center = image stays in center
+   No cropping
+*/
 
+.admin-product img.product-image {
+    object-fit: contain;
+    object-position: center center;
+}
+
+/* =========================================================
+   IMAGE LOADING / ERROR
+========================================================= */
+
+.admin-product img {
+    max-width: 100%;
+}
+
+.admin-product img[src=""] {
+    display: none;
+}
+
+/* =========================================================
+   PRODUCT INFORMATION
+========================================================= */
+
+.admin-product-info {
     flex: 1;
+    min-width: 0;
 }
 
 .admin-product h3 {
+    margin: 5px 0 10px;
+    font-size: 21px;
+    word-break: break-word;
+}
 
-    margin: 5px 0;
+.admin-product-info p {
+    line-height: 1.5;
 }
 
 .product-id {
-
     color: #666;
-
     font-size: 13px;
+    margin-bottom: 5px;
 }
 
 .product-status {
-
     font-weight: bold;
 }
 
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
 .admin-actions {
-
     display: flex;
-
+    flex-wrap: wrap;
     gap: 10px;
-
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .edit-button,
 .delete-button {
-
-    padding: 8px 14px;
-
+    padding: 9px 15px;
     border: none;
-
     border-radius: 6px;
-
     cursor: pointer;
+    font-weight: bold;
 }
 
 .edit-button {
-
     background: #f59e0b;
-
     color: white;
+}
+
+.edit-button:hover {
+    background: #d97706;
 }
 
 .delete-button {
-
     background: #dc2626;
-
     color: white;
 }
 
+.delete-button:hover {
+    background: #b91c1c;
+}
 
 /* =========================================================
    IMAGE PREVIEW
 ========================================================= */
 
 .image-preview {
+    width: 100%;
+    max-width: 350px;
+    min-height: 150px;
 
-    margin-top: 10px;
+    margin-top: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f8fafc;
+
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+
+    padding: 10px;
+}
+
+.image-preview:empty {
+    display: none;
 }
 
 .image-preview img {
+    display: block;
 
-    width: 120px;
+    width: 100%;
+    max-width: 330px;
 
-    height: 120px;
+    height: 250px;
 
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center center;
 
     border-radius: 8px;
 }
-
 
 /* =========================================================
    ALERT
 ========================================================= */
 
 #adminAlert {
-
     display: none;
 
     position: fixed;
 
     top: 20px;
-
     right: 20px;
 
     z-index: 9999;
 
-    background: #111827;
+    max-width: 350px;
 
+    background: #111827;
     color: white;
 
     padding: 13px 18px;
 
     border-radius: 8px;
 
-    box-shadow:
-        0 5px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+
+    word-break: break-word;
 }
 
+/* =========================================================
+   ERROR BOX
+========================================================= */
+
+.error-box {
+    background: #fee2e2;
+    color: #991b1b;
+
+    border: 1px solid #fecaca;
+
+    padding: 18px;
+
+    border-radius: 8px;
+}
+
+.error-box h3 {
+    margin-top: 0;
+}
+
+/* =========================================================
+   DESKTOP LARGE SCREEN
+========================================================= */
+
+@media (min-width: 1000px) {
+
+    .admin-product {
+        min-height: 320px;
+    }
+
+    .admin-product > .product-image {
+        width: 300px;
+        height: 300px;
+
+        min-width: 300px;
+        max-width: 300px;
+    }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .container {
+        padding: 18px;
+    }
+
+    .admin-product {
+        gap: 18px;
+    }
+
+    .admin-product > .product-image {
+        width: 220px;
+        height: 220px;
+
+        min-width: 220px;
+        max-width: 220px;
+    }
+
+}
 
 /* =========================================================
    MOBILE
@@ -379,49 +456,116 @@ textarea:focus {
 @media (max-width: 650px) {
 
     .header {
-
         padding: 15px;
-
+        align-items: center;
     }
 
     .header h1 {
-
         font-size: 20px;
+    }
 
+    .header p {
+        font-size: 13px;
+    }
+
+    .logout-button {
+        padding: 9px 12px;
+        font-size: 13px;
     }
 
     .container {
-
-        padding: 15px;
-
+        padding: 12px;
     }
 
     .card {
-
         padding: 18px;
-
-    }
-
-    .admin-product {
-
-        flex-direction: column;
-
-    }
-
-    .admin-product img {
-
-        width: 100%;
-
-        height: 200px;
-
+        border-radius: 10px;
     }
 
     .list-header {
+        align-items: center;
+    }
 
-        align-items: flex-start;
+    .admin-product {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
 
-        gap: 10px;
+    /*
+       Mobile:
+       Image is centered and complete image is visible.
+    */
 
+    .admin-product > .product-image {
+        width: 100%;
+        max-width: 320px;
+
+        min-width: 0;
+
+        height: 280px;
+
+        margin: 0 auto;
+
+        object-fit: contain;
+        object-position: center center;
+    }
+
+    .admin-product-info {
+        width: 100%;
+    }
+
+    .admin-product h3 {
+        font-size: 19px;
+    }
+
+    .admin-actions {
+        width: 100%;
+    }
+
+    .edit-button,
+    .delete-button {
+        flex: 1;
+    }
+
+    .image-preview {
+        max-width: 100%;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 220px;
+    }
+
+    #adminAlert {
+        left: 15px;
+        right: 15px;
+        top: 15px;
+        max-width: none;
+    }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .card {
+        padding: 14px;
+    }
+
+    .admin-product > .product-image {
+        height: 240px;
+    }
+
+    .admin-actions {
+        flex-direction: column;
+    }
+
+    .edit-button,
+    .delete-button {
+        width: 100%;
     }
 
 }
