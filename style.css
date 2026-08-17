@@ -783,3 +783,73 @@ textarea {
         font-size: 10px;
     }
 }
+```css
+/* =========================================================
+   PRODUCT CLICK POPUP
+========================================================= */
+
+#productModalContent .product-card {
+    width: 100%;
+    min-height: auto;
+
+    display: flex;
+
+    border: none;
+
+    overflow: visible;
+
+    cursor: default;
+}
+
+
+/* Bigger image inside popup */
+
+#productModalContent .product-image-box {
+    width: 240px;
+    height: 280px;
+
+    min-width: 240px;
+    max-width: 240px;
+}
+
+
+/* Product information */
+
+#productModalContent .product-info {
+    padding: 18px;
+}
+
+
+/* Don't show pointer on popup */
+
+#productModalContent .product-card {
+    cursor: default;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    #productModalContent .product-card {
+        flex-direction: column;
+    }
+
+    #productModalContent .product-image-box {
+
+        width: 100%;
+        height: 280px;
+
+        min-width: 0;
+        max-width: none;
+    }
+
+    #productModalContent .product-info {
+        padding: 12px 0 0 0;
+    }
+
+}
+```
+
