@@ -1,7 +1,9 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -13,8 +15,9 @@
 
     <link
         rel="stylesheet"
-        href="style.css"
+        href="./style.css"
     >
+
 </head>
 
 
@@ -32,11 +35,15 @@
     </div>
 
     <div>
-        <h1>My Local Shop</h1>
+
+        <h1>
+            My Local Shop
+        </h1>
 
         <p>
             Available Products
         </p>
+
     </div>
 
 </header>
@@ -107,18 +114,24 @@
 
 
 
+<!-- =====================================================
+     SHOP LOCATION
+===================================================== -->
+
 <section class="location-section">
 
     <button
         id="locationButton"
         class="location-button"
-        type="button">
+        type="button"
+    >
 
         📍 Get Shop Location
 
     </button>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -131,7 +144,6 @@
 >
 
     <div class="modal-content">
-
 
         <button
             type="button"
@@ -197,7 +209,6 @@
 
     <div class="modal-content">
 
-
         <button
             type="button"
             id="closeOrder"
@@ -218,7 +229,6 @@
             Name
         </label>
 
-
         <input
             id="customerName"
             type="text"
@@ -227,20 +237,20 @@
         >
 
 
-
         <!-- MOBILE -->
 
-       <label for="customerMobile">Mobile</label>
+        <label for="customerMobile">
+            Mobile
+        </label>
 
-<input
-    id="customerMobile"
-    type="tel"
-    inputmode="numeric"
-    maxlength="10"
-    pattern="[0-9]{10}"
-    placeholder="10-digit mobile number"
->
-
+        <input
+            id="customerMobile"
+            type="tel"
+            inputmode="numeric"
+            maxlength="10"
+            pattern="[0-9]{10}"
+            placeholder="10-digit mobile number"
+        >
 
 
         <!-- ADDRESS -->
@@ -248,7 +258,6 @@
         <label for="customerAddress">
             Delivery Address
         </label>
-
 
         <textarea
             id="customerAddress"
@@ -258,16 +267,13 @@
         ></textarea>
 
 
-
         <!-- ORDER SUMMARY -->
 
         <h3>
             Order
         </h3>
 
-
         <div id="orderItems"></div>
-
 
 
         <!-- TOTAL -->
@@ -283,7 +289,6 @@
         </h3>
 
 
-
         <!-- SEND ORDER -->
 
         <button
@@ -296,6 +301,33 @@
 
         </button>
 
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     PRODUCT DETAIL POPUP
+===================================================== -->
+
+<div
+    id="productModal"
+    class="modal"
+>
+
+    <div class="modal-content product-modal-content">
+
+        <button
+            type="button"
+            id="closeProductModal"
+            class="close"
+        >
+            ×
+        </button>
+
+
+        <div id="productModalContent"></div>
 
     </div>
 
@@ -313,29 +345,6 @@
 
 </div>
 
-```html
-<!-- =====================================================
-     PRODUCT POPUP
-===================================================== -->
-
-<div id="productModal" class="modal">
-
-    <div class="modal-content">
-
-        <button
-            type="button"
-            id="closeProductModal"
-            class="close"
-        >
-            ×
-        </button>
-
-        <div id="productModalContent"></div>
-
-    </div>
-
-</div>
-```
 
 
 <!-- =====================================================
@@ -348,3 +357,4 @@
 </body>
 
 </html>
+```
