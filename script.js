@@ -2062,10 +2062,373 @@ document.addEventListener(
         setupLocation();
 
         setupModalOutsideClick();
+       setupProductClickPopup();
 
     }
 );
+/* =========================================================
+   PRODUCT CLICK POPUP
+========================================================= */
 
+function setupProductClickPopup() {
+
+    const productList =
+        document.getElementById("productList");
+
+    const modal =
+        document.getElementById("productModal");
+
+    const modalContent =
+        document.getElementById(
+            "productModalContent"
+        );
+
+    const closeButton =
+        document.getElementById(
+            "closeProductModal"
+        );
+
+
+    if (
+        !productList ||
+        !modal ||
+        !modalContent ||
+        !closeButton
+    ) {
+        return;
+    }
+
+
+    /* =====================================================
+       CLICK PRODUCT
+    ===================================================== */
+
+    productList.addEventListener(
+        "click",
+        function(event) {
+
+            /*
+             * Don't open popup when clicking:
+             * + button
+             * - button
+             * Add to Cart
+             */
+
+            if (
+                event.target.closest(".actions")
+            ) {
+                return;
+            }
+
+
+            const card =
+                event.target.closest(
+                    ".product-card"
+                );
+
+
+            if (!card) {
+                return;
+            }
+
+
+            /*
+             * Get product ID
+             */
+
+            const productId =
+                card.dataset.productId;
+
+
+            /*
+             * Find original product card
+             */
+
+            if (!productId) {
+                return;
+            }
+
+
+            /*
+             * Copy the SAME product card
+             */
+
+            const clonedCard =
+                card.cloneNode(true);
+
+
+            /*
+             * Remove product-card click
+             * behavior from popup
+             */
+
+            clonedCard.id =
+                "popupProductCard";
+
+
+            /*
+             * Put same product card
+             * inside popup
+             */
+
+            modalContent.innerHTML = "";
+
+            modalContent.appendChild(
+                clonedCard
+            );
+
+
+            /*
+             * Show popup
+             */
+
+            modal.style.display =
+                "block";
+
+
+            /*
+             * Make popup Add To Cart
+             * work independently
+             */
+
+            setupPopupCartButton(
+                clonedCard
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       CLOSE BUTTON
+    ===================================================== */
+
+    closeButton.addEventListener(
+        "click",
+        function() {
+
+            modal.style.display =
+                "none";
+
+            modalContent.innerHTML =
+                "";
+
+        }
+    );
+
+
+    /* =====================================================
+       CLICK OUTSIDE
+    ===================================================== */
+
+    modal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target === modal
+            ) {
+
+                modal.style.display =
+                    "none";
+
+                modalContent.innerHTML =
+                    "";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   POPUP CART BUTTON
+========================================================= */
+
+function setupPopupCartButton(card) {
+
+    const minus =
+        card.querySelector(".minus");
+
+    const plus =
+        card.querySelector(".plus");
+
+    const qty =
+        card.querySelector(".qty");
+
+    const addButton =
+        card.querySelector(".add-cart");
+
+
+    if (
+        !minus ||
+        !plus ||
+        !qty ||
+        !addButton
+    ) {
+        return;
+    }
+
+
+    /*
+     * PLUS
+     */
+
+    plus.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            let value =
+                Number(qty.innerText) || 1;
+
+            value++;
+
+            qty.innerText =
+                value;
+
+        }
+    );
+
+
+    /*
+     * MINUS
+     */
+
+    minus.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+            let value =
+                Number(qty.innerText) || 1;
+
+            if (value > 1) {
+                value--;
+            }
+
+            qty.innerText =
+                value;
+
+        }
+    );
+
+
+    /*
+     * ADD TO CART
+     */
+
+    addButton.addEventListener(
+        "click",
+        function(event) {
+
+            event.stopPropagation();
+
+
+            const id =
+                card.dataset.productId;
+
+
+            const name =
+                card.dataset.name;
+
+
+            const price =
+                Number(
+                    card.dataset.price
+                ) || 0;
+
+
+            const imageElement =
+                card.querySelector(
+                    ".product-image"
+                );
+
+
+            const image =
+                imageElement
+                    ? imageElement.src
+                    : "./default-product.jpg";
+
+
+            const quantity =
+                Number(
+                    qty.innerText
+                ) || 1;
+
+
+            const existing =
+                cart.find(
+                    function(item) {
+
+                        return (
+                            String(item.id) ===
+                            String(id)
+                        );
+
+                    }
+                );
+
+
+            if (existing) {
+
+                existing.quantity +=
+                    quantity;
+
+            }
+            else {
+
+                cart.push({
+
+                    id: id,
+
+                    name: name,
+
+                    price: price,
+
+                    image: image,
+
+                    quantity: quantity
+
+                });
+
+            }
+
+
+            updateCart();
+
+
+            showCustomAlert(
+                name +
+                " added to cart"
+            );
+
+
+            /*
+             * Close popup
+             */
+
+            const modal =
+                document.getElementById(
+                    "productModal"
+                );
+
+
+            if (modal) {
+
+                modal.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+}
 
 /* =========================================================
    AUTO REFRESH
@@ -2079,3 +2442,4 @@ setInterval(
     },
     30000
 );
+
