@@ -1,6 +1,7 @@
 
 /* =========================================================
    SHOP CUSTOMER WEBSITE
+
    Products: products.json
    Order: Email App
    Location: Google Maps
@@ -12,6 +13,7 @@
 ========================================================= */
 
 const SHOP_LATITUDE = "27.842087";
+
 const SHOP_LONGITUDE = "75.264468";
 
 const SHOPKEEPER_EMAIL = "pankajsal880@gmail.com";
@@ -38,17 +40,27 @@ function showCustomAlert(message) {
     const alertMessage =
         document.getElementById("customAlertMessage");
 
+
     if (!alertBox || !alertMessage) {
+
         alert(message);
+
         return;
     }
 
-    alertMessage.innerText = message;
-    alertBox.style.display = "block";
+
+    alertMessage.innerText =
+        message;
+
+
+    alertBox.style.display =
+        "block";
+
 
     setTimeout(function () {
 
-        alertBox.style.display = "none";
+        alertBox.style.display =
+            "none";
 
     }, 2000);
 }
@@ -63,8 +75,10 @@ function escapeHTML(value) {
     const div =
         document.createElement("div");
 
+
     div.textContent =
         String(value ?? "");
+
 
     return div.innerHTML;
 }
@@ -72,53 +86,41 @@ function escapeHTML(value) {
 
 /* =========================================================
    IMAGE URL
-   SAME LOGIC AS SHOPKEEPER PAGE
 ========================================================= */
 
 function getImageURL(product) {
 
     let url = "";
 
-    /* Accept different possible field names */
 
     if (typeof product === "string") {
 
-        url = product.trim();
+        url =
+            product.trim();
 
     }
     else {
 
-        url = String(
-            product?.imageURL ??
-            product?.imageUrl ??
-            product?.image ??
-            ""
-        ).trim();
+        url =
+            String(
+                product?.imageURL ??
+                product?.imageUrl ??
+                product?.image ??
+                ""
+            ).trim();
 
     }
 
 
-    console.log("Original image URL:", url);
-
-
-    /* No image */
-
     if (!url) {
-
-        console.warn(
-            "No image URL:",
-            product?.name
-        );
 
         return "./default-product.jpg";
     }
 
 
-    /* =====================================================
-       GOOGLE DRIVE FILE URL
-
-       https://drive.google.com/file/d/FILE_ID/view
-    ===================================================== */
+    /*
+       Google Drive FILE URL
+    */
 
     let match =
         url.match(
@@ -128,27 +130,21 @@ function getImageURL(product) {
 
     if (match && match[1]) {
 
-        const fileId = match[1];
+        const fileId =
+            match[1];
 
-        const convertedURL =
+
+        return (
             "https://drive.google.com/thumbnail?id=" +
             encodeURIComponent(fileId) +
-            "&sz=w1000";
-
-        console.log(
-            "Converted Google Drive URL:",
-            convertedURL
+            "&sz=w1000"
         );
-
-        return convertedURL;
     }
 
 
-    /* =====================================================
-       GOOGLE DRIVE OPEN URL
-
-       https://drive.google.com/open?id=FILE_ID
-    ===================================================== */
+    /*
+       Google Drive OPEN URL
+    */
 
     match =
         url.match(
@@ -158,28 +154,21 @@ function getImageURL(product) {
 
     if (match && match[1]) {
 
-        const fileId = match[1];
+        const fileId =
+            match[1];
 
-        const convertedURL =
+
+        return (
             "https://drive.google.com/thumbnail?id=" +
             encodeURIComponent(fileId) +
-            "&sz=w1000";
-
-        console.log(
-            "Converted Google Drive URL:",
-            convertedURL
+            "&sz=w1000"
         );
-
-        return convertedURL;
     }
 
 
-    /* =====================================================
-       GOOGLE DRIVE UC URL
-
-       https://drive.google.com/uc?id=FILE_ID
-       https://drive.google.com/uc?export=view&id=FILE_ID
-    ===================================================== */
+    /*
+       Google Drive UC URL
+    */
 
     match =
         url.match(
@@ -189,27 +178,21 @@ function getImageURL(product) {
 
     if (match && match[1]) {
 
-        const fileId = match[1];
+        const fileId =
+            match[1];
 
-        const convertedURL =
+
+        return (
             "https://drive.google.com/thumbnail?id=" +
             encodeURIComponent(fileId) +
-            "&sz=w1000";
-
-        console.log(
-            "Converted Google Drive URL:",
-            convertedURL
+            "&sz=w1000"
         );
-
-        return convertedURL;
     }
 
 
-    /* =====================================================
-       GOOGLE DRIVE THUMBNAIL
-
-       Already converted
-    ===================================================== */
+    /*
+       Already thumbnail URL
+    */
 
     if (
         url.includes(
@@ -221,11 +204,9 @@ function getImageURL(product) {
     }
 
 
-    /* =====================================================
-       GOOGLE DRIVE PREVIEW URL
-
-       https://drive.google.com/file/d/FILE_ID/preview
-    ===================================================== */
+    /*
+       Other Google Drive URLs
+    */
 
     if (
         url.includes(
@@ -238,31 +219,25 @@ function getImageURL(product) {
                 /\/d\/([^/?]+)/
             );
 
+
         if (match && match[1]) {
 
-            const fileId = match[1];
+            const fileId =
+                match[1];
 
-            const convertedURL =
+
+            return (
                 "https://drive.google.com/thumbnail?id=" +
                 encodeURIComponent(fileId) +
-                "&sz=w1000";
-
-            console.log(
-                "Converted Google Drive URL:",
-                convertedURL
+                "&sz=w1000"
             );
-
-            return convertedURL;
         }
     }
 
 
-    /* =====================================================
-       NORMAL IMAGE URL
-
-       Example:
-       https://example.com/image.jpg
-    ===================================================== */
+    /*
+       Normal image URL
+    */
 
     return url;
 }
@@ -303,24 +278,15 @@ function loadProducts() {
         Date.now();
 
 
-    console.log(
-        "Fetching products:",
-        url
-    );
-
-
-    fetch(url, {
-        method: "GET",
-        cache: "no-store"
-    })
+    fetch(
+        url,
+        {
+            method: "GET",
+            cache: "no-store"
+        }
+    )
 
     .then(function (response) {
-
-        console.log(
-            "products.json HTTP status:",
-            response.status
-        );
-
 
         if (!response.ok) {
 
@@ -337,12 +303,6 @@ function loadProducts() {
 
     .then(function (text) {
 
-        console.log(
-            "Raw products.json:",
-            text
-        );
-
-
         if (!text.trim()) {
 
             throw new Error(
@@ -352,6 +312,7 @@ function loadProducts() {
 
 
         let products;
+
 
         try {
 
@@ -366,30 +327,29 @@ function loadProducts() {
                 error
             );
 
+
             throw new Error(
                 "Invalid products.json format."
             );
         }
 
 
-        console.log(
-            "Products received:",
-            products
-        );
-
-
         /*
-           Products JSON MUST be an array
+           Support:
+
+           [
+              {...},
+              {...}
+           ]
+
+           OR:
+
+           {
+              "products": [...]
+           }
         */
 
         if (!Array.isArray(products)) {
-
-            /*
-               Also support:
-               {
-                   "products": [...]
-               }
-            */
 
             if (
                 products &&
@@ -407,9 +367,7 @@ function loadProducts() {
                 throw new Error(
                     "products.json must contain a product array."
                 );
-
             }
-
         }
 
 
@@ -428,7 +386,9 @@ function loadProducts() {
         container.innerHTML = `
             <div class="no-products">
 
-                <h3>Unable to load products</h3>
+                <h3>
+                    Unable to load products
+                </h3>
 
                 <p>
                     ${escapeHTML(
@@ -461,11 +421,12 @@ function displayProducts(products) {
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     /*
-       AVAILABLE PRODUCTS
+       Available products
     */
 
     const availableProducts =
@@ -473,38 +434,31 @@ function displayProducts(products) {
             function (product) {
 
                 if (!product) {
+
                     return false;
                 }
 
 
                 return (
                     product.available === true ||
+
                     String(
                         product.available ?? ""
                     )
                     .trim()
-                    .toUpperCase() === "YES" ||
+                    .toUpperCase() ===
+                    "YES" ||
+
                     String(
                         product.available ?? ""
                     )
                     .trim()
-                    .toLowerCase() === "true"
+                    .toLowerCase() ===
+                    "true"
                 );
 
             }
         );
-
-
-    console.log(
-        "Total products:",
-        products.length
-    );
-
-
-    console.log(
-        "Available products:",
-        availableProducts
-    );
 
 
     if (
@@ -533,7 +487,23 @@ function displayProducts(products) {
     );
 
 
+    /*
+       Product buttons
+    */
+
     initializeProducts();
+
+
+    /*
+       Product click popup
+
+       IMPORTANT:
+       This is called AFTER
+       product cards are created.
+    */
+
+    setupProductClickPopup();
+
 
     applyCurrentSearch();
 }
@@ -560,6 +530,11 @@ function createProductCard(
 
     /*
        PRODUCT ID
+
+       IMPORTANT:
+
+       We use dataset.id
+       everywhere.
     */
 
     card.dataset.id =
@@ -620,27 +595,15 @@ function createProductCard(
                 discount /
                 100
             );
-
     }
 
 
     /*
-       IMAGE URL
-
-       IMPORTANT:
-       Use same converter as shopkeeper
+       IMAGE
     */
 
     const imageURL =
         getImageURL(product);
-
-
-    console.log(
-        "Product:",
-        product.name,
-        "Image:",
-        imageURL
-    );
 
 
     const name =
@@ -656,6 +619,10 @@ function createProductCard(
             ""
         );
 
+
+    /*
+       Save final price
+    */
 
     card.dataset.price =
         String(
@@ -763,7 +730,7 @@ function createProductCard(
 
 
     /*
-       IMAGE ERROR HANDLER
+       IMAGE ERROR
     */
 
     const image =
@@ -775,33 +742,8 @@ function createProductCard(
     if (image) {
 
         image.addEventListener(
-            "load",
-            function () {
-
-                console.log(
-                    "IMAGE LOADED:",
-                    name,
-                    image.src
-                );
-
-            }
-        );
-
-
-        image.addEventListener(
             "error",
             function () {
-
-                console.error(
-                    "IMAGE FAILED:",
-                    name,
-                    image.src
-                );
-
-
-                /*
-                   Prevent infinite loop
-                */
 
                 if (
                     image.dataset.fallback ===
@@ -821,7 +763,6 @@ function createProductCard(
 
             }
         );
-
     }
 
 
@@ -839,7 +780,7 @@ function initializeProducts() {
 
     document
         .querySelectorAll(
-            ".product-card"
+            "#productList .product-card"
         )
         .forEach(
             function (card) {
@@ -885,7 +826,10 @@ function initializeProducts() {
 
                 minus.addEventListener(
                     "click",
-                    function () {
+                    function (event) {
+
+                        event.stopPropagation();
+
 
                         let value =
                             Number(
@@ -898,7 +842,6 @@ function initializeProducts() {
                         ) {
 
                             value--;
-
                         }
 
 
@@ -915,7 +858,10 @@ function initializeProducts() {
 
                 plus.addEventListener(
                     "click",
-                    function () {
+                    function (event) {
+
+                        event.stopPropagation();
+
 
                         let value =
                             Number(
@@ -939,7 +885,10 @@ function initializeProducts() {
 
                 addButton.addEventListener(
                     "click",
-                    function () {
+                    function (event) {
+
+                        event.stopPropagation();
+
 
                         const id =
                             card.dataset.id;
@@ -978,9 +927,7 @@ function initializeProducts() {
                                 function (item) {
 
                                     return (
-                                        String(
-                                            item.id
-                                        ) ===
+                                        String(item.id) ===
                                         String(id)
                                     );
 
@@ -1014,7 +961,6 @@ function initializeProducts() {
                                     quantity
 
                             });
-
                         }
 
 
@@ -1035,6 +981,502 @@ function initializeProducts() {
 
             }
         );
+}
+
+
+/* =========================================================
+   PRODUCT CLICK POPUP
+========================================================= */
+
+function setupProductClickPopup() {
+
+    const productList =
+        document.getElementById(
+            "productList"
+        );
+
+
+    const modal =
+        document.getElementById(
+            "productModal"
+        );
+
+
+    const modalContent =
+        document.getElementById(
+            "productModalContent"
+        );
+
+
+    const closeButton =
+        document.getElementById(
+            "closeProductModal"
+        );
+
+
+    if (
+        !productList ||
+        !modal ||
+        !modalContent ||
+        !closeButton
+    ) {
+
+        console.error(
+            "Product popup elements not found."
+        );
+
+        return;
+    }
+
+
+    /*
+       Prevent adding multiple
+       click listeners after
+       auto refresh.
+    */
+
+    if (
+        productList.dataset.popupReady ===
+        "true"
+    ) {
+
+        return;
+    }
+
+
+    productList.dataset.popupReady =
+        "true";
+
+
+    /*
+       CLICK PRODUCT
+    */
+
+    productList.addEventListener(
+        "click",
+        function (event) {
+
+            /*
+               Do not open popup when
+               customer clicks action buttons.
+            */
+
+            if (
+                event.target.closest(
+                    ".actions"
+                )
+            ) {
+
+                return;
+            }
+
+
+            const card =
+                event.target.closest(
+                    ".product-card"
+                );
+
+
+            if (!card) {
+
+                return;
+            }
+
+
+            /*
+               IMPORTANT:
+
+               createProductCard()
+               stores product ID as:
+
+               card.dataset.id
+            */
+
+            const productId =
+                card.dataset.id;
+
+
+            if (!productId) {
+
+                console.error(
+                    "Product ID missing."
+                );
+
+                return;
+            }
+
+
+            /*
+               Clone same product card
+            */
+
+            const clonedCard =
+                card.cloneNode(true);
+
+
+            clonedCard.id =
+                "popupProductCard";
+
+
+            /*
+               Popup should not itself
+               behave like a clickable
+               product.
+            */
+
+            clonedCard.style.cursor =
+                "default";
+
+
+            /*
+               Put cloned product
+               inside popup
+            */
+
+            modalContent.innerHTML =
+                "";
+
+
+            modalContent.appendChild(
+                clonedCard
+            );
+
+
+            /*
+               Show popup
+            */
+
+            modal.style.display =
+                "block";
+
+
+            /*
+               Setup popup buttons
+            */
+
+            setupPopupCartButton(
+                clonedCard
+            );
+
+        }
+    );
+
+
+    /*
+       CLOSE BUTTON
+    */
+
+    closeButton.addEventListener(
+        "click",
+        function () {
+
+            closeProductPopup();
+
+        }
+    );
+
+
+    /*
+       CLICK OUTSIDE
+    */
+
+    modal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                modal
+            ) {
+
+                closeProductPopup();
+
+            }
+
+        }
+    );
+
+
+    /*
+       ESC KEY
+    */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
+                if (
+                    modal.style.display ===
+                    "block"
+                ) {
+
+                    closeProductPopup();
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE PRODUCT POPUP
+========================================================= */
+
+function closeProductPopup() {
+
+    const modal =
+        document.getElementById(
+            "productModal"
+        );
+
+
+    const modalContent =
+        document.getElementById(
+            "productModalContent"
+        );
+
+
+    if (modal) {
+
+        modal.style.display =
+            "none";
+    }
+
+
+    if (modalContent) {
+
+        modalContent.innerHTML =
+            "";
+    }
+}
+
+
+/* =========================================================
+   POPUP CART BUTTON
+========================================================= */
+
+function setupPopupCartButton(card) {
+
+    const minus =
+        card.querySelector(
+            ".minus"
+        );
+
+
+    const plus =
+        card.querySelector(
+            ".plus"
+        );
+
+
+    const qty =
+        card.querySelector(
+            ".qty"
+        );
+
+
+    const addButton =
+        card.querySelector(
+            ".add-cart"
+        );
+
+
+    if (
+        !minus ||
+        !plus ||
+        !qty ||
+        !addButton
+    ) {
+
+        return;
+    }
+
+
+    /*
+       PLUS
+    */
+
+    plus.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+
+            let value =
+                Number(
+                    qty.innerText
+                ) || 1;
+
+
+            value++;
+
+
+            qty.innerText =
+                value;
+
+        }
+    );
+
+
+    /*
+       MINUS
+    */
+
+    minus.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+
+            let value =
+                Number(
+                    qty.innerText
+                ) || 1;
+
+
+            if (
+                value > 1
+            ) {
+
+                value--;
+            }
+
+
+            qty.innerText =
+                value;
+
+        }
+    );
+
+
+    /*
+       ADD TO CART
+    */
+
+    addButton.addEventListener(
+        "click",
+        function (event) {
+
+            event.stopPropagation();
+
+
+            const id =
+                card.dataset.id;
+
+
+            const name =
+                card.dataset.name;
+
+
+            const price =
+                Number(
+                    card.dataset.price
+                ) || 0;
+
+
+            const imageElement =
+                card.querySelector(
+                    ".product-image"
+                );
+
+
+            const image =
+                imageElement
+                ? imageElement.src
+                : "./default-product.jpg";
+
+
+            const quantity =
+                Number(
+                    qty.innerText
+                ) || 1;
+
+
+            if (!id) {
+
+                showCustomAlert(
+                    "Product ID missing"
+                );
+
+                return;
+            }
+
+
+            const existing =
+                cart.find(
+                    function (item) {
+
+                        return (
+                            String(item.id) ===
+                            String(id)
+                        );
+
+                    }
+                );
+
+
+            if (existing) {
+
+                existing.quantity +=
+                    quantity;
+
+            }
+            else {
+
+                cart.push({
+
+                    id:
+                        id,
+
+                    name:
+                        name,
+
+                    price:
+                        price,
+
+                    image:
+                        image,
+
+                    quantity:
+                        quantity
+
+                });
+
+            }
+
+
+            qty.innerText =
+                "1";
+
+
+            updateCart();
+
+
+            showCustomAlert(
+                name +
+                " added to cart"
+            );
+
+
+            /*
+               Close product popup
+            */
+
+            closeProductPopup();
+
+        }
+    );
 
 }
 
@@ -1070,7 +1512,6 @@ function updateCart() {
 
         cartCount.innerText =
             count;
-
     }
 
 
@@ -1129,7 +1570,6 @@ function showCart() {
 
 
         return;
-
     }
 
 
@@ -1148,12 +1588,8 @@ function showCart() {
         function (item, index) {
 
             const itemTotal =
-                Number(
-                    item.price
-                ) *
-                Number(
-                    item.quantity
-                );
+                Number(item.price) *
+                Number(item.quantity);
 
 
             total +=
@@ -1264,7 +1700,6 @@ function showCart() {
         cartTotal.innerText =
             "₹" +
             total.toFixed(2);
-
     }
 }
 
@@ -1276,6 +1711,7 @@ function showCart() {
 function cartPlus(index) {
 
     if (!cart[index]) {
+
         return;
     }
 
@@ -1294,6 +1730,7 @@ function cartPlus(index) {
 function cartMinus(index) {
 
     if (!cart[index]) {
+
         return;
     }
 
@@ -1309,7 +1746,6 @@ function cartMinus(index) {
             index,
             1
         );
-
     }
 
 
@@ -1324,6 +1760,7 @@ function cartMinus(index) {
 function removeCart(index) {
 
     if (!cart[index]) {
+
         return;
     }
 
@@ -1369,12 +1806,10 @@ function setupCart() {
 
                     cartModal.style.display =
                         "block";
-
                 }
 
             }
         );
-
     }
 
 
@@ -1400,14 +1835,11 @@ function setupCart() {
 
                     cartModal.style.display =
                         "none";
-
                 }
 
             }
         );
-
     }
-
 }
 
 
@@ -1424,6 +1856,7 @@ function setupOrderButton() {
 
 
     if (!orderButton) {
+
         return;
     }
 
@@ -1441,7 +1874,6 @@ function setupOrderButton() {
                 );
 
                 return;
-
             }
 
 
@@ -1464,7 +1896,6 @@ function setupOrderButton() {
 
                 cartModal.style.display =
                     "none";
-
             }
 
 
@@ -1472,12 +1903,10 @@ function setupOrderButton() {
 
                 orderModal.style.display =
                     "block";
-
             }
 
         }
     );
-
 }
 
 
@@ -1494,6 +1923,7 @@ function showOrder() {
 
 
     if (!container) {
+
         return;
     }
 
@@ -1509,12 +1939,8 @@ function showOrder() {
         function (item) {
 
             const itemTotal =
-                Number(
-                    item.price
-                ) *
-                Number(
-                    item.quantity
-                );
+                Number(item.price) *
+                Number(item.quantity);
 
 
             total +=
@@ -1561,7 +1987,6 @@ function showOrder() {
         orderTotal.innerText =
             "₹" +
             total.toFixed(2);
-
     }
 }
 
@@ -1579,10 +2004,6 @@ function setupSendOrder() {
 
 
     if (!sendOrder) {
-
-        console.error(
-            "sendOrder button not found"
-        );
 
         return;
     }
@@ -1635,7 +2056,6 @@ function setupSendOrder() {
                 );
 
                 return;
-
             }
 
 
@@ -1650,7 +2070,6 @@ function setupSendOrder() {
                 );
 
                 return;
-
             }
 
 
@@ -1661,7 +2080,6 @@ function setupSendOrder() {
                 );
 
                 return;
-
             }
 
 
@@ -1674,7 +2092,6 @@ function setupSendOrder() {
                 );
 
                 return;
-
             }
 
 
@@ -1715,12 +2132,8 @@ function setupSendOrder() {
                 function (item) {
 
                     const itemTotal =
-                        Number(
-                            item.price
-                        ) *
-                        Number(
-                            item.quantity
-                        );
+                        Number(item.price) *
+                        Number(item.quantity);
 
 
                     total +=
@@ -1780,11 +2193,6 @@ function setupSendOrder() {
                 body;
 
 
-            /*
-               Open customer's default
-               email application
-            */
-
             window.location.href =
                 mailtoURL;
 
@@ -1795,26 +2203,32 @@ function setupSendOrder() {
 
             cart = [];
 
+
             updateCart();
 
 
             if (nameInput) {
-                nameInput.value = "";
+
+                nameInput.value =
+                    "";
             }
 
 
             if (mobileInput) {
-                mobileInput.value = "";
+
+                mobileInput.value =
+                    "";
             }
 
 
             if (addressInput) {
-                addressInput.value = "";
+
+                addressInput.value =
+                    "";
             }
 
         }
     );
-
 }
 
 
@@ -1831,6 +2245,7 @@ function setupCloseOrder() {
 
 
     if (!closeOrder) {
+
         return;
     }
 
@@ -1849,12 +2264,10 @@ function setupCloseOrder() {
 
                 orderModal.style.display =
                     "none";
-
             }
 
         }
     );
-
 }
 
 
@@ -1871,6 +2284,7 @@ function setupSearch() {
 
 
     if (!searchInput) {
+
         return;
     }
 
@@ -1883,7 +2297,6 @@ function setupSearch() {
 
         }
     );
-
 }
 
 
@@ -1896,6 +2309,7 @@ function applyCurrentSearch() {
 
 
     if (!searchInput) {
+
         return;
     }
 
@@ -1908,7 +2322,7 @@ function applyCurrentSearch() {
 
     document
         .querySelectorAll(
-            ".product-card"
+            "#productList .product-card"
         )
         .forEach(
             function (card) {
@@ -1928,7 +2342,6 @@ function applyCurrentSearch() {
 
             }
         );
-
 }
 
 
@@ -1945,6 +2358,7 @@ function setupLocation() {
 
 
     if (!button) {
+
         return;
     }
 
@@ -1981,7 +2395,6 @@ function setupLocation() {
 
         }
     );
-
 }
 
 
@@ -2009,28 +2422,27 @@ function setupModalOutsideClick() {
 
             if (
                 cartModal &&
-                event.target === cartModal
+                event.target ===
+                cartModal
             ) {
 
                 cartModal.style.display =
                     "none";
-
             }
 
 
             if (
                 orderModal &&
-                event.target === orderModal
+                event.target ===
+                orderModal
             ) {
 
                 orderModal.style.display =
                     "none";
-
             }
 
         }
     );
-
 }
 
 
@@ -2049,386 +2461,30 @@ document.addEventListener(
 
         loadProducts();
 
+
         setupCart();
+
 
         setupOrderButton();
 
+
         setupSendOrder();
+
 
         setupCloseOrder();
 
+
         setupSearch();
+
 
         setupLocation();
 
+
         setupModalOutsideClick();
-       setupProductClickPopup();
 
     }
 );
-/* =========================================================
-   PRODUCT CLICK POPUP
-========================================================= */
 
-function setupProductClickPopup() {
-
-    const productList =
-        document.getElementById("productList");
-
-    const modal =
-        document.getElementById("productModal");
-
-    const modalContent =
-        document.getElementById(
-            "productModalContent"
-        );
-
-    const closeButton =
-        document.getElementById(
-            "closeProductModal"
-        );
-
-
-    if (
-        !productList ||
-        !modal ||
-        !modalContent ||
-        !closeButton
-    ) {
-        return;
-    }
-
-
-    /* =====================================================
-       CLICK PRODUCT
-    ===================================================== */
-
-    productList.addEventListener(
-        "click",
-        function(event) {
-
-            /*
-             * Don't open popup when clicking:
-             * + button
-             * - button
-             * Add to Cart
-             */
-
-            if (
-                event.target.closest(".actions")
-            ) {
-                return;
-            }
-
-
-            const card =
-                event.target.closest(
-                    ".product-card"
-                );
-
-
-            if (!card) {
-                return;
-            }
-
-
-            /*
-             * Get product ID
-             */
-
-            const productId =
-                card.dataset.productId;
-
-
-            /*
-             * Find original product card
-             */
-
-            if (!productId) {
-                return;
-            }
-
-
-            /*
-             * Copy the SAME product card
-             */
-
-            const clonedCard =
-                card.cloneNode(true);
-
-
-            /*
-             * Remove product-card click
-             * behavior from popup
-             */
-
-            clonedCard.id =
-                "popupProductCard";
-
-
-            /*
-             * Put same product card
-             * inside popup
-             */
-
-            modalContent.innerHTML = "";
-
-            modalContent.appendChild(
-                clonedCard
-            );
-
-
-            /*
-             * Show popup
-             */
-
-            modal.style.display =
-                "block";
-
-
-            /*
-             * Make popup Add To Cart
-             * work independently
-             */
-
-            setupPopupCartButton(
-                clonedCard
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-       CLOSE BUTTON
-    ===================================================== */
-
-    closeButton.addEventListener(
-        "click",
-        function() {
-
-            modal.style.display =
-                "none";
-
-            modalContent.innerHTML =
-                "";
-
-        }
-    );
-
-
-    /* =====================================================
-       CLICK OUTSIDE
-    ===================================================== */
-
-    modal.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target === modal
-            ) {
-
-                modal.style.display =
-                    "none";
-
-                modalContent.innerHTML =
-                    "";
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   POPUP CART BUTTON
-========================================================= */
-
-function setupPopupCartButton(card) {
-
-    const minus =
-        card.querySelector(".minus");
-
-    const plus =
-        card.querySelector(".plus");
-
-    const qty =
-        card.querySelector(".qty");
-
-    const addButton =
-        card.querySelector(".add-cart");
-
-
-    if (
-        !minus ||
-        !plus ||
-        !qty ||
-        !addButton
-    ) {
-        return;
-    }
-
-
-    /*
-     * PLUS
-     */
-
-    plus.addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-            let value =
-                Number(qty.innerText) || 1;
-
-            value++;
-
-            qty.innerText =
-                value;
-
-        }
-    );
-
-
-    /*
-     * MINUS
-     */
-
-    minus.addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-            let value =
-                Number(qty.innerText) || 1;
-
-            if (value > 1) {
-                value--;
-            }
-
-            qty.innerText =
-                value;
-
-        }
-    );
-
-
-    /*
-     * ADD TO CART
-     */
-
-    addButton.addEventListener(
-        "click",
-        function(event) {
-
-            event.stopPropagation();
-
-
-            const id =
-                card.dataset.productId;
-
-
-            const name =
-                card.dataset.name;
-
-
-            const price =
-                Number(
-                    card.dataset.price
-                ) || 0;
-
-
-            const imageElement =
-                card.querySelector(
-                    ".product-image"
-                );
-
-
-            const image =
-                imageElement
-                    ? imageElement.src
-                    : "./default-product.jpg";
-
-
-            const quantity =
-                Number(
-                    qty.innerText
-                ) || 1;
-
-
-            const existing =
-                cart.find(
-                    function(item) {
-
-                        return (
-                            String(item.id) ===
-                            String(id)
-                        );
-
-                    }
-                );
-
-
-            if (existing) {
-
-                existing.quantity +=
-                    quantity;
-
-            }
-            else {
-
-                cart.push({
-
-                    id: id,
-
-                    name: name,
-
-                    price: price,
-
-                    image: image,
-
-                    quantity: quantity
-
-                });
-
-            }
-
-
-            updateCart();
-
-
-            showCustomAlert(
-                name +
-                " added to cart"
-            );
-
-
-            /*
-             * Close popup
-             */
-
-            const modal =
-                document.getElementById(
-                    "productModal"
-                );
-
-
-            if (modal) {
-
-                modal.style.display =
-                    "none";
-
-            }
-
-        }
-    );
-
-}
 
 /* =========================================================
    AUTO REFRESH
@@ -2437,9 +2493,31 @@ function setupPopupCartButton(card) {
 setInterval(
     function () {
 
+        /*
+           Don't reload products while
+           product popup is open.
+        */
+
+        const productModal =
+            document.getElementById(
+                "productModal"
+            );
+
+
+        if (
+            productModal &&
+            productModal.style.display ===
+            "block"
+        ) {
+
+            return;
+        }
+
+
         loadProducts();
 
     },
     30000
 );
+
 
