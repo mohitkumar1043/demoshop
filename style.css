@@ -1,8 +1,14 @@
+```css
+/* =========================================================
+   RESET
+========================================================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
+
 
 body {
     font-family: Arial, sans-serif;
@@ -10,86 +16,128 @@ body {
     color: #222;
 }
 
+
+
 /* =========================================================
    HEADER
 ========================================================= */
 
 .shop-header {
+
     background: white;
+
     padding: 15px;
+
     display: flex;
+
     align-items: center;
+
     gap: 12px;
+
     border-bottom: 1px solid #ddd;
 }
 
+
 .shop-logo {
+
     width: 50px;
     height: 50px;
+
     background: #111;
+
     color: white;
+
     border-radius: 10px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     font-size: 25px;
+
     flex-shrink: 0;
 }
 
+
 .shop-header h1 {
+
     font-size: 20px;
 }
 
+
 .shop-header p {
+
     color: #777;
+
     font-size: 13px;
+
     margin-top: 3px;
 }
+
+
 
 /* =========================================================
    TOP BAR
 ========================================================= */
 
 .top-bar {
+
     max-width: 800px;
+
     margin: auto;
 
     display: flex;
+
     gap: 10px;
 
     padding: 15px;
 }
 
+
 .search-box {
+
     flex: 1;
 
     background: white;
+
     border: 1px solid #ddd;
 
     height: 45px;
+
     border-radius: 8px;
 
     display: flex;
+
     align-items: center;
 
     padding: 0 12px;
+
     gap: 8px;
 }
 
+
 .search-box input {
+
     width: 100%;
+
     border: none;
+
     outline: none;
+
     font-size: 15px;
 }
 
+
 .cart-button {
+
     background: #111;
+
     color: white;
 
     border: none;
+
     border-radius: 8px;
 
     padding: 0 15px;
@@ -97,40 +145,55 @@ body {
     cursor: pointer;
 }
 
+
 #cartCount {
+
     background: white;
+
     color: black;
 
     border-radius: 50%;
 
     padding: 3px 7px;
+
     margin-left: 4px;
 }
+
+
 
 /* =========================================================
    PRODUCTS
 ========================================================= */
 
 main {
+
     max-width: 800px;
+
     margin: auto;
+
     padding: 0 15px;
 }
 
+
 main h2 {
+
     margin-bottom: 10px;
 }
+
+
 
 /* =========================================================
    PRODUCT LIST
 ========================================================= */
 
 .product-list {
+
     height: 430px;
 
     overflow-y: auto;
 
     display: flex;
+
     flex-direction: column;
 
     gap: 12px;
@@ -138,25 +201,34 @@ main h2 {
     padding-right: 5px;
 }
 
+
 .product-list::-webkit-scrollbar {
+
     width: 7px;
 }
 
+
 .product-list::-webkit-scrollbar-thumb {
+
     background: #999;
+
     border-radius: 10px;
 }
+
+
 
 /* =========================================================
    PRODUCT CARD
 ========================================================= */
 
 .product-card {
+
     width: 100%;
 
     background: white;
 
     border: 1px solid #ddd;
+
     border-radius: 10px;
 
     display: flex;
@@ -166,17 +238,39 @@ main h2 {
     min-height: 200px;
 
     overflow: hidden;
+
+    /*
+       Product is clickable
+    */
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
 }
+
+
+.product-card:hover {
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.10);
+}
+
+
 
 /* =========================================================
    PRODUCT IMAGE BOX
 ========================================================= */
 
 .product-image-box {
+
     width: 210px;
+
     height: 200px;
 
     min-width: 210px;
+
     max-width: 210px;
 
     flex-shrink: 0;
@@ -184,6 +278,7 @@ main h2 {
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     background: #f5f5f5;
@@ -191,23 +286,26 @@ main h2 {
     overflow: hidden;
 }
 
+
+
 /* =========================================================
    PRODUCT IMAGE
-
-   contain = NO CROPPING
-   center = IMAGE CENTER
 ========================================================= */
 
 .product-card .product-image {
+
     display: block;
 
     width: 100%;
+
     height: 100%;
 
     max-width: 100%;
+
     max-height: 100%;
 
     object-fit: contain;
+
     object-position: center center;
 
     background: #f5f5f5;
@@ -215,11 +313,14 @@ main h2 {
     padding: 5px;
 }
 
+
+
 /* =========================================================
    PRODUCT INFO
 ========================================================= */
 
 .product-info {
+
     padding: 15px;
 
     flex: 1;
@@ -227,16 +328,21 @@ main h2 {
     min-width: 0;
 
     display: flex;
+
     flex-direction: column;
 }
 
+
 .product-info h3 {
+
     font-size: 18px;
 
     word-break: break-word;
 }
 
+
 .description {
+
     color: #777;
 
     font-size: 14px;
@@ -246,7 +352,9 @@ main h2 {
     line-height: 1.4;
 }
 
+
 .price {
+
     font-size: 20px;
 
     font-weight: bold;
@@ -254,7 +362,9 @@ main h2 {
     margin-top: 8px;
 }
 
+
 .old-price {
+
     text-decoration: line-through;
 
     color: #888;
@@ -264,7 +374,9 @@ main h2 {
     margin-left: 5px;
 }
 
+
 .product-discount {
+
     color: green;
 
     font-size: 13px;
@@ -274,11 +386,14 @@ main h2 {
     font-weight: bold;
 }
 
+
+
 /* =========================================================
    ACTIONS
 ========================================================= */
 
 .actions {
+
     display: flex;
 
     gap: 8px;
@@ -288,7 +403,9 @@ main h2 {
     margin-top: auto;
 }
 
+
 .quantity {
+
     display: flex;
 
     border: 1px solid #ccc;
@@ -300,8 +417,11 @@ main h2 {
     flex-shrink: 0;
 }
 
+
 .quantity button {
+
     width: 34px;
+
     height: 34px;
 
     border: none;
@@ -313,20 +433,27 @@ main h2 {
     font-size: 20px;
 }
 
+
 .quantity button:hover {
+
     background: #ddd;
 }
 
+
 .qty {
+
     width: 35px;
 
     display: flex;
 
     justify-content: center;
+
     align-items: center;
 }
 
+
 .add-cart {
+
     height: 36px;
 
     flex: 1;
@@ -346,15 +473,20 @@ main h2 {
     font-weight: bold;
 }
 
+
 .add-cart:hover {
+
     background: #333;
 }
+
+
 
 /* =========================================================
    LOCATION
 ========================================================= */
 
 .location-section {
+
     max-width: 800px;
 
     margin: auto;
@@ -362,7 +494,9 @@ main h2 {
     padding: 15px;
 }
 
+
 .location-button {
+
     width: 100%;
 
     height: 48px;
@@ -380,29 +514,36 @@ main h2 {
     font-weight: bold;
 }
 
+
 .location-button:hover {
+
     background: #1565c0;
 }
+
+
 
 /* =========================================================
    MODALS
 ========================================================= */
 
 .modal {
+
     display: none;
 
     position: fixed;
 
     inset: 0;
 
-    background: rgba(0, 0, 0, .6);
+    background: rgba(0, 0, 0, 0.6);
 
     z-index: 1000;
 
     padding: 15px;
 }
 
+
 .modal-content {
+
     background: white;
 
     width: 100%;
@@ -422,10 +563,13 @@ main h2 {
     position: relative;
 }
 
+
 .close {
+
     position: absolute;
 
     right: 10px;
+
     top: 5px;
 
     border: none;
@@ -435,13 +579,107 @@ main h2 {
     font-size: 28px;
 
     cursor: pointer;
+
+    z-index: 10;
 }
+
+
+
+/* =========================================================
+   PRODUCT DETAIL POPUP
+========================================================= */
+
+.product-modal-content {
+
+    max-width: 650px;
+
+    padding: 20px;
+}
+
+
+#productModalContent {
+
+    width: 100%;
+}
+
+
+#productModalContent .product-card {
+
+    width: 100%;
+
+    min-height: auto;
+
+    display: flex;
+
+    border: none;
+
+    box-shadow: none;
+
+    overflow: visible;
+
+    cursor: default;
+}
+
+
+#productModalContent .product-card:hover {
+
+    box-shadow: none;
+}
+
+
+#productModalContent .product-image-box {
+
+    width: 260px;
+
+    height: 300px;
+
+    min-width: 260px;
+
+    max-width: 260px;
+
+    border-radius: 8px;
+}
+
+
+#productModalContent .product-info {
+
+    padding: 18px;
+}
+
+
+#productModalContent .product-info h3 {
+
+    font-size: 22px;
+}
+
+
+#productModalContent .description {
+
+    font-size: 15px;
+
+    line-height: 1.5;
+}
+
+
+#productModalContent .price {
+
+    font-size: 24px;
+}
+
+
+#productModalContent .actions {
+
+    margin-top: 20px;
+}
+
+
 
 /* =========================================================
    CART
 ========================================================= */
 
 .cart-row {
+
     display: flex;
 
     gap: 10px;
@@ -451,8 +689,11 @@ main h2 {
     border-bottom: 1px solid #ddd;
 }
 
+
 .cart-row img {
+
     width: 65px;
+
     height: 65px;
 
     min-width: 65px;
@@ -466,13 +707,17 @@ main h2 {
     border-radius: 6px;
 }
 
+
 .cart-info {
+
     flex: 1;
 
     min-width: 0;
 }
 
+
 .cart-controls {
+
     display: flex;
 
     align-items: center;
@@ -480,8 +725,11 @@ main h2 {
     margin-top: 7px;
 }
 
+
 .cart-controls button {
+
     width: 30px;
+
     height: 30px;
 
     border: 1px solid #ddd;
@@ -491,13 +739,17 @@ main h2 {
     cursor: pointer;
 }
 
+
 .cart-controls span {
+
     width: 30px;
 
     text-align: center;
 }
 
+
 .remove {
+
     color: red;
 
     background: none;
@@ -509,7 +761,9 @@ main h2 {
     margin-top: 5px;
 }
 
+
 #cartBottom {
+
     border-top: 1px solid #ddd;
 
     margin-top: 15px;
@@ -517,7 +771,9 @@ main h2 {
     padding-top: 15px;
 }
 
+
 .main-button {
+
     width: 100%;
 
     height: 45px;
@@ -537,11 +793,14 @@ main h2 {
     font-weight: bold;
 }
 
+
+
 /* =========================================================
    FORM
 ========================================================= */
 
 label {
+
     display: block;
 
     margin-top: 12px;
@@ -551,8 +810,10 @@ label {
     font-weight: bold;
 }
 
+
 input,
 textarea {
+
     width: 100%;
 
     padding: 11px;
@@ -566,16 +827,22 @@ textarea {
     outline: none;
 }
 
+
 input:focus,
 textarea:focus {
+
     border-color: #1976d2;
 }
 
+
 textarea {
+
     min-height: 80px;
 }
 
+
 #orderItems {
+
     background: #f5f5f5;
 
     padding: 10px;
@@ -583,7 +850,9 @@ textarea {
     margin: 10px 0;
 }
 
+
 .order-line {
+
     display: flex;
 
     justify-content: space-between;
@@ -593,11 +862,14 @@ textarea {
     padding: 5px 0;
 }
 
+
+
 /* =========================================================
    ALERT
 ========================================================= */
 
 #customAlert {
+
     display: none;
 
     position: fixed;
@@ -625,6 +897,8 @@ textarea {
     text-align: center;
 }
 
+
+
 /* =========================================================
    MOBILE
 ========================================================= */
@@ -632,48 +906,45 @@ textarea {
 @media (max-width: 600px) {
 
     .top-bar {
+
         padding: 10px;
     }
 
+
     main {
+
         padding: 0 10px;
     }
 
+
     .product-list {
+
         height: 390px;
     }
 
+
     .product-card {
+
         min-height: 180px;
     }
 
-    /* =====================================================
-       MOBILE IMAGE BOX
-    ===================================================== */
 
     .product-image-box {
+
         width: 120px;
+
         height: 180px;
 
         min-width: 120px;
+
         max-width: 120px;
-
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-
-        background: #f5f5f5;
-
-        overflow: hidden;
     }
 
-    /* =====================================================
-       MOBILE PRODUCT IMAGE
-    ===================================================== */
 
     .product-card .product-image {
+
         width: 100%;
+
         height: 100%;
 
         object-fit: contain;
@@ -683,44 +954,59 @@ textarea {
         padding: 4px;
     }
 
+
     .product-info {
+
         padding: 10px;
     }
 
+
     .product-info h3 {
+
         font-size: 15px;
     }
 
+
     .description {
+
         font-size: 12px;
     }
 
+
     .price {
+
         font-size: 17px;
     }
 
+
     .add-cart {
+
         font-size: 11px;
     }
 
+
     .quantity button {
+
         width: 28px;
     }
+
 
     .qty {
+
         width: 28px;
     }
 
+
     .cart-button {
+
         padding: 0 10px;
     }
 
-    /* =====================================================
-       CART IMAGE
-    ===================================================== */
 
     .cart-row img {
+
         width: 65px;
+
         height: 65px;
 
         min-width: 65px;
@@ -731,7 +1017,67 @@ textarea {
 
         background: #f5f5f5;
     }
+
+
+
+    /* =====================================================
+       PRODUCT POPUP MOBILE
+    ===================================================== */
+
+    .product-modal-content {
+
+        max-width: 500px;
+
+        padding: 15px;
+    }
+
+
+    #productModalContent .product-card {
+
+        flex-direction: column;
+
+        min-height: auto;
+    }
+
+
+    #productModalContent .product-image-box {
+
+        width: 100%;
+
+        height: 280px;
+
+        min-width: 0;
+
+        max-width: none;
+    }
+
+
+    #productModalContent .product-info {
+
+        padding: 15px 5px 5px 5px;
+    }
+
+
+    #productModalContent .product-info h3 {
+
+        font-size: 20px;
+    }
+
+
+    #productModalContent .price {
+
+        font-size: 22px;
+    }
+
+
+    #productModalContent .actions {
+
+        margin-top: 15px;
+    }
+
 }
+
+
 
 /* =========================================================
    VERY SMALL MOBILE
@@ -740,114 +1086,74 @@ textarea {
 @media (max-width: 380px) {
 
     .product-image-box {
+
         width: 105px;
+
         height: 170px;
 
         min-width: 105px;
+
         max-width: 105px;
     }
 
+
     .product-card .product-image {
+
         padding: 3px;
     }
 
+
     .product-info {
+
         padding: 8px;
     }
 
+
     .product-info h3 {
+
         font-size: 14px;
     }
 
+
     .description {
+
         font-size: 11px;
     }
 
+
     .price {
+
         font-size: 16px;
     }
 
+
     .actions {
+
         gap: 4px;
     }
 
+
     .quantity button {
+
         width: 25px;
     }
+
 
     .qty {
+
         width: 25px;
     }
 
+
     .add-cart {
+
         font-size: 10px;
     }
-}
-```css
-/* =========================================================
-   PRODUCT CLICK POPUP
-========================================================= */
 
-#productModalContent .product-card {
-    width: 100%;
-    min-height: auto;
-
-    display: flex;
-
-    border: none;
-
-    overflow: visible;
-
-    cursor: default;
-}
-
-
-/* Bigger image inside popup */
-
-#productModalContent .product-image-box {
-    width: 240px;
-    height: 280px;
-
-    min-width: 240px;
-    max-width: 240px;
-}
-
-
-/* Product information */
-
-#productModalContent .product-info {
-    padding: 18px;
-}
-
-
-/* Don't show pointer on popup */
-
-#productModalContent .product-card {
-    cursor: default;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 600px) {
-
-    #productModalContent .product-card {
-        flex-direction: column;
-    }
 
     #productModalContent .product-image-box {
 
-        width: 100%;
-        height: 280px;
-
-        min-width: 0;
-        max-width: none;
-    }
-
-    #productModalContent .product-info {
-        padding: 12px 0 0 0;
+        height: 240px;
     }
 
 }
