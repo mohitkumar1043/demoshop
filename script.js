@@ -459,7 +459,7 @@ function displayProducts(products) {
 
             }
         );
-
+availableProducts.reverse();
 
     if (
         availableProducts.length === 0
