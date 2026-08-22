@@ -458,8 +458,8 @@ function displayProducts(products) {
                 );
 
             }
-        );
-availableProducts.reverse();
+        ).slice().reverse();
+
 
     if (
         availableProducts.length === 0
