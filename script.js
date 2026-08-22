@@ -370,7 +370,7 @@ function loadProducts() {
             }
         }
 
-
+       products.reverse();
         displayProducts(products);
 
     })
@@ -458,7 +458,7 @@ function displayProducts(products) {
                 );
 
             }
-        ).reverse();
+        )
 
 
     if (
