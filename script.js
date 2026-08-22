@@ -458,7 +458,7 @@ function displayProducts(products) {
                 );
 
             }
-        ).slice().reverse();
+        ).reverse();
 
 
     if (
